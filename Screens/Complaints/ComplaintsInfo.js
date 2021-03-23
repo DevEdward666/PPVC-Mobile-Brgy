@@ -8,6 +8,7 @@ import {
   StyleSheet,
   TextInput,
   TouchableHighlight,
+  TouchableNativeFeedback,
   ScrollView,
 } from 'react-native';
 import {FAB} from 'react-native-paper';
@@ -24,6 +25,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CustomBottomSheet from '../../Plugins/CustomBottomSheet';
 import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
+import {ImageBackground} from 'react-native';
 const ComplaintsInfo = () => {
   const users_reducers = useSelector((state) => state.UserInfoReducers.data);
   const [complaint_pk, setcomplaint_pk] = useState('');
@@ -37,11 +39,9 @@ const ComplaintsInfo = () => {
       Actions.home();
     } else {
       await setcomplaint_pk(item);
-      setTimeout(() => {
-        dispatch(action_get_complaints_messages(item.toString()));
-      }, 1000);
     }
   });
+  console.log('test');
   const dispatch = useDispatch();
   const complaint_info = useSelector(
     (state) => state.ComplaintsReducers.data_info,
@@ -161,7 +161,8 @@ const ComplaintsInfo = () => {
           <View
             style={{
               width: '100%',
-              height: 50,
+              height: 100,
+              maxHeight: 1000,
             }}>
             <Text style={styles.Titletext}>
               Subject: {complaint_info[0]?.title}
@@ -173,22 +174,37 @@ const ComplaintsInfo = () => {
         <View
           style={{
             flex: 1,
-            flexDirection: 'row',
+            flexDirection: 'column',
             justifyContent: 'center',
           }}>
           <Divider style={{backgroundColor: 'grey'}} />
-          <View style={{width: '100%', height: 300, marginTop: 100}}>
-            <Image
-              source={{
-                uri: `${base_url}/${complaint_info[0]?.complaint_file[0]?.file_path}`,
-              }}
-              style={{
-                width: '100%',
-                height: '100%',
-                resizeMode: 'contain',
-              }}
-            />
-          </View>
+
+          {complaint_info[0]?.complaint_file.map((item, index) => (
+            <View style={{width: 100 + '%'}}>
+              <TouchableNativeFeedback key={index} underlayColor="white">
+                <CardView
+                  key={index}
+                  style={styles.avatar}
+                  radius={1}
+                  backgroundColor={'#ffffff'}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      height: 500,
+                      maxHeight: 2000,
+                      alignItems: 'center',
+                    }}>
+                    <ImageBackground
+                      source={{
+                        uri: `${base_url}/${item?.file_path}`,
+                      }}
+                      style={styles.avatar}
+                    />
+                  </View>
+                </CardView>
+              </TouchableNativeFeedback>
+            </View>
+          ))}
         </View>
       </ScrollView>
       <GestureRecognizer
@@ -308,6 +324,13 @@ const ComplaintsInfo = () => {
 };
 
 const styles = StyleSheet.create({
+  avatar: {
+    width: '100%',
+    height: 500,
+    borderColor: 'white',
+    alignSelf: 'center',
+    resizeMode: 'contain',
+  },
   safeareaviewcontainer: {
     flex: 1,
     paddingTop: 10,
@@ -340,6 +363,8 @@ const styles = StyleSheet.create({
   },
 
   text: {
+    height: 100,
+    maxHeight: 1000,
     color: 'black',
     fontSize: 14,
     marginTop: 10,

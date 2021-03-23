@@ -88,7 +88,6 @@ export const action_insert_complaints = (
   const parseData = await fetchdata.json();
   if (parseData.status != 400) {
     if (parseData.success != false) {
-      console.log(parseData);
     }
   }
 };
@@ -117,7 +116,6 @@ export const action_get_complaints_messages = (complaint_pk) => async (
         type: GET_COMPLAINTS_MESSAGE,
         payload: parseData.data,
       });
-      console.log(parseData);
     }
   }
 };
@@ -143,7 +141,6 @@ export const action_set_complaints_messages = (body, complaint_pk) => async (
   const parseData = await fetchdata.json();
   if (parseData.status != 400) {
     if (parseData.success != false) {
-      console.log(parseData);
     }
   }
 };
