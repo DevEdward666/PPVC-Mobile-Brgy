@@ -10,8 +10,10 @@ import {
   Image,
   View,
   ImageBackground,
+  TouchableNativeFeedback,
   Text,
 } from 'react-native';
+import DocumentPicker from 'react-native-document-picker';
 import Icons from 'react-native-vector-icons/FontAwesome';
 import {
   Button,
@@ -38,6 +40,7 @@ import {
 } from '../../Services/Actions/PostsActions';
 import CustomBottomSheet from '../../Plugins/CustomBottomSheet';
 import {ScrollView, TextInput} from 'react-native-gesture-handler';
+import CustomFlexBox from '../../Plugins/CustomFlexBox';
 
 const UINews = () => {
   const windowWidth = Dimensions.get('window').width;
@@ -65,7 +68,8 @@ const UINews = () => {
   const [posts_id, setposts_id] = useState('');
   const [post, setpost] = useState('');
   const [commentstate, setcommentstate] = useState(0);
-
+  const [postResource, setpostResource] = useState([]);
+  const [multipleFile, setmultipleFile] = useState([]);
   const [spinner, setSpinner] = useState(false);
   const dispatch = useDispatch();
   const onChangeText = useCallback((text) => {
@@ -108,17 +112,19 @@ const UINews = () => {
   const handleAddPostPress = useCallback(() => {
     setaddpostVisible(true);
   }, []);
+  const handleRemoveItem = useCallback((e, i) => {
+    setpostResource(postResource.filter((item, index) => index !== i));
+  });
   const handleSubmitPostPress = useCallback(async () => {
-    // console.log(post);
     if (post.length > 0) {
-      console.log(post);
-      await dispatch(action_set_posts(post, post));
+      await dispatch(action_set_posts(post, post, multipleFile));
 
       await setaddpostVisible(false);
       await dispatch(action_get_posts());
       await setpost('');
+      await setmultipleFile([]);
     }
-  }, [dispatch, post]);
+  }, [dispatch, post, multipleFile]);
   const handleCommentSend = useCallback(async () => {
     if (comment.length > 0) {
       await dispatch(action_posts_add_comment(posts_id, comment));
@@ -192,7 +198,31 @@ const UINews = () => {
     velocityThreshold: 0.3,
     directionalOffsetThreshold: 1000,
   };
+  const selectFile = async () => {
+    // Opening Document Picker to select one file
+    try {
+      const results = await DocumentPicker.pickMultiple({
+        type: [DocumentPicker.types.images],
+      });
+      for (const res of results) {
+        setpostResource((prev) => [...prev, {uri: res.uri}]);
+        setmultipleFile((prev) => [...prev, res]);
+      }
 
+      // Setting the state to show single file attributes
+    } catch (err) {
+      setmultipleFile(null);
+      // Handling any exception (If any)
+      if (DocumentPicker.isCancel(err)) {
+        // If user canceled the document selection
+        alert('Canceled');
+      } else {
+        // For Unknown Error
+        alert('Unknown Error: ' + JSON.stringify(err));
+        throw err;
+      }
+    }
+  };
   const BadgedIcon = withBadge(1)(Icons);
   let imageUri = 'data:image/png;base64,' + users_reducers?.pic;
   return (
@@ -328,7 +358,7 @@ const UINews = () => {
                     </View>
                   </View>
                 </View>
-                <View style={{width: '100%', height: 1000}}>
+                <View style={{width: '100%', height: 620, maxHeight: 5000}}>
                   <TextInput
                     style={{
                       borderWidth: 2,
@@ -337,11 +367,72 @@ const UINews = () => {
                       fontSize: 32,
                     }}
                     multiline
-                    placeholder="What's on you mind"
+                    placeholder="What's on your mind"
                     numberOfLines={4}
                     onChangeText={(text) => handleChangeTextPost(text)}
                     value={post}
                   />
+                  <View style={{width: 30 + '%', height: 50, padding: 5}}>
+                    <Button
+                      style={{color: 'black'}}
+                      icon={
+                        <Icons name="file-image-o" size={15} color="green" />
+                      }
+                      iconLeft
+                      type="outline"
+                      title=" Photo"
+                      onPress={selectFile}
+                    />
+                  </View>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: 'column',
+                      justifyContent: 'flex-start',
+                    }}>
+                    <View
+                      style={{
+                        width: '100%',
+                        height: 450,
+                        maxHeight: 10000,
+                      }}>
+                      <ScrollView>
+                        <CustomFlexBox
+                          label="flexDirection"
+                          selectedValue={'column'}>
+                          {postResource.map((item, index) => (
+                            <View style={{width: 100 + '%'}}>
+                              <TouchableNativeFeedback
+                                key={index}
+                                onLongPress={() =>
+                                  handleRemoveItem(item, index)
+                                }
+                                underlayColor="white">
+                                <CardView
+                                  style={styles.avatar}
+                                  radius={1}
+                                  backgroundColor={'#ffffff'}>
+                                  <View
+                                    style={{
+                                      flexDirection: 'row',
+                                      height: 500,
+                                      maxHeight: 2000,
+                                      alignItems: 'center',
+                                    }}>
+                                    <ImageBackground
+                                      source={{
+                                        uri: item.uri,
+                                      }}
+                                      style={styles.avatar}></ImageBackground>
+                                  </View>
+                                </CardView>
+                              </TouchableNativeFeedback>
+                            </View>
+                          ))}
+                        </CustomFlexBox>
+                      </ScrollView>
+                    </View>
+                  </View>
                 </View>
               </View>
             </SafeAreaView>
@@ -575,6 +666,13 @@ const UINews = () => {
   );
 };
 const styles = StyleSheet.create({
+  avatar: {
+    width: '100%',
+    height: 500,
+    borderColor: 'white',
+    alignSelf: 'center',
+    resizeMode: 'contain',
+  },
   spinnerTextStyle: {
     color: '#FFF',
   },

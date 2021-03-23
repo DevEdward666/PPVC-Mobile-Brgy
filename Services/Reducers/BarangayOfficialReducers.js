@@ -1,5 +1,5 @@
 import {GET_DATA_BARANGAY} from '../Types/BarangaOfficialTypes';
-import BASE_URL from '../Types/Default_Types';
+import {BASE_URL} from '../Types/Default_Types';
 const barangay_officials = {
   data_barangay: [],
   base_url: BASE_URL,

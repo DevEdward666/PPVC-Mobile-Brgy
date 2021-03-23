@@ -32,11 +32,14 @@ const ComplaintsInfo = () => {
   const [sendClicked, setsendClicked] = useState(0);
   let imageUri = 'data:image/png;base64,' + users_reducers.pic;
   const base_url = useSelector((state) => state.NewsReducers.base_url);
-  AsyncStorage.getItem('complaint_pk').then((item) => {
+  AsyncStorage.getItem('complaint_pk').then(async (item) => {
     if (item == null) {
       Actions.home();
     } else {
-      setcomplaint_pk(item);
+      await setcomplaint_pk(item);
+      setTimeout(() => {
+        dispatch(action_get_complaints_messages(item.toString()));
+      }, 1000);
     }
   });
   const dispatch = useDispatch();
@@ -62,15 +65,19 @@ const ComplaintsInfo = () => {
     setisVisible(false);
   }, []);
 
-  const handleMessageSend = useCallback(() => {
-    setsendmessage('');
-    dispatch(action_set_complaints_messages(sendmessage, complaint_pk));
-    dispatch(action_get_complaints_messages(complaint_pk));
-    setsendClicked((prev) => prev + 1);
+  const handleMessageSend = useCallback(async () => {
+    await setsendmessage('');
+    await dispatch(action_set_complaints_messages(sendmessage, complaint_pk));
+    await dispatch(action_get_complaints_messages(complaint_pk));
+    await setsendClicked((prev) => prev + 1);
   }, [dispatch, sendmessage, complaint_pk]);
   useEffect(() => {
-    dispatch(action_get_complaints_messages(complaint_pk));
-  }, [dispatch, sendClicked]);
+    setTimeout(() => {
+      dispatch(action_get_complaints_messages(complaint_pk.toString()));
+    }, 1000);
+
+    console.log(complaint_pk);
+  }, [dispatch, sendClicked, complaint_pk]);
   const [gestureName, setgestureName] = useState('');
 
   const onSwipe = useCallback((gestureName, gestureState) => {
@@ -157,7 +164,7 @@ const ComplaintsInfo = () => {
               height: 50,
             }}>
             <Text style={styles.Titletext}>
-              Subject: {complaint_info[0]?.SUBJECT}
+              Subject: {complaint_info[0]?.title}
             </Text>
             <Text style={styles.text}>{complaint_info[0]?.body}</Text>
           </View>
@@ -204,21 +211,7 @@ const ComplaintsInfo = () => {
                         flexDirection: 'row',
                         justifyContent: 'flex-end',
                         marginBottom: 10,
-                      }}>
-                      <View
-                        style={{
-                          width: '5%',
-                          height: 10,
-                        }}>
-                        <Icon
-                          raised
-                          name="times"
-                          type="font-awesome"
-                          color="#f50"
-                          onPress={() => handleCloseCommentButton()}
-                        />
-                      </View>
-                    </View>
+                      }}></View>
                   </View>
                 </View>
               </CardView>
@@ -234,7 +227,7 @@ const ComplaintsInfo = () => {
                             justifyContent: 'space-around',
                             marginBottom: 50,
                           }}>
-                          <View style={{width: 100, height: 20}}>
+                          <View style={{width: 20 + '%', height: 20}}>
                             <Image
                               source={{
                                 uri: `data:image/png;base64,${Notification?.user_pic}`,
@@ -242,15 +235,15 @@ const ComplaintsInfo = () => {
                               style={{
                                 marginTop: 10,
                                 marginStart: 10,
-                                width: 40,
-                                height: 40,
+                                width: 50,
+                                height: 50,
                                 borderRadius: 120 / 2,
                                 overflow: 'hidden',
                                 borderWidth: 3,
                               }}
                             />
                           </View>
-                          <View style={{width: 350, height: 20}}>
+                          <View style={{width: 90 + '%', height: 20}}>
                             <CardView key={Notification.complaint_msg_pk}>
                               <Text style={styles.messagesText}>
                                 {Notification?.first_name}
@@ -326,8 +319,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#a0c2fa',
   },
   messagesText: {
-    padding: 10,
-    height: 80,
+    padding: 5,
+    height: 70,
     maxHeight: 700,
   },
   messagesCard: {

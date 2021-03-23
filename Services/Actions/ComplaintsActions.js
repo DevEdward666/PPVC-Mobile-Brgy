@@ -60,7 +60,11 @@ export const action_get_complaints_info = (complaint_pk) => async (
   }
 };
 
-export const action_insert_complaints = (subject, body) => async () => {
+export const action_insert_complaints = (
+  subject,
+  body,
+  complaint_file,
+) => async () => {
   var url = `${BASE_URL}/api/complaint/addComplaint`;
   const token = await AsyncStorage.getItem('tokenizer');
   const bearer_token = token;
@@ -68,11 +72,16 @@ export const action_insert_complaints = (subject, body) => async () => {
   let formdata = new FormData();
   formdata.append('subject', subject);
   formdata.append('body', body);
+  complaint_file.forEach((item) => {
+    formdata.append('uploaded_files', item);
+  });
+
   const fetchdata = await fetch(url, {
     method: 'POST',
     withCredentials: true,
     headers: {
       Authorization: bearer,
+      'Content-Type': 'multipart/form-data',
     },
     body: formdata,
   });
@@ -108,6 +117,7 @@ export const action_get_complaints_messages = (complaint_pk) => async (
         type: GET_COMPLAINTS_MESSAGE,
         payload: parseData.data,
       });
+      console.log(parseData);
     }
   }
 };

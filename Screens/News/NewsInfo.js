@@ -49,7 +49,9 @@ const UINews = () => {
   const news_reducers_comments = useSelector(
     (state) => state.NewsReducers.comments,
   );
-
+  const [entries, setEntries] = useState([]);
+  const [comment, setcomment] = useState('');
+  const [isVisible, setisVisible] = useState(false);
   const ENTRIES1 = news_reducers_info[0]?.upload_files;
   AsyncStorage.getItem('news_id').then((item) => {
     if (item == null) {
@@ -64,19 +66,16 @@ const UINews = () => {
     setTimeout(() => {
       setSpinner(false);
     }, 1000);
-
+    setEntries(news_reducers_info[0]?.upload_files);
     dispatch(action_get_news_info(news_id.toString()));
     dispatch(action_get_news_comments(news_id.toString()));
-    setEntries(ENTRIES1);
   }, [dispatch, news_id]);
   useEffect(() => {
+    let unmounted = false;
     setEntries(ENTRIES1);
     dispatch(action_get_news_info(news_id.toString()));
     dispatch(action_get_news_comments(news_id.toString()));
-  }, [dispatch]);
-  const [entries, setEntries] = useState([]);
-  const [comment, setcomment] = useState('');
-  const [isVisible, setisVisible] = useState(false);
+  }, [dispatch, news_id, ENTRIES1]);
 
   const carouselRef = useRef(null);
 
@@ -107,8 +106,8 @@ const UINews = () => {
     if (comment !== '') {
       await dispatch(action_get_news_add_comment(news_id, comment));
       await dispatch(action_get_news_comments(news_id.toString()));
-      setcommentstate((prev) => prev + 1);
-      setcomment('');
+      await setcommentstate((prev) => prev + 1);
+      await setcomment('');
     }
   }, [dispatch, comment, news_id]);
   const handleCloseCommentButton = useCallback(async () => {
@@ -119,14 +118,14 @@ const UINews = () => {
   }, []);
 
   const onRefresh = useCallback(async () => {
-    setRefreshing(true);
+    await setRefreshing(true);
 
     wait(1000).then(() => {
       setRefreshing(false);
-      dispatch(action_get_news_info(news_id.toString()));
-      dispatch(action_get_news_comments(news_id.toString()));
-      setEntries(ENTRIES1);
     });
+    await dispatch(action_get_news_info(news_id.toString()));
+    await dispatch(action_get_news_comments(news_id.toString()));
+    await setEntries(ENTRIES1);
   }, [dispatch, ENTRIES1]);
   const [gestureName, setgestureName] = useState('');
   const onSwipe = useCallback((gestureName, gestureState) => {

@@ -3,7 +3,7 @@ import {
   GET_COMPLAINTS_INFO,
   GET_COMPLAINTS_MESSAGE,
 } from '../Types/Complaints_Types';
-import BASE_URL from '../Types/Default_Types';
+import {BASE_URL} from '../Types/Default_Types';
 const complaints = {
   data: [],
   data_info: [],

@@ -136,8 +136,7 @@ export const action_set_posts_reactions = (posts_pk, reaction) => async (
   }
 };
 
-export const action_set_posts = (title, body) => async (dispatch) => {
-  //   var url = `${BASE_URL}/api/user/currentUser`;
+export const action_set_posts = (title, body, upload_files) => async () => {
   var url = `${BASE_URL}/api/posts/addPosts`;
   const token = await AsyncStorage.getItem('tokenizer');
   const bearer_token = token;
@@ -145,11 +144,17 @@ export const action_set_posts = (title, body) => async (dispatch) => {
   let formdata = new FormData();
   formdata.append('title', title);
   formdata.append('body', body);
+
+  upload_files.forEach((item) => {
+    formdata.append('uploaded_files', item);
+  });
+
   const fetchdata = await fetch(url, {
     method: 'POST',
     withCredentials: true,
     headers: {
       Authorization: bearer,
+      'Content-Type': 'multipart/form-data',
     },
     body: formdata,
   });
@@ -158,4 +163,5 @@ export const action_set_posts = (title, body) => async (dispatch) => {
     if (parseData.success != false) {
     }
   }
+  console.log(upload_files);
 };

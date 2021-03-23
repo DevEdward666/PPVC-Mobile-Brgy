@@ -29,9 +29,9 @@ const BarangayOfficials = () => {
         </Text>
       </CardView>
       <ScrollView>
-        {brgyofficiallist.map((items) => {
+        {brgyofficiallist.map((items, index) => {
           return (
-            <CardView key={items?.first_name}>
+            <CardView key={index}>
               <View
                 style={{
                   flex: 1,

@@ -1,4 +1,4 @@
-import BASE_URL from '../Types/Default_Types';
+import {BASE_URL} from '../Types/Default_Types';
 
 const defult_values = {
   // base_url: 'http://192.168.254.108:4050',

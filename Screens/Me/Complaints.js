@@ -2,33 +2,61 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useCallback, useEffect, useState} from 'react';
 import {
   FlatList,
+  PermissionsAndroid,
   RefreshControl,
   SafeAreaView,
   StyleSheet,
   Text,
   TouchableHighlight,
+  TouchableNativeFeedback,
   View,
 } from 'react-native';
+import DocumentPicker from 'react-native-document-picker';
+import {Button, Divider, Icon, Input} from 'react-native-elements';
+import FbGrid from 'react-native-fb-image-grid';
 import Spinner from 'react-native-loading-spinner-overlay';
+import {FAB} from 'react-native-paper';
 import CardView from 'react-native-rn-cardview';
 import {Actions} from 'react-native-router-flux';
-import {useDispatch, useSelector} from 'react-redux';
-import wait from '../../Plugins/waitinterval';
 import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
-import {FloatingAction} from 'react-native-floating-action';
+import Icons from 'react-native-vector-icons/FontAwesome';
+import {useDispatch, useSelector} from 'react-redux';
+import CustomBottomSheet from '../../Plugins/CustomBottomSheet';
+import wait from '../../Plugins/waitinterval';
+import {ScrollView, TextInput} from 'react-native-gesture-handler';
 import {
   action_get_complaints,
   action_insert_complaints,
 } from '../../Services/Actions/ComplaintsActions';
-import {BottomSheet} from 'react-native-elements/dist/bottomSheet/BottomSheet';
+import CustomFlexBox from '../../Plugins/CustomFlexBox';
+import {ImageBackground} from 'react-native';
 
-import {Input, Button} from 'react-native-elements';
-import {TextInput} from 'react-native-gesture-handler';
-import CustomOverLay from '../../Plugins/CustomOverLay';
-import {Overlay, Icon} from 'react-native-elements';
-import {Divider} from 'react-native-elements';
-import CustomBottomSheet from '../../Plugins/CustomBottomSheet';
-import {FAB} from 'react-native-paper';
+export async function requestStoragePermission() {
+  if (Platform.OS !== 'android') return true;
+
+  const pm1 = await PermissionsAndroid.check(
+    PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+  );
+  const pm2 = await PermissionsAndroid.check(
+    PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+  );
+
+  if (pm1 && pm2) return true;
+
+  const userResponse = await PermissionsAndroid.requestMultiple([
+    PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+    PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+  ]);
+
+  if (
+    userResponse['android.permission.READ_EXTERNAL_STORAGE'] === 'granted' &&
+    userResponse['android.permission.WRITE_EXTERNAL_STORAGE'] === 'granted'
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+}
 const complaints = () => {
   const complaintslist = useSelector((state) => state.ComplaintsReducers.data);
   const users_reducers = useSelector((state) => state.UserInfoReducers.data);
@@ -39,7 +67,9 @@ const complaints = () => {
   const [subjecttext, setsubjecttext] = useState('');
   const [complaintmessage, setcomplaintmessage] = useState('');
   const [overlayopen, setoverlayopen] = useState(false);
-
+  const [complaintResource, setcomplaintResource] = useState([]);
+  const [complaintsimagepath, setcomplaintsimagepath] = useState(null);
+  const [singleFile, setSingleFile] = useState([]);
   const [overlaymessage, setoverlaymessage] = useState('');
   const [reported_by, setreported_by] = useState('');
   AsyncStorage.getItem('user_id').then((item) => {
@@ -62,7 +92,7 @@ const complaints = () => {
   }, [dispatch, reported_by]);
   const gotocomplaints = useCallback((item) => {
     Actions.complaintsinfo();
-    AsyncStorage.setItem('complaint_pk', item.complaint_pk.toString());
+    AsyncStorage.setItem('complaint_pk', item?.complaint_pk.toString());
   });
   const handleFloatingIcon = useCallback((value) => {
     setIsVisible(true);
@@ -73,21 +103,61 @@ const complaints = () => {
   const handleComplaintmessage = useCallback((text) => {
     setcomplaintmessage(text);
   });
-  const handleSendButton = useCallback(() => {
+  const handleSendButton = useCallback(async () => {
     if (complaintmessage === '' || subjecttext === '') {
       // setoverlayopen(true);
       alert('Please Fill all fields');
     } else {
-      dispatch(action_insert_complaints(subjecttext, complaintmessage));
-      wait(300).then(() => {
+      dispatch(
+        action_insert_complaints(subjecttext, complaintmessage, singleFile),
+      );
+      wait(1000).then(() => {
         dispatch(action_get_complaints(reported_by));
       });
       setIsVisible(false);
+      alert('Complaint Successfully Send');
     }
-  }, [overlayopen, subjecttext, complaintmessage, dispatch, reported_by]);
+  }, [
+    overlayopen,
+    subjecttext,
+    complaintmessage,
+    dispatch,
+    reported_by,
+    singleFile,
+  ]);
   const handleCancelButton = useCallback(() => {
     setIsVisible(false);
   }, []);
+
+  const handleRemoveItem = useCallback((e, i) => {
+    setcomplaintResource(
+      complaintResource.filter((item, index) => index !== i),
+    );
+  });
+  const selectFile = async () => {
+    // Opening Document Picker to select one file
+    try {
+      const results = await DocumentPicker.pickMultiple({
+        type: [DocumentPicker.types.images],
+      });
+      for (const res of results) {
+        setSingleFile((prev) => [...prev, res]);
+        setcomplaintResource((prev) => [...prev, {uri: res.uri}]);
+      }
+      // Setting the state to show single file attributes
+    } catch (err) {
+      setSingleFile(null);
+      // Handling any exception (If any)
+      if (DocumentPicker.isCancel(err)) {
+        // If user canceled the document selection
+        alert('Canceled');
+      } else {
+        // For Unknown Error
+        alert('Unknown Error: ' + JSON.stringify(err));
+        throw err;
+      }
+    }
+  };
   const [gestureName, setgestureName] = useState('');
 
   const onSwipe = useCallback((gestureName, gestureState) => {
@@ -123,7 +193,6 @@ const complaints = () => {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-        style={styles.container}
         data={complaintslist}
         keyExtractor={(item, index) => index.toString()}
         onEndReachedThreshold={0.1}
@@ -144,7 +213,7 @@ const complaints = () => {
                     height: 50,
                   }}>
                   <Text numberOfLines={1} style={styles.Titletext}>
-                    {item?.SUBJECT}
+                    {item?.title}
                   </Text>
                 </View>
                 <View
@@ -195,7 +264,7 @@ const complaints = () => {
           isVisible={isVisible}
           color="rgba(0.5, 0.25, 0, 0.2)"
           UI={
-            <SafeAreaView style={styles.flatlistcontainer}>
+            <SafeAreaView style={{flex: 1}}>
               <View
                 style={{
                   flex: 1,
@@ -258,7 +327,7 @@ const complaints = () => {
                 <View
                   style={{
                     width: '100%',
-                    height: 300,
+                    height: 200,
                   }}>
                   <View
                     style={{
@@ -271,6 +340,71 @@ const complaints = () => {
                       onChangeText={(value) => handleComplaintmessage(value)}
                     />
                   </View>
+                </View>
+                <View style={{width: 30 + '%', height: 30, padding: 5}}>
+                  <Button
+                    style={{color: 'black'}}
+                    icon={<Icons name="file-image-o" size={15} color="green" />}
+                    iconLeft
+                    type="outline"
+                    title=" Photo"
+                    onPress={selectFile}
+                  />
+                </View>
+              </View>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: 'column',
+                  justifyContent: 'flex-start',
+                }}>
+                <View
+                  style={{
+                    width: '100%',
+                    height: 450,
+                    maxHeight: 10000,
+                  }}>
+                  <View
+                    style={{
+                      backgroundColor: 'white)',
+                    }}>
+                    <Text style={{textAlign: 'center', padding: 10}}>
+                      Attached Image
+                    </Text>
+                  </View>
+                  <ScrollView>
+                    <CustomFlexBox
+                      label="flexDirection"
+                      selectedValue={'column'}>
+                      {complaintResource.map((item, index) => (
+                        <View style={{width: 100 + '%'}}>
+                          <TouchableNativeFeedback
+                            key={index}
+                            onLongPress={() => handleRemoveItem(item, index)}
+                            underlayColor="white">
+                            <CardView
+                              style={styles.avatar}
+                              radius={1}
+                              backgroundColor={'#ffffff'}>
+                              <View
+                                style={{
+                                  flexDirection: 'row',
+                                  height: 500,
+                                  maxHeight: 2000,
+                                  alignItems: 'center',
+                                }}>
+                                <ImageBackground
+                                  source={{
+                                    uri: item.uri,
+                                  }}
+                                  style={styles.avatar}></ImageBackground>
+                              </View>
+                            </CardView>
+                          </TouchableNativeFeedback>
+                        </View>
+                      ))}
+                    </CustomFlexBox>
+                  </ScrollView>
                 </View>
               </View>
             </SafeAreaView>
@@ -287,9 +421,21 @@ const complaints = () => {
 };
 
 const styles = StyleSheet.create({
+  background: {
+    backgroundColor: 'black',
+    flex: 1,
+  },
+  avatar: {
+    width: '100%',
+    height: 500,
+    borderColor: 'white',
+    alignSelf: 'center',
+    resizeMode: 'contain',
+  },
   container: {
     flex: 1,
     width: '100%',
+    height: 500,
   },
   fab: {
     position: 'absolute',
@@ -300,24 +446,25 @@ const styles = StyleSheet.create({
   text: {
     color: 'black',
     fontSize: 14,
-    padding: 15,
+    padding: 5,
   },
   HeaderText: {
     color: 'black',
     fontSize: 24,
-    padding: 15,
+    padding: 5,
     textAlign: 'justify',
   },
   Titletext: {
     color: 'black',
     fontWeight: 'bold',
     fontSize: 14,
-    padding: 15,
+    padding: 5,
     textAlign: 'justify',
   },
   flatlistcontainer: {
     backgroundColor: '#fafafa',
     flex: 1,
+    height: 500,
     paddingTop: 10,
   },
   flatlistitem: {

@@ -133,7 +133,7 @@ const UINews = () => {
                 }}>
                 <ImageBackground
                   source={{
-                    uri: `${base_url}/${item[index]?.upload_files[index]?.file_path}`,
+                    uri: `${base_url}/${item?.upload_files[0]?.file_path}`,
                   }}
                   // source={{
                   //   uri:
