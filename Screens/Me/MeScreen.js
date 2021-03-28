@@ -69,10 +69,20 @@ const MeScreen = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(action_get_userinfo());
+    let mounted = true;
+
+    const getuserinfo = () => {
+      dispatch(action_get_userinfo());
+    };
+
+    mounted && getuserinfo();
+    return () => (mounted = false);
   }, [dispatch]);
   const gotocomplaints = useCallback(() => {
     Actions.complaints();
+  }, []);
+  const gotofad = useCallback(() => {
+    Actions.fad();
   }, []);
   let imageUri = 'data:image/png;base64,' + users_reducers.pic;
   const gotoinfo = useCallback(() => {
@@ -123,7 +133,6 @@ const MeScreen = () => {
               </CardView>
             </TouchableHighlight>
             <TouchableHighlight
-              style={{marginTop: 50}}
               onPress={() => gotocomplaints()}
               underlayColor="white">
               <CardView radius={1} backgroundColor={'#ffffff'}>
@@ -168,8 +177,50 @@ const MeScreen = () => {
                 </View>
               </CardView>
             </TouchableHighlight>
+            <TouchableHighlight onPress={() => gotofad()} underlayColor="white">
+              <CardView radius={1} backgroundColor={'#ffffff'}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    height: 70,
+                    alignItems: 'center',
+                  }}>
+                  <View
+                    style={{
+                      width: '80%',
+                      height: 50,
+                      justifyContent: 'center',
+                    }}>
+                    <Text
+                      style={{
+                        textAlign: 'left',
+                        marginStart: 10,
+                        fontSize: 14,
+                        alignContent: 'center',
+                      }}>
+                      Family Assesment Data
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      width: '10%',
+                      height: 50,
+                      justifyContent: 'center',
+                    }}>
+                    <Image
+                      style={{
+                        height: 50,
+                        width: '100%',
+                        resizeMode: 'center',
+                        alignContent: 'flex-start',
+                      }}
+                      source={require('../../assets/icons/ic_admission_prem-playstore.png')}
+                    />
+                  </View>
+                </View>
+              </CardView>
+            </TouchableHighlight>
             <TouchableHighlight
-              style={{marginTop: 50}}
               onPress={() => removeValue()}
               underlayColor="white">
               <CardView radius={10} backgroundColor={'#ffffff'}>

@@ -5,8 +5,10 @@ import SignUp from '../Screens/SignUpScreen';
 import Index from '../Screens/Main/BottomNavigation';
 import NewsFeed from '../Screens/News/NewsFeed';
 import NewsInfo from '../Screens/News/NewsInfo';
+import PostsInfo from '../Screens/Posts/PostsInfo';
 import Complaints from '../Screens/Me/Complaints';
 import ComplaintsInfo from '../Screens/Complaints/ComplaintsInfo';
+import FADForm from '../Screens/FamilyAssesmentData/FADForm';
 import MeInfo from '../Screens/Me/MeInfo';
 const Routes = () => (
   <Router>
@@ -20,7 +22,9 @@ const Routes = () => (
       <Scene key="signup" component={SignUp} title="Signup" />
       <Scene key="newsfeed" component={NewsFeed} title="News" />
       <Scene key="newsinfo" component={NewsInfo} title="News Info" />
+      <Scene key="postsinfo" component={PostsInfo} title="Posts" />
       <Scene key="profile" component={MeInfo} title="My Profile" />
+      <Scene key="fad" component={FADForm} title="Family Assesment Data Form" />
 
       <Scene
         key="complaintsinfo"

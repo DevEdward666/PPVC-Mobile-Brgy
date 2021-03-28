@@ -50,11 +50,18 @@ const UINews = () => {
     });
   }, [dispatch]);
   useEffect(() => {
-    setSpinner(true);
-    setInterval(() => {
-      setSpinner(false);
-    }, 1000);
-    dispatch(action_get_news());
+    let mounted = true;
+
+    const getnews = () => {
+      setSpinner(true);
+      setInterval(() => {
+        setSpinner(false);
+      }, 1000);
+      dispatch(action_get_news());
+    };
+
+    mounted && getnews();
+    return () => (mounted = false);
   }, [dispatch]);
   const loadmore = async () => {
     setSpinner(true);
@@ -69,6 +76,7 @@ const UINews = () => {
 
     Actions.newsinfo();
   };
+
   const updateIndex = useCallback(
     (item, index) => {
       setnews_id(item?.news_pk);
@@ -82,7 +90,6 @@ const UINews = () => {
     },
     [dispatch],
   );
-  console.log(news_reducers[0]?.upload_files[0]?.file_path);
   const component1 = () => {
     return (
       <>

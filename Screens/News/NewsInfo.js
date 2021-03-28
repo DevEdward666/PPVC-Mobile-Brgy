@@ -62,19 +62,30 @@ const UINews = () => {
   });
 
   useEffect(() => {
-    setSpinner(true);
-    setTimeout(() => {
-      setSpinner(false);
-    }, 1000);
-    setEntries(news_reducers_info[0]?.upload_files);
-    dispatch(action_get_news_info(news_id.toString()));
-    dispatch(action_get_news_comments(news_id.toString()));
+    let mounted = true;
+
+    const getcommentsandinfo = () => {
+      setSpinner(true);
+      setTimeout(() => {
+        setSpinner(false);
+      }, 1000);
+      setEntries(news_reducers_info[0]?.upload_files);
+      dispatch(action_get_news_info(news_id.toString()));
+      dispatch(action_get_news_comments(news_id.toString()));
+    };
+
+    mounted && getcommentsandinfo();
+    return () => (mounted = false);
   }, [dispatch, news_id]);
   useEffect(() => {
-    let unmounted = false;
-    setEntries(ENTRIES1);
-    dispatch(action_get_news_info(news_id.toString()));
-    dispatch(action_get_news_comments(news_id.toString()));
+    let mounted = true;
+    const getcommentsandinfo = () => {
+      setEntries(ENTRIES1);
+      dispatch(action_get_news_info(news_id.toString()));
+      dispatch(action_get_news_comments(news_id.toString()));
+    };
+    mounted && getcommentsandinfo();
+    return () => (mounted = false);
   }, [dispatch, news_id, ENTRIES1]);
 
   const carouselRef = useRef(null);

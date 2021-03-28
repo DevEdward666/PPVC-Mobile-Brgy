@@ -10,7 +10,7 @@ import {
 } from '../Types/PostsTypes';
 export const action_get_user_posts = () => async (dispatch) => {
   //   var url = `${BASE_URL}/api/user/currentUser`;
-  var url = `${BASE_URL}/api/posts/getUserPosts`;
+  var url = `${BASE_URL}/api/postsmobile/getUserPosts`;
   const token = await AsyncStorage.getItem('tokenizer');
   const bearer_token = token;
   const bearer = 'Bearer ' + bearer_token;
@@ -33,7 +33,7 @@ export const action_get_user_posts = () => async (dispatch) => {
 };
 export const action_get_posts = () => async (dispatch) => {
   //   var url = `${BASE_URL}/api/user/currentUser`;
-  var url = `${BASE_URL}/api/posts/getPosts`;
+  var url = `${BASE_URL}/api/postsmobile/getPosts`;
   const token = await AsyncStorage.getItem('tokenizer');
   const bearer_token = token;
   const bearer = 'Bearer ' + bearer_token;
@@ -54,8 +54,8 @@ export const action_get_posts = () => async (dispatch) => {
     }
   }
 };
-export const action_get_posts_comments = (posts_pk) => async (dispatch) => {
-  var url = `${BASE_URL}/api/posts/getPostsComments`;
+export const action_get_posts_info = (posts_pk) => async (dispatch) => {
+  var url = `${BASE_URL}/api/postsmobile/getSinglePostWithPhoto`;
   const token = await AsyncStorage.getItem('tokenizer');
   const bearer_token = token;
   const bearer = 'Bearer ' + bearer_token;
@@ -73,14 +73,14 @@ export const action_get_posts_comments = (posts_pk) => async (dispatch) => {
   if (parseData.status != 400) {
     if (parseData.success != false) {
       dispatch({
-        type: GET_POSTS_COMMENTS,
+        type: GET_POSTS_INFO,
         payload: parseData.data,
       });
     }
   }
 };
 export const action_posts_add_comment = (posts_pk, body) => async () => {
-  var url = `${BASE_URL}/api/posts/addPostComment`;
+  var url = `${BASE_URL}/api/postsmobile/addPostComment`;
   const token = await AsyncStorage.getItem('tokenizer');
   const user_pk = await AsyncStorage.getItem('user_id');
   const bearer_token = token;
@@ -97,20 +97,18 @@ export const action_posts_add_comment = (posts_pk, body) => async () => {
     },
     body: formdata,
   });
-  r;
   const parseData = await fetchdata.json();
   if (parseData.status != 400) {
     if (parseData.success != false) {
     }
   }
-  console.log(parseData);
 };
 
 export const action_set_posts_reactions = (posts_pk, reaction) => async (
   dispatch,
 ) => {
   //   var url = `${BASE_URL}/api/user/currentUser`;
-  var url = `${BASE_URL}/api/posts/addPostReaction`;
+  var url = `${BASE_URL}/api/postsmobile/addPostReaction`;
   const token = await AsyncStorage.getItem('tokenizer');
   const bearer_token = token;
   const bearer = 'Bearer ' + bearer_token;
@@ -136,8 +134,35 @@ export const action_set_posts_reactions = (posts_pk, reaction) => async (
   }
 };
 
+export const action_get_posts_comments = (posts_pk) => async (dispatch) => {
+  //   var url = `${BASE_URL}/api/user/currentUser`;
+  var url = `${BASE_URL}/api/postsmobile/getPostCommentsAdmin`;
+  const token = await AsyncStorage.getItem('tokenizer');
+  const bearer_token = token;
+  const bearer = 'Bearer ' + bearer_token;
+  let formdata = new FormData();
+  formdata.append('posts_pk', posts_pk);
+  const fetchdata = await fetch(url, {
+    method: 'POST',
+    withCredentials: true,
+    headers: {
+      Authorization: bearer,
+    },
+    body: formdata,
+  });
+  const parseData = await fetchdata.json();
+  if (parseData.status != 400) {
+    if (parseData.success != false) {
+      dispatch({
+        type: GET_POSTS_COMMENTS,
+        payload: parseData.data,
+      });
+    }
+  }
+};
+
 export const action_set_posts = (title, body, upload_files) => async () => {
-  var url = `${BASE_URL}/api/posts/addPosts`;
+  var url = `${BASE_URL}/api/postsmobile/addPosts`;
   const token = await AsyncStorage.getItem('tokenizer');
   const bearer_token = token;
   const bearer = 'Bearer ' + bearer_token;
@@ -161,6 +186,7 @@ export const action_set_posts = (title, body, upload_files) => async () => {
   const parseData = await fetchdata.json();
   if (parseData.status != 400) {
     if (parseData.success != false) {
+      console.log(parseData);
     }
   }
   console.log(upload_files);

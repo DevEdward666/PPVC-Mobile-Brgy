@@ -5,6 +5,7 @@ import UserInfoReducers from './UserInfoReducers';
 import NewsReducers from './NewsReducers';
 import ComplaintsReducers from './ComplaintsReducers';
 import BarangayOfficialReducers from './BarangayOfficialReducers';
+import ResidentReducers from './ResidentReducers';
 import PostsReducers from './PostsReducers';
 const Root_Reducer = combineReducers({
   Login_Reducer: Login_Reducer,
@@ -14,5 +15,6 @@ const Root_Reducer = combineReducers({
   ComplaintsReducers: ComplaintsReducers,
   BarangayOfficialReducers: BarangayOfficialReducers,
   PostsReducers: PostsReducers,
+  ResidentReducers: ResidentReducers,
 });
 export default Root_Reducer;

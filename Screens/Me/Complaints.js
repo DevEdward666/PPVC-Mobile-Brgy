@@ -88,7 +88,14 @@ const complaints = () => {
     });
   }, [dispatch, reported_by]);
   useEffect(() => {
-    dispatch(action_get_complaints(reported_by));
+    let mounted = true;
+
+    const getcomplaints = () => {
+      dispatch(action_get_complaints(reported_by));
+    };
+
+    mounted && getcomplaints();
+    return () => (mounted = false);
   }, [dispatch, reported_by]);
   const gotocomplaints = useCallback((item) => {
     Actions.complaintsinfo();
@@ -377,9 +384,8 @@ const complaints = () => {
                       label="flexDirection"
                       selectedValue={'column'}>
                       {complaintResource.map((item, index) => (
-                        <View style={{width: 100 + '%'}}>
+                        <View style={{width: 100 + '%'}} key={index}>
                           <TouchableNativeFeedback
-                            key={index}
                             onLongPress={() => handleRemoveItem(item, index)}
                             underlayColor="white">
                             <CardView

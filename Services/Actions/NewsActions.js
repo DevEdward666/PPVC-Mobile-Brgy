@@ -11,7 +11,7 @@ import {
 
 export const action_get_news = () => async (dispatch) => {
   //   var url = `${BASE_URL}/api/user/currentUser`;
-  var url = `${BASE_URL}/api/news/getNewsDataPublished`;
+  var url = `${BASE_URL}/api/newsmobile/getNewsDataPublished`;
   const token = await AsyncStorage.getItem('tokenizer');
   const bearer_token = token;
   const bearer = 'Bearer ' + bearer_token;
@@ -34,7 +34,7 @@ export const action_get_news = () => async (dispatch) => {
 };
 export const action_get_news_info = (news_pk) => async (dispatch) => {
   //   var url = `${BASE_URL}/api/user/currentUser`;
-  var url = `${BASE_URL}/api/news/getSingleNewsWithPhoto`;
+  var url = `${BASE_URL}/api/newsmobile/getSingleNewsWithPhoto`;
   const token = await AsyncStorage.getItem('tokenizer');
   const bearer_token = token;
   const bearer = 'Bearer ' + bearer_token;
@@ -61,7 +61,7 @@ export const action_get_news_info = (news_pk) => async (dispatch) => {
 
 export const action_get_news_comments = (news_pk) => async (dispatch) => {
   //   var url = `${BASE_URL}/api/user/currentUser`;
-  var url = `${BASE_URL}/api/news/getNewsComments`;
+  var url = `${BASE_URL}/api/newsmobile/getNewsComments`;
   const token = await AsyncStorage.getItem('tokenizer');
   const bearer_token = token;
   const bearer = 'Bearer ' + bearer_token;
@@ -89,7 +89,7 @@ export const action_set_news_reactions = (news_pk, reaction) => async (
   dispatch,
 ) => {
   //   var url = `${BASE_URL}/api/user/currentUser`;
-  var url = `${BASE_URL}/api/news/addNewsReaction`;
+  var url = `${BASE_URL}/api/newsmobile/addNewsReaction`;
   const token = await AsyncStorage.getItem('tokenizer');
   const bearer_token = token;
   const bearer = 'Bearer ' + bearer_token;
@@ -116,7 +116,7 @@ export const action_set_news_reactions = (news_pk, reaction) => async (
 };
 export const action_get_news_add_comment = (news_pk, body) => async () => {
   //   var url = `${BASE_URL}/api/user/currentUser`;
-  var url = `${BASE_URL}/api/news/addNewsComment`;
+  var url = `${BASE_URL}/api/newsmobile/addNewsComment`;
   const token = await AsyncStorage.getItem('tokenizer');
   const user_pk = await AsyncStorage.getItem('user_id');
   const bearer_token = token;

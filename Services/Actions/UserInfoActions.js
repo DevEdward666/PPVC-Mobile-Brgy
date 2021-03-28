@@ -6,7 +6,7 @@ import {GET_INFO} from '../Types/UserInfoTypes';
 
 export const action_get_userinfo = () => async (dispatch) => {
   //   var url = `${BASE_URL}/api/user/currentUser`;
-  var url = `${BASE_URL}/api/user/currentUser`;
+  var url = `${BASE_URL}/api/user/userinfo`;
   const user_id = await AsyncStorage.getItem('user_id');
   const token = await AsyncStorage.getItem('tokenizer');
   const bearer_token = token;

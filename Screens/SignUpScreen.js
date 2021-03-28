@@ -15,6 +15,7 @@ import {
   Button,
   View,
 } from 'react-native';
+import DocumentPicker from 'react-native-document-picker';
 import {Icon, Input} from 'react-native-elements';
 import * as ImagePicker from 'react-native-image-picker';
 import CustomBottomSheet from '../Plugins/CustomBottomSheet';
@@ -30,7 +31,10 @@ import {
 } from 'react-native-table-component';
 import {FlatList} from 'react-native-gesture-handler';
 import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
+import {action_SignUp_user} from '../Services/Actions/SignUpActions';
+import {useDispatch, useSelector} from 'react-redux';
 const SignUpScreen = () => {
+  const dispatch = useDispatch();
   const [firstname, setfirstname] = useState('');
   const [middlename, setmiddlename] = useState('');
   const [lastname, setlastname] = useState('');
@@ -47,6 +51,7 @@ const SignUpScreen = () => {
   const [dialect, setdialect] = useState('');
   const [disability, setdisablity] = useState('');
   const [jobspecs, setjobspecs] = useState('');
+  const [isemployed, setisemployed] = useState('');
   const [purok, setpurok] = useState('');
   const [religion, setreligion] = useState('');
   const [tribe, setribe] = useState('');
@@ -91,14 +96,16 @@ const SignUpScreen = () => {
   const [province, setprovince] = useState('');
   const [yearsstayed, setyearsstayed] = useState('');
   const [CredentialsError, setCredentialsError] = useState(false);
+  const [houseownedby, sethouseownedby] = useState('');
+  const [VotingPrecint, setVotingPrecint] = useState('');
+  const [HouseStatus, setHouseStatus] = useState('');
 
-  const [qualityness, setQualityness] = useState('');
-  const [Occationfortheland, setOccationfortheland] = useState('');
-  const [Occationofthehouse, setOccationofthehouse] = useState('');
-  const [structure, setStructure] = useState('');
   const [PeopleInsidetheHouse, setPeopleInsidetheHouse] = useState([]);
+  const [PhotoSingleFile, setPhotoSingleFile] = useState('');
+  const [PhotoResource, setPhotoResource] = useState('');
   const [HouseIncome, setHouseIncome] = useState('');
   const tableHead = ['Head', 'Head2', 'Head3', 'Head4'];
+
   const onChange = useCallback((event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShow(Platform.OS === 'ios');
@@ -110,8 +117,8 @@ const SignUpScreen = () => {
 
     var age_now = today.getFullYear() - currentDate.getFullYear();
     console.log(age_now);
-    if (age_now < '13') {
-      alert('Age below 13 are not allowed to use this application');
+    if (age_now < '-1') {
+      alert('Age is invalid');
     } else {
       if (month <= 9 && day <= 9) {
         setbirthdate(year + '-0' + month + '-0' + day);
@@ -126,6 +133,66 @@ const SignUpScreen = () => {
 
     //console.log(year + '-' + month + '-' + day);
   });
+  const selectFile = async () => {
+    // Opening Document Picker to select one file
+    try {
+      const results = await DocumentPicker.pick({
+        type: [DocumentPicker.types.images],
+      });
+
+      setPhotoSingleFile(results);
+      setPhotoResource(results.uri);
+
+      // Setting the state to show single file attributes
+    } catch (err) {
+      setPhotoSingleFile(null);
+      // Handling any exception (If any)
+      if (DocumentPicker.isCancel(err)) {
+        // If user canceled the document selection
+        alert('Canceled');
+      } else {
+        // For Unknown Error
+        alert('Unknown Error: ' + JSON.stringify(err));
+        throw err;
+      }
+    }
+  };
+  const handlePassword = (password) => {
+    setPassword(password);
+    if (password != confirmpassword) {
+      setErrorMessage('Password mismatch');
+      setstepError(true);
+    } else {
+      let reg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+      if (reg.test(password) === false) {
+        setErrorMessage(
+          'Minimum eight characters, at least one uppercase letter, one lowercase letter and one number:',
+        );
+      } else {
+        setmobileErrorMessage();
+        setstepError(false);
+        setErrorMessage('');
+      }
+    }
+  };
+  const handleConfirmPassword = (confirmpassword) => {
+    setPassword(password);
+    if (password != confirmpassword) {
+      setErrorMessage('Password mismatch');
+      setstepError(true);
+    } else {
+      let reg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+      if (reg.test(password) === false) {
+        setErrorMessage(
+          'Minimum eight characters, at least one uppercase letter, one lowercase letter and one number:',
+        );
+      } else {
+        setmobileErrorMessage();
+        setstepError(false);
+        setErrorMessage('');
+      }
+    }
+  };
   const showMode = useCallback((currentMode) => {
     setShow(true);
     setMode(currentMode);
@@ -151,6 +218,25 @@ const SignUpScreen = () => {
   const handleNationality = useCallback((pickNationality) => {
     setnationality(pickNationality);
   });
+  const handlehouseownedby = useCallback(
+    (picked) => {
+      sethouseownedby(picked);
+    },
+    [houseownedby],
+  );
+
+  const handleVotingPrecint = useCallback(
+    (picked) => {
+      setVotingPrecint(picked);
+    },
+    [VotingPrecint],
+  );
+  const handleHouseStatus = useCallback(
+    (picked) => {
+      setHouseStatus(picked);
+    },
+    [HouseStatus],
+  );
   const handleRegionChange = useCallback((pickregion) => {
     setregion(pickregion);
     setprovince('');
@@ -180,7 +266,7 @@ const SignUpScreen = () => {
       setInfoError(true);
       alert('Please Fill All Fields');
     }
-    if (resourcePathProfile == null) {
+    if (PhotoResource == null) {
       alert('Please Take Profile Image');
       setInfoError(true);
     } else {
@@ -240,7 +326,15 @@ const SignUpScreen = () => {
     },
     [nationality, region, province, city, barangay, fulladdress],
   );
-
+  const validate = (email) => {
+    let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (reg.test(email) === false) {
+      setemailErrorMessage('Email is Not valid');
+    } else {
+      setemailErrorMessage();
+      setemail(email);
+    }
+  };
   const handleCivilStatus = useCallback((value) => {
     setcivilstatus(value);
   });
@@ -251,6 +345,11 @@ const SignUpScreen = () => {
     setdisablity(value);
   });
   const handleJobSpecs = useCallback((value) => {
+    if (value.lenght > 4) {
+      setisemployed('y');
+    } else {
+      setisemployed('n');
+    }
     setjobspecs(value);
   });
   const handlePurok = useCallback((value) => {
@@ -263,21 +362,10 @@ const SignUpScreen = () => {
     setribe(value);
   });
 
-  const handleOccationfortheland = useCallback((value) => {
-    setOccationfortheland(value);
-  });
-  const handleOccationofthehouse = useCallback((value) => {
-    setOccationofthehouse(value);
-  });
   const handleHouseIncome = useCallback((value) => {
     setHouseIncome(value);
   });
-  const handleQualityness = useCallback((value) => {
-    setQualityness(value);
-  });
-  const handleStructure = useCallback((value) => {
-    setStructure(value);
-  });
+
   const handleAddPeople = useCallback(() => {
     setIsVisible(true);
   });
@@ -410,49 +498,55 @@ const SignUpScreen = () => {
     });
   }, [setresourcePath]);
   const profileImage = useCallback(() => {
-    ImagePicker.launchCamera({maxWidth: 1280, maxHeight: 720}, (response) => {
-      console.log('Request =', response);
-      setresourcePathProfile(response.uri); // update the local state, this will rerender your TomarFoto component with the photo uri path.
-      if (response.didCancel) {
-        alert('Action cancelled ');
-      } else if (response.error) {
-        alert('Error : ', response.error);
-      } else {
-        const source = {uri: response.uri};
-        console.log(response.uri);
-        setprofileimageresponse(response);
-        //  dispatch(action_POST_FileImageProfile(response, username));
-      }
-    });
+    ImagePicker.launchCamera(
+      {base64: true, maxWidth: 1280, maxHeight: 720},
+      (response) => {
+        console.log('Request =', response);
+        setresourcePathProfile(response.uri); // update the local state, this will rerender your TomarFoto component with the photo uri path.
+        setPhotoSingleFile(response.data); // update the local state, this will rerender your TomarFoto component with the photo uri path.
+        if (response.didCancel) {
+          alert('Action cancelled ');
+        } else if (response.error) {
+          alert('Error : ', response.error);
+        } else {
+          const source = {uri: response.uri};
+          console.log(response.uri);
+          setprofileimageresponse(response);
+          //  dispatch(action_POST_FileImageProfile(response, username));
+        }
+      },
+    );
   }, [setresourcePathProfile]);
   const handleSubmitCredentials = useCallback(() => {
     if (stepError == false) {
-      // await dispatch(
-      //   action_SignUp_user(
-      //     firstname,
-      //     middlename,
-      //     lastname,
-      //     gender,
-      //     birthdate,
-      //     mobile,
-      //     email,
-      //     username,
-      //     password,
-      //     region,
-      //     city,
-      //     province,
-      //     barangay,
-      //     '8000',
-      //     nationality,
-      //     fulladdress,
-      //     imageresponse,
-      //     profileimageresponse,
-      //   ),
-      // );
-      // await dispatch(action_POST_FileImage(imageresponse, username));
-      // await dispatch(
-      //   action_POST_FileImageProfile(profileimageresponse, username),
-      // );
+      dispatch(
+        action_SignUp_user(
+          PhotoSingleFile,
+          firstname,
+          middlename,
+          lastname,
+          suffix,
+          gender,
+          birthdate,
+          nationality,
+          religion,
+          civilstatus,
+          purok,
+          mobile,
+          email,
+          dialect,
+          tribe,
+          disability,
+          isemployed,
+          jobspecs,
+          HouseIncome,
+          HouseStatus,
+          VotingPrecint,
+          houseownedby,
+          username,
+          password,
+        ),
+      );
     } else {
       alert('Please Provide Valid Data');
     }
@@ -559,6 +653,14 @@ const SignUpScreen = () => {
                   inputStyle={styles.inputText}
                   onChangeText={(text) => setlastname(text)}
                   defaultValue={lastname}
+                />
+                <Input
+                  style={styles.textInput}
+                  placeholder="Suffix"
+                  inputContainerStyle={styles.inputContainer}
+                  inputStyle={styles.inputText}
+                  onChangeText={(text) => setSuffix(text)}
+                  defaultValue={suffix}
                 />
 
                 <View style={{flex: 1, flexDirection: 'row'}}>
@@ -683,15 +785,17 @@ const SignUpScreen = () => {
                   onChangeText={(text) => handleTribe(text)}
                   defaultValue={tribe}
                 />
-                <Input
-                  style={styles.textInput}
-                  placeholder="Disabled if yes please fill what type"
-                  inputContainerStyle={styles.inputContainer}
-                  inputStyle={styles.inputText}
-                  onChangeText={(text) => handleDisablity(text)}
-                  defaultValue={disability}
-                />
 
+                <Picker
+                  selectedValue={disability}
+                  style={styles.PickerContainer}
+                  onValueChange={(itemValue, itemIndex) =>
+                    handleDisablity(itemValue)
+                  }>
+                  <Picker.Item label="Disabled Person" />
+                  <Picker.Item label="Yes" value="y" />
+                  <Picker.Item label="No" value="n" />
+                </Picker>
                 <Input
                   style={styles.textInput}
                   placeholder="Purok"
@@ -716,12 +820,39 @@ const SignUpScreen = () => {
                   onChangeText={(text) => handleHouseIncome(text)}
                   defaultValue={HouseIncome}
                 />
+                <Input
+                  style={styles.textInput}
+                  placeholder="House Status"
+                  inputContainerStyle={styles.inputContainer}
+                  inputStyle={styles.inputText}
+                  onChangeText={(text) => handleHouseStatus(text)}
+                  defaultValue={HouseStatus}
+                />
+                <Input
+                  style={styles.textInput}
+                  placeholder="Voting Precint"
+                  inputContainerStyle={styles.inputContainer}
+                  inputStyle={styles.inputText}
+                  onChangeText={(text) => handleVotingPrecint(text)}
+                  defaultValue={VotingPrecint}
+                />
+                <Picker
+                  selectedValue={houseownedby}
+                  style={styles.PickerContainer}
+                  onValueChange={(itemValue, itemIndex) =>
+                    handlehouseownedby(itemValue)
+                  }>
+                  <Picker.Item label="Okasyon sa balay" />
+                  <Picker.Item label="Family Owned" value="Tag-iya" />
+                  <Picker.Item label="Renta" value="Renta" />
+                  <Picker.Item label="Boarder" value="Boarder" />
+                  <Picker.Item label="Live In" value="Nangipon ug puyo" />
+                </Picker>
               </View>
             </ProgressStep>
             <ProgressStep
               label="Credentials"
-              onNext={handleNextCredentials}
-              errors={CredentialsError}>
+              onSubmit={handleSubmitCredentials}>
               <View style={styles.Inputcontainer}>
                 <Input
                   style={styles.textInput}
@@ -740,15 +871,6 @@ const SignUpScreen = () => {
                   //errorMessage={mobileErrorMessage}
                   onChangeText={(text) => setmobile(text)}
                   defaultValue={mobile}
-                />
-                <Input
-                  style={styles.textInput}
-                  placeholder="Username"
-                  inputContainerStyle={styles.inputContainer}
-                  inputStyle={styles.inputText}
-                  errorMessage={errorUsernameMessage}
-                  onChangeText={(text) => handleUsernameExist(text)}
-                  defaultValue={username}
                 />
                 <View style={{flex: 1, flexDirection: 'row'}}>
                   <View
@@ -834,7 +956,7 @@ const SignUpScreen = () => {
                 </View>
               </View>
             </ProgressStep>
-            <ProgressStep label="FAD" onSubmit={handleSubmitCredentials}>
+            {/* <ProgressStep label="FAD" onSubmit={handleSubmitCredentials}>
               <View style={styles.Inputcontainer}>
                 <CardView
                   style={{marginBottom: 20, textAlign: 'center', height: 40}}>
@@ -988,7 +1110,7 @@ const SignUpScreen = () => {
                                 <Text style={styles.peopletext}>
                                   Birthdate: {item?.PeopleBirthdate}
                                 </Text>
-                                {/* <Text style={styles.peopletext}>
+                                <Text style={styles.peopletext}>
                             Civil Status: {item?.PeopleCivilStatus}
                           </Text>
                           <Text style={styles.peopletext}>
@@ -1008,7 +1130,7 @@ const SignUpScreen = () => {
                           </Text>
                           <Text style={styles.peopletext}>
                             Health Status: {item?.PeopleHealthStatus}
-                          </Text> */}
+                          </Text>
                               </View>
                             </View>
                           </CardView>
@@ -1142,6 +1264,7 @@ const SignUpScreen = () => {
                 </Button>
               </View>
             </ProgressStep>
+          */}
           </ProgressSteps>
         </View>
       </View>

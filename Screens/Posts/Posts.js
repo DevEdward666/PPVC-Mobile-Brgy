@@ -43,7 +43,7 @@ import {ScrollView, TextInput} from 'react-native-gesture-handler';
 import CustomFlexBox from '../../Plugins/CustomFlexBox';
 
 const UINews = () => {
-  const windowWidth = Dimensions.get('window').width;
+  const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
   var IMAGES_PER_ROW = 3;
 
   const calculatedSize = () => {
@@ -83,22 +83,27 @@ const UINews = () => {
       dispatch(action_get_posts());
     });
   }, [dispatch]);
+  const gotopostsinfo = useCallback(async (item) => {
+    await AsyncStorage.setItem('posts_id', item.posts_pk.toString());
+    Actions.postsinfo();
+  }, []);
   useEffect(() => {
-    setSpinner(true);
-    setInterval(() => {
-      setSpinner(false);
-    }, 1000);
-    dispatch(action_get_posts());
+    let mounted = true;
+    const getposts = () => {
+      setSpinner(true);
+      setInterval(() => {
+        setSpinner(false);
+      }, 1000);
+      dispatch(action_get_posts());
+    };
+
+    mounted && getposts();
+    return () => (mounted = false);
   }, [dispatch]);
 
-  const gotonewsinfo = async (item) => {
-    await AsyncStorage.setItem('news_id', item.news_pk.toString());
-
-    Actions.newsinfo();
-  };
   const updateIndex = useCallback(
-    (item, index) => {
-      setposts_id(item?.posts_pk);
+    async (item, index) => {
+      await setposts_id(item?.posts_pk);
       dispatch(action_get_posts_comments(item?.posts_pk));
       if (index !== 0) {
         setisVisible(true);
@@ -123,13 +128,15 @@ const UINews = () => {
       await dispatch(action_get_posts());
       await setpost('');
       await setmultipleFile([]);
+      await setpostResource([]);
     }
   }, [dispatch, post, multipleFile]);
   const handleCommentSend = useCallback(async () => {
     if (comment.length > 0) {
-      await dispatch(action_posts_add_comment(posts_id, comment));
+      dispatch(action_posts_add_comment(posts_id, comment));
+
+      dispatch(action_get_posts_comments(posts_id));
       await setcomment('');
-      await dispatch(action_get_posts_comments(posts_id));
     }
   }, [dispatch, comment]);
   const handleChangeTextPost = useCallback(
@@ -150,7 +157,7 @@ const UINews = () => {
   const component2 = () => {
     return (
       <Text>
-        <Icon name="comment" size={15} color="grey" /> Comment
+        <Icons name="comment" size={15} color="grey" /> Comment
       </Text>
     );
   };
@@ -351,7 +358,8 @@ const UINews = () => {
                         }}
                       />
                     </View>
-                    <View style={{width: 90 + '%', height: 30}}>
+                    <View
+                      style={{width: screenWidth - 20, height: screenHeight}}>
                       <Text style={styles.fullnametext}>
                         {users_reducers.full_name}
                       </Text>
@@ -393,17 +401,15 @@ const UINews = () => {
                     <View
                       style={{
                         width: '100%',
-                        height: 450,
-                        maxHeight: 10000,
+                        height: screenHeight - 1000,
                       }}>
                       <ScrollView>
                         <CustomFlexBox
                           label="flexDirection"
                           selectedValue={'column'}>
                           {postResource.map((item, index) => (
-                            <View style={{width: 100 + '%'}}>
+                            <View style={{width: 100 + '%'}} key={index}>
                               <TouchableNativeFeedback
-                                key={index}
                                 onLongPress={() =>
                                   handleRemoveItem(item, index)
                                 }
@@ -448,123 +454,124 @@ const UINews = () => {
         keyExtractor={(item, index) => index.toString()}
         onEndReachedThreshold={0.1}
         renderItem={({item, index}) => (
-          <CardView style={{marginTop: -5}} radius={1}>
-            <View
-              style={{
-                flexDirection: 'row',
-                height: 50,
-                padding: 10,
-                marginTop: 10,
-                alignItems: 'center',
-              }}>
-              <View style={styles.contentNOTIFICATION}>
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: 'row',
-                    justifyContent: 'space-around',
-                    marginBottom: 50,
-                  }}>
-                  <View style={{width: 20 + '%', height: 20}}>
-                    <Image
-                      source={{
-                        uri: `data:image/png;base64,${item?.user_pic}`,
-                      }}
-                      style={{
-                        marginTop: 10,
-                        marginStart: 10,
-                        width: 40,
-                        height: 40,
-                        borderRadius: 120 / 2,
-                        overflow: 'hidden',
-                        borderWidth: 3,
-                      }}
-                    />
-                  </View>
-                  <View style={{width: 95 + '%', height: 50}}>
-                    <Text style={styles.containerNOTIFICATION}>
-                      {item?.user_full_name}
-                      {'\n'}
-                      {item?.TIMESTAMP}
-                    </Text>
-                  </View>
-                </View>
-
-                <Text rkType="primary3 mediumLine"></Text>
-              </View>
-            </View>
-            {item.upload_files[0]?.file_path ? (
+          <TouchableHighlight
+            onPress={() => gotopostsinfo(item)}
+            underlayColor="white">
+            <CardView style={{marginTop: 10}} radius={1}>
               <View
                 style={{
                   flexDirection: 'row',
-                  height: 300,
+                  height: 50,
+                  padding: 10,
+                  marginTop: 10,
                   alignItems: 'center',
                 }}>
-                <ImageBackground
-                  source={item.upload_files.map((item) => {
-                    return {
-                      uri: `${base_url}/${item.file_path}`,
-                      width: 400,
-                      height: 100,
-                    };
-                  })}
-                  // source={{
-                  //   uri:
-                  //     'http://192.168.1.4:4050/src/Storage/Files/News/1613828094461images%20(2).jfif',
-                  // }}
+                <View style={styles.contentNOTIFICATION}>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: 'row',
+                      justifyContent: 'space-around',
+                      marginBottom: 50,
+                    }}>
+                    <View style={{width: 20 + '%', height: 20}}>
+                      <Image
+                        source={{
+                          uri: `data:image/png;base64,${item?.user_pic}`,
+                        }}
+                        style={{
+                          marginTop: 10,
+                          marginStart: 10,
+                          width: 40,
+                          height: 40,
+                          borderRadius: 120 / 2,
+                          overflow: 'hidden',
+                          borderWidth: 3,
+                        }}
+                      />
+                    </View>
+                    <View style={{width: 95 + '%', height: 50}}>
+                      <Text style={styles.containerNOTIFICATION}>
+                        {item?.user_full_name}
+                        {'\n'}
+                        {item?.TIMESTAMP}
+                      </Text>
+                    </View>
+                  </View>
+
+                  <Text rkType="primary3 mediumLine"></Text>
+                </View>
+              </View>
+              {item.upload_files[0]?.file_path ? (
+                <View
                   style={{
-                    width: '100%',
-                    height: '100%',
-                    flex: 1,
-                    resizeMode: 'cover',
-                    justifyContent: 'center',
+                    flexDirection: 'column',
+                    height: 300,
+                    alignItems: 'center',
+                  }}>
+                  <View style={{width: '100%', height: screenHeight - 1000}}>
+                    <Text numberOfLines={6} style={styles.text}>
+                      {item.title}
+                    </Text>
+                  </View>
+                  <View style={{width: '100%', height: screenHeight - 500}}>
+                    <ImageBackground
+                      source={item.upload_files.map((item) => {
+                        return {
+                          uri: `${base_url}/${item.file_path}`,
+                          width: 400,
+                          height: 100,
+                        };
+                      })}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        flex: 1,
+                        resizeMode: 'cover',
+                        justifyContent: 'center',
+                      }}></ImageBackground>
+                  </View>
+                </View>
+              ) : (
+                <>
+                  <Text numberOfLines={6} style={styles.noimagetext}>
+                    {item.body}
+                  </Text>
+                </>
+              )}
+              <CardView>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    height: 30,
+                    alignItems: 'center',
                   }}>
                   <View
                     style={{
                       flex: 1,
-                      justifyContent: 'flex-end',
+                      justifyContent: 'flex-start',
                     }}>
-                    <Text numberOfLines={6} style={styles.text}>
-                      {item.title}
-                      {'\n'}
-                      {'\n'}
-                      {item.body}
-                    </Text>
+                    <View
+                      style={{
+                        width: 30,
+                        marginBottom: -20,
+                        marginStart: 20,
+                      }}>
+                      <Icons name="thumbs-up" size={15} color="grey" />
+                    </View>
+                    <View style={{width: 80}}>
+                      <Badge status="primary" value={item?.likes} />
+                    </View>
                   </View>
-                </ImageBackground>
-              </View>
-            ) : (
-              <>
-                <Text numberOfLines={6} style={styles.noimagetext}>
-                  {item.body}
-                </Text>
-              </>
-            )}
-            <View
-              style={{
-                flexDirection: 'row',
-                height: 30,
-                alignItems: 'center',
-              }}>
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: 'flex-start',
-                }}>
-                <View style={{width: 30, marginBottom: -20, marginStart: 20}}>
-                  <Icons name="thumbs-up" size={15} color="grey" />
                 </View>
-                <View style={{width: 80}}>
-                  <Badge status="primary" value={item?.likes} />
-                </View>
-              </View>
-            </View>
-            <ButtonGroup
-              onPress={(index) => updateIndex(item, index)}
-              buttons={buttons}
-              containerStyle={{height: 35, marginBottom: 15}}
-            />
-          </CardView>
+                <ButtonGroup
+                  onPress={(index) => updateIndex(item, index)}
+                  buttons={buttons}
+                  containerStyle={{height: 35, marginBottom: 15}}
+                />
+              </CardView>
+            </CardView>
+          </TouchableHighlight>
         )}
       />
       <GestureRecognizer
@@ -698,11 +705,10 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   text: {
-    color: 'white',
+    color: 'black',
     fontSize: 14,
     padding: 15,
     textAlign: 'justify',
-    backgroundColor: '#000000a0',
   },
   noimagetext: {
     color: 'black',

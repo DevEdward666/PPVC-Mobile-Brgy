@@ -9,6 +9,7 @@ import {
   Text,
   StyleSheet,
   RefreshControl,
+  ImageBackground,
   FlatList,
 } from 'react-native';
 import {action_get_userinfo} from '../../Services/Actions/UserInfoActions';
@@ -23,6 +24,7 @@ import {
 import CustomBottomSheet from '../../Plugins/CustomBottomSheet';
 import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
 import {ScrollView, TextInput} from 'react-native-gesture-handler';
+import wait from '../../Plugins/waitinterval';
 import {
   action_get_user_posts,
   action_get_posts_comments,
@@ -36,6 +38,7 @@ const MeInfo = () => {
     (state) => state.PostsReducers.posts_user_data,
   );
   const posts_reducers = useSelector((state) => state.PostsReducers.posts_data);
+  const base_url = useSelector((state) => state.PostsReducers.base_url);
 
   const posts_comments = useSelector(
     (state) => state.PostsReducers.posts_comments,
@@ -48,8 +51,15 @@ const MeInfo = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [post, setpost] = useState('');
   useEffect(() => {
-    dispatch(action_get_userinfo());
-    dispatch(action_get_user_posts());
+    let mounted = true;
+
+    const userinfoanduserposts = () => {
+      dispatch(action_get_userinfo());
+      dispatch(action_get_user_posts());
+    };
+
+    mounted && userinfoanduserposts();
+    return () => (mounted = false);
   }, [dispatch]);
   let imageUri = 'data:image/png;base64,' + users_reducers?.pic;
 

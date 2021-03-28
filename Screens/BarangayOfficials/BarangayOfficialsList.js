@@ -18,7 +18,14 @@ const BarangayOfficials = () => {
     (state) => state.BarangayOfficialReducers.data_barangay,
   );
   useEffect(() => {
-    dispatch(action_get_barangay_officials_list());
+    let mounted = true;
+
+    const getbrgyofficials = () => {
+      dispatch(action_get_barangay_officials_list());
+    };
+
+    mounted && getbrgyofficials();
+    return () => (mounted = false);
   }, [dispatch]);
 
   return (

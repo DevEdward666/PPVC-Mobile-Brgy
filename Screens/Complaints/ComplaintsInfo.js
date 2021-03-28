@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useCallback} from 'react';
+import React, {useEffect, useState, useCallback, useRef} from 'react';
 import PropTypes from 'prop-types';
 import {
   Image,
@@ -26,14 +26,20 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import CustomBottomSheet from '../../Plugins/CustomBottomSheet';
 import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
 import {ImageBackground} from 'react-native';
+import io from 'socket.io-client';
 const ComplaintsInfo = () => {
   const users_reducers = useSelector((state) => state.UserInfoReducers.data);
   const [complaint_pk, setcomplaint_pk] = useState('');
   const [sendmessage, setsendmessage] = useState('');
+  const [messages, getmessages] = useState('');
   const [isVisible, setisVisible] = useState(false);
   const [sendClicked, setsendClicked] = useState(0);
+  const [token, settoken] = useState('');
+
+  const [reload_messages, set_reload_messages] = useState(0);
   let imageUri = 'data:image/png;base64,' + users_reducers.pic;
   const base_url = useSelector((state) => state.NewsReducers.base_url);
+  const socketRef = useRef();
   AsyncStorage.getItem('complaint_pk').then(async (item) => {
     if (item == null) {
       Actions.home();
@@ -41,7 +47,13 @@ const ComplaintsInfo = () => {
       await setcomplaint_pk(item);
     }
   });
-  console.log('test');
+  AsyncStorage.getItem('tokenizer').then(async (item) => {
+    if (item == null) {
+      Actions.home();
+    } else {
+      await settoken(item);
+    }
+  });
   const dispatch = useDispatch();
   const complaint_info = useSelector(
     (state) => state.ComplaintsReducers.data_info,
@@ -50,10 +62,49 @@ const ComplaintsInfo = () => {
     (state) => state.ComplaintsReducers.data_messages,
   );
   useEffect(() => {
-    dispatch(action_get_complaints_info(complaint_pk));
-    dispatch(action_get_complaints_messages(complaint_pk));
-  }, [dispatch, complaint_pk]);
+    let mounted = true;
 
+    const socketsio = () => {
+      socketRef.current = io(`${base_url}/socket/complaint/chat`, {
+        query: {
+          token: token,
+        },
+      });
+
+      socketRef.current.on('connected', (data) => {
+        console.log('this =>' + data);
+      });
+
+      socketRef.current.emit('joinRoom', complaint_pk);
+
+      socketRef.current.on('allMessage', () => {
+        set_reload_messages((prev) => prev + 1);
+      });
+
+      socketRef.current.on('failedMessage', (error) => {
+        console.log(error);
+      });
+
+      return () => {
+        socketRef?.current?.disconnect();
+      };
+    };
+
+    mounted && socketsio();
+    return () => (mounted = false);
+  }, [complaint_pk, token]);
+  useEffect(() => {
+    let mounted = true;
+
+    const getcomplintsinfo = () => {
+      dispatch(action_get_complaints_info(complaint_pk));
+      dispatch(action_get_complaints_messages(complaint_pk));
+    };
+
+    mounted && getcomplintsinfo();
+    return () => (mounted = false);
+  }, [dispatch, complaint_pk, reload_messages]);
+  console.log(complaint_info);
   const onChangeMessageText = useCallback((text) => {
     setsendmessage(text);
   }, []);
@@ -70,14 +121,21 @@ const ComplaintsInfo = () => {
     await dispatch(action_set_complaints_messages(sendmessage, complaint_pk));
     await dispatch(action_get_complaints_messages(complaint_pk));
     await setsendClicked((prev) => prev + 1);
+    socketRef.current.emit('sendMessage', complaint_pk);
   }, [dispatch, sendmessage, complaint_pk]);
   useEffect(() => {
-    setTimeout(() => {
-      dispatch(action_get_complaints_messages(complaint_pk.toString()));
-    }, 1000);
+    let mounted = true;
 
-    console.log(complaint_pk);
+    const getcomplaintsmessages = () => {
+      setTimeout(() => {
+        dispatch(action_get_complaints_messages(complaint_pk.toString()));
+      }, 1000);
+    };
+
+    mounted && getcomplaintsmessages();
+    return () => (mounted = false);
   }, [dispatch, sendClicked, complaint_pk]);
+
   const [gestureName, setgestureName] = useState('');
 
   const onSwipe = useCallback((gestureName, gestureState) => {
@@ -145,7 +203,7 @@ const ComplaintsInfo = () => {
               marginLeft: -40,
             }}>
             <Text style={styles.texttime}>
-              Date: {complaint_info[0]?.reported_at}
+              Date: {complaint_info?.reported_at}
             </Text>
           </View>
         </View>
@@ -165,9 +223,9 @@ const ComplaintsInfo = () => {
               maxHeight: 1000,
             }}>
             <Text style={styles.Titletext}>
-              Subject: {complaint_info[0]?.title}
+              Subject: {complaint_info?.title}
             </Text>
-            <Text style={styles.text}>{complaint_info[0]?.body}</Text>
+            <Text style={styles.text}>{complaint_info?.body}</Text>
           </View>
         </View>
         <Divider style={{backgroundColor: 'grey'}} />
@@ -179,11 +237,10 @@ const ComplaintsInfo = () => {
           }}>
           <Divider style={{backgroundColor: 'grey'}} />
 
-          {complaint_info[0]?.complaint_file.map((item, index) => (
-            <View style={{width: 100 + '%'}}>
+          {complaint_info?.complaint_file.map((item, index) => (
+            <View style={{width: 100 + '%'}} key={index}>
               <TouchableNativeFeedback key={index} underlayColor="white">
                 <CardView
-                  key={index}
                   style={styles.avatar}
                   radius={1}
                   backgroundColor={'#ffffff'}>
@@ -244,20 +301,35 @@ const ComplaintsInfo = () => {
                             marginBottom: 50,
                           }}>
                           <View style={{width: 20 + '%', height: 20}}>
-                            <Image
-                              source={{
-                                uri: `data:image/png;base64,${Notification?.user_pic}`,
-                              }}
-                              style={{
-                                marginTop: 10,
-                                marginStart: 10,
-                                width: 50,
-                                height: 50,
-                                borderRadius: 120 / 2,
-                                overflow: 'hidden',
-                                borderWidth: 3,
-                              }}
-                            />
+                            {Notification?.user?.pic ? (
+                              <Image
+                                source={{
+                                  uri: `data:image/png;base64,${Notification?.user?.pic}`,
+                                }}
+                                style={{
+                                  marginTop: 10,
+                                  marginStart: 10,
+                                  width: 50,
+                                  height: 50,
+                                  borderRadius: 120 / 2,
+                                  overflow: 'hidden',
+                                  borderWidth: 3,
+                                }}
+                              />
+                            ) : (
+                              <Image
+                                source={require('../../assets/icons/applogo.jpg')}
+                                style={{
+                                  marginTop: 10,
+                                  marginStart: 10,
+                                  width: 50,
+                                  height: 50,
+                                  borderRadius: 120 / 2,
+                                  overflow: 'hidden',
+                                  borderWidth: 3,
+                                }}
+                              />
+                            )}
                           </View>
                           <View style={{width: 90 + '%', height: 20}}>
                             <CardView key={Notification.complaint_msg_pk}>
