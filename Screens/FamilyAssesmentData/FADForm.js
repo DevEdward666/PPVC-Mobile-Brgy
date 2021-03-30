@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import PropTypes from 'prop-types';
-import {ScrollView, TextInput} from 'react-native-gesture-handler';
+import {ScrollView} from 'react-native-gesture-handler';
 import {ProgressStep, ProgressSteps} from 'react-native-progress-steps';
 import {
   View,
@@ -9,7 +9,11 @@ import {
   Button,
   Dimensions,
   TouchableNativeFeedback,
+  SafeAreaView,
 } from 'react-native';
+import SearchableDropdown from 'react-native-searchable-dropdown';
+import DropDownPicker from 'react-native-dropdown-picker';
+import {TextInput} from 'react-native-paper';
 import {Picker} from '@react-native-community/picker';
 import {Icon, Input} from 'react-native-elements';
 import Icons from 'react-native-vector-icons/FontAwesome';
@@ -23,6 +27,7 @@ import {
   action_get_FAD_exist,
 } from '../../Services/Actions/ResidentsActions';
 import CustomAlert from '../../Plugins/CustomAlert';
+import CustomSnackBar from '../../Plugins/CustomSnackBar';
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const FADForm = () => {
   const users_reducers = useSelector((state) => state.UserInfoReducers.data);
@@ -39,13 +44,16 @@ const FADForm = () => {
   const [qualityness, setQualityness] = useState('');
   const [Occationfortheland, setOccationfortheland] = useState('');
   const [Occationofthehouse, setOccationofthehouse] = useState('');
+  const [submitmessage, setsubmitmessage] = useState('');
 
   const [relationship, setrelationship] = useState('');
   const [PeopleName, setpeoplename] = useState('');
   const [residentname, setresidentname] = useState('');
   const [peopleid, setpeopleid] = useState('');
+  const [showsnackbar, setshowsnackbar] = useState(false);
 
   const [PeopleInsidetheHouse, setPeopleInsidetheHouse] = useState([]);
+  const [ADDPeopleInsidetheHouse, setADDPeopleInsidetheHouse] = useState([]);
   const [fam_member, setfam_member] = useState([]);
   const [structure, setStructure] = useState('');
   const [yearsstayed, setyearsstayed] = useState('');
@@ -55,47 +63,41 @@ const FADForm = () => {
   const [InfoError, setInfoError] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const handleSubmit = useCallback(async () => {
-    if (residents_data_exist.lenght < 0) {
-      await dispatch(
-        action_addfamily(
-          users_reducers.resident_pk,
-          Occationofthehouse,
-          structure,
-          yearsstayed,
-          Occationfortheland,
-          qualityness,
-          fam_member,
-        ),
+    await dispatch(
+      action_addfamily(
+        users_reducers.resident_pk,
+        Occationofthehouse,
+        structure,
+        yearsstayed,
+        Occationfortheland,
+        qualityness,
+        fam_member,
+      ),
+    );
+    if (residents_issuccess) {
+      setAlertshow(true);
+      setAlertmessage(
+        'Your Application for Family Assesment Data has been submitted successfully',
       );
-      console.log(residents_issuccess);
-      if (residents_issuccess) {
-        setAlertshow(true);
-        setAlertmessage(
-          'Your Application for Family Assesment Data has been submitted successfully',
-        );
-        setAlerttitle('Family Assesment Data');
-      }
-    } else {
-      await setAlertshow(true);
-      await setAlertmessage('You have an existing record');
-      await setAlerttitle('Family Assesment Data');
+      setAlerttitle('Family Assesment Data');
     }
-  }, [dispatch, fam_member]);
-  const handleNextInfo = useCallback(() => {
+    setshowsnackbar(true);
+    setsubmitmessage('Submitted');
+  }, [dispatch, fam_member, showsnackbar]);
+  const handleNextInfo = useCallback(async () => {
     if (
-      qualityness == '' ||
-      Occationfortheland == '' ||
-      Occationofthehouse == '' ||
-      yearsstayed == '' ||
-      structure == ''
+      qualityness == undefined ||
+      Occationfortheland == undefined ||
+      Occationofthehouse == undefined ||
+      yearsstayed == undefined ||
+      structure == undefined
     ) {
-      setInfoError(true);
+      await setInfoError(true);
       alert('Please Fill All Fields');
     } else {
-      setInfoError(false);
+      await setInfoError(false);
     }
   }, [
-    dispatch,
     qualityness,
     Occationfortheland,
     Occationofthehouse,
@@ -124,7 +126,7 @@ const FADForm = () => {
     (value) => {
       const getid = value.split('-')[0].trim();
       const getname = value.split('-')[1].trim();
-
+      console.log(value);
       setpeopleid(getid);
       setpeoplename(value);
       setresidentname(getname);
@@ -144,44 +146,59 @@ const FADForm = () => {
   const handlePeopleAdd = useCallback(async () => {
     setIsVisible(false);
     let found = false;
-    if (residents_data_exist.lenght < 0) {
-      PeopleInsidetheHouse.map((item) => {
-        console.log(item.resident_pk === peopleid + '' + item.resident_pk);
-        if (item.resident_pk === peopleid) {
-          found = true;
-        }
-      });
-      if (!found) {
-        setPeopleInsidetheHouse((prev) => [
-          ...prev,
-          {
-            resident_pk: parseInt(peopleid),
-            PeopleName: residentname,
-            realationship: relationship,
-          },
-        ]);
-        setfam_member((prev) => [
-          ...prev,
-          {resident_pk: parseInt(peopleid), rel: relationship},
-        ]);
-      } else {
-        alert('Resident already exist in the list');
+    // if (residents_data_exist !== []) {
+    //   ADDPeopleInsidetheHouse.map((item) => {
+    //     console.log(item.resident_pk === peopleid + '' + item.resident_pk);
+    //     if (item.resident_pk === peopleid) {
+    //       found = true;
+    //     }
+    //   });
+    //   if (!found) {
+    //     setADDPeopleInsidetheHouse((prev) => [
+    //       ...prev,
+    //       {
+    //         resident_pk: parseInt(peopleid),
+    //         PeopleName: residentname,
+    //         realationship: relationship,
+    //       },
+    //     ]);
+    //     setfam_member((prev) => [
+    //       ...prev,
+    //       {resident_pk: parseInt(peopleid), rel: relationship},
+    //     ]);
+    //   } else {
+    //     alert('Resident already exist in the list');
+    //   }
+    // } else {
+    PeopleInsidetheHouse.map((item) => {
+      console.log(item.resident_pk === peopleid + '' + item.resident_pk);
+      if (item.PeopleName === residentname) {
+        found = true;
       }
+    });
+    if (!found) {
+      setPeopleInsidetheHouse((prev) => [
+        ...prev,
+        {
+          resident_pk: parseInt(peopleid),
+          PeopleName: residentname,
+          realationship: relationship,
+        },
+      ]);
+      setfam_member((prev) => [
+        ...prev,
+        {resident_pk: parseInt(peopleid), rel: relationship},
+      ]);
     } else {
-      await setAlertshow(true);
-      await setAlertmessage('You have an existing record');
-      await setAlerttitle('Family Assesment Data');
+      alert('Resident already exist in the list');
     }
+    console.log(PeopleInsidetheHouse);
+
+    // }
   }, [PeopleInsidetheHouse, PeopleName, parseInt(peopleid), relationship]);
 
   const handleAddPeople = useCallback(async () => {
-    if (residents_data_exist.lenght < 0) {
-      await setIsVisible(true);
-    } else {
-      await setAlertshow(true);
-      await setAlertmessage('You have an existing record');
-      await setAlerttitle('Family Assesment Data');
-    }
+    await setIsVisible(true);
   });
 
   const [gestureName, setgestureName] = useState('');
@@ -198,16 +215,13 @@ const FADForm = () => {
       setPeopleInsidetheHouse([]);
       await dispatch(action_get_residents_list());
       await dispatch(action_get_FAD_exist(users_reducers.resident_pk));
-      if (residents_data_exist.lenght < 0) {
+      if (residents_data_exist === []) {
         await setAlertshow(true);
         await setAlertmessage(
           'Make sure you are the head of the family before filling it',
         );
         await setAlerttitle('Family Assesment Data');
       } else {
-        await setAlertshow(true);
-        await setAlertmessage('You have an existing record');
-        await setAlerttitle('Family Assesment Data');
         await setOccationofthehouse(residents_data_exist[0]?.okasyon_balay);
         await setOccationfortheland(residents_data_exist[0]?.okasyon_yuta);
         await setStructure(residents_data_exist[0]?.straktura);
@@ -222,16 +236,16 @@ const FADForm = () => {
               realationship: item.rel,
             },
           ]);
+          setfam_member((prev) => [
+            ...prev,
+            {resident_pk: parseInt(item.resident_pk), rel: item.rel},
+          ]);
         });
-
-        await setyearsstayed(
-          parseInt(residents_data_exist[0]?.kadugayon_pagpuyo),
-        );
       }
     };
     mounted && listofresident();
     return () => (mounted = false);
-  }, [dispatch, Occationofthehouse, yearsstayed]);
+  }, [dispatch, Alertshow]);
   const onSwipe = useCallback((gestureName, gestureState) => {
     const {SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT} = swipeDirections;
     setgestureName({gestureName: gestureName});
@@ -256,54 +270,75 @@ const FADForm = () => {
     directionalOffsetThreshold: 80,
   };
   return (
-    <ScrollView>
+    <ScrollView style={{height: screenHeight}}>
       <View style={styles.container}>
         <CustomAlert
           title={Alerttitle}
           message={Alertmessage}
           show={Alertshow}
         />
-        <View style={{flex: 1}}>
+        <View style={{flex: 1, height: screenHeight - 90}}>
           <ProgressSteps>
             <ProgressStep
               label="Information"
               onNext={handleNextInfo}
               errors={InfoError}>
               <View style={styles.Inputcontainer}>
-                <Input
-                  style={styles.textInput}
-                  placeholder="First Name"
-                  inputContainerStyle={styles.inputContainer}
-                  inputStyle={styles.inputText}
-                  //         onChangeText={(text) => setfirstname(text)}
-                  defaultValue={users_reducers.first_name}
+                <TextInput
+                  disabled={true}
+                  theme={{
+                    colors: {
+                      primary: '#3eb2fa',
+                      background: 'white',
+                      underlineColor: 'transparent',
+                    },
+                  }}
+                  mode="outlined"
+                  label="First Name"
+                  value={users_reducers.first_name}
                 />
-                <Input
-                  style={styles.textInput}
-                  placeholder="Middle Name"
-                  inputContainerStyle={styles.inputContainer}
-                  inputStyle={styles.inputText}
-                  //    onChangeText={(text) => setmiddlename(text)}
-                  defaultValue={users_reducers.middle_name}
+                <TextInput
+                  disabled={true}
+                  theme={{
+                    colors: {
+                      primary: '#3eb2fa',
+                      background: 'white',
+                      underlineColor: 'transparent',
+                    },
+                  }}
+                  mode="outlined"
+                  label="Middle Name"
+                  value={users_reducers.middle_name}
                 />
-                <Input
-                  style={styles.textInput}
-                  placeholder="Last Name"
-                  inputContainerStyle={styles.inputContainer}
-                  inputStyle={styles.inputText}
-                  // onChangeText={(text) => setlastname(text)}
-                  defaultValue={users_reducers.last_name}
+                <TextInput
+                  disabled={true}
+                  theme={{
+                    colors: {
+                      primary: '#3eb2fa',
+                      background: 'white',
+                      underlineColor: 'transparent',
+                    },
+                  }}
+                  mode="outlined"
+                  label="Last Name"
+                  value={users_reducers.last_name}
                 />
+
                 <View style={styles.container}>
                   <CardView
-                    style={{marginBottom: 20, textAlign: 'center', height: 40}}>
+                    style={{
+                      marginTop: 20,
+                      marginBottom: 20,
+                      textAlign: 'center',
+                      height: 40,
+                    }}>
                     <Text style={{textAlign: 'center'}}>
                       Family Assesment Data
                     </Text>
                   </CardView>
                   <Picker
                     selectedValue={Occationofthehouse}
-                    defaultValue={Occationofthehouse}
+                    // value={Occationofthehouse}
                     style={styles.PickerContainer}
                     onValueChange={(itemValue, itemIndex) =>
                       handleOccationofthehouse(itemValue)
@@ -345,16 +380,21 @@ const FADForm = () => {
                       value="Tigbantay sa yuta"
                     />
                   </Picker>
-
-                  <Input
-                    style={styles.textInput}
-                    placeholder="Kadugayon sa pagpuyo diha sa Barangay"
-                    inputContainerStyle={styles.inputContainer}
-                    keyboardType={'numeric'}
-                    inputStyle={styles.inputText}
+                  <TextInput
+                    theme={{
+                      colors: {
+                        primary: '#3eb2fa',
+                        background: 'white',
+                        underlineColor: 'transparent',
+                      },
+                    }}
+                    keyboardType="numeric"
                     onChangeText={(text) => handleYearsStayedChange(text)}
-                    defaultValue={yearsstayed}
+                    mode="outlined"
+                    label="Kadugayon sa pagpuyo diha sa Barangay"
+                    value={yearsstayed}
                   />
+
                   <Picker
                     selectedValue={structure}
                     style={styles.PickerContainer}
@@ -459,12 +499,21 @@ const FADForm = () => {
                     isVisible={isVisible}
                     color="rgba(0.5, 0.25, 0, 0.2)"
                     UI={
-                      <ScrollView style={{padding: 10}}>
+                      <View style={{padding: 10, height: screenHeight}}>
                         <View style={{marginBottom: 50, padding: 10}}>
+                          {/* // items={residents_list?.map((item, index) => [
+                            //   {
+                            //     label: item?.first_name,
+                            //     value: item?.resident_pk,
+                            //   },
+                            // ])} */}
+
                           <Picker
                             selectedValue={PeopleName}
                             style={styles.PickerContainer}
-                            onValueChange={(value) => hadnlePeopleName(value)}>
+                            onValueChange={(itemValue, itemIndex) =>
+                              hadnlePeopleName(itemValue)
+                            }>
                             <Picker.Item label="Pangalan" />
                             {residents_list.map((item, index) => (
                               <Picker.Item
@@ -480,6 +529,35 @@ const FADForm = () => {
                               />
                             ))}
                           </Picker>
+                          {/* <DropDownPicker
+                            items={residents_list.map((item, index) => [
+                              {
+                                value:
+                                  item?.resident_pk +
+                                  ' - ' +
+                                  item?.first_name +
+                                  ' ' +
+                                  item?.last_name,
+                                label: item?.first_name + ' ' + item?.last_name,
+                              },
+                            ])}
+                            defaultValue={PeopleName}
+                            containerStyle={{height: 40}}
+                            style={{backgroundColor: '#fafafa'}}
+                            itemStyle={{
+                              justifyContent: 'flex-start',
+                            }}
+                            searchable={true}
+                            searchableError={() => <Text>Not Found</Text>}
+                            searchablePlaceholder="Search Name"
+                            dropDownStyle={{backgroundColor: '#fafafa'}}
+                            onChangeItem={(item) => console.log(item)}
+                            onSearch={(text) => {
+                              // Example
+                              console.log(text);
+                            }}
+                          /> */}
+
                           <Picker
                             selectedValue={relationship}
                             style={styles.PickerContainer}
@@ -508,10 +586,11 @@ const FADForm = () => {
                             Add
                           </Button>
                         </View>
-                      </ScrollView>
+                      </View>
                     }
                   />
                 </GestureRecognizer>
+
                 <Button
                   icon={<Icons name="arrow-right" size={20} color="white" />}
                   title="Add People"
@@ -523,6 +602,9 @@ const FADForm = () => {
           </ProgressSteps>
         </View>
       </View>
+      <>
+        <CustomSnackBar show={showsnackbar} message={submitmessage} />
+      </>
     </ScrollView>
   );
 };

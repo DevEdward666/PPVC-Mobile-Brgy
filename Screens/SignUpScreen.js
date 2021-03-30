@@ -4,6 +4,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import CardView from 'react-native-rn-cardview';
 import {Picker} from '@react-native-community/picker';
 import {ProgressStep, ProgressSteps} from 'react-native-progress-steps';
+import {TextInput} from 'react-native-paper';
 import {
   Image,
   ImageBackground,
@@ -33,6 +34,8 @@ import {FlatList} from 'react-native-gesture-handler';
 import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
 import {action_SignUp_user} from '../Services/Actions/SignUpActions';
 import {useDispatch, useSelector} from 'react-redux';
+import CustomAlert from '../Plugins/CustomAlert';
+import {Actions} from 'react-native-router-flux';
 const SignUpScreen = () => {
   const dispatch = useDispatch();
   const [firstname, setfirstname] = useState('');
@@ -77,9 +80,9 @@ const SignUpScreen = () => {
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState(false);
   const [errorUsernameMessage, setErrorMessageUsername] = useState('');
-  const [emailErrorMessage, setemailErrorMessage] = useState('');
+  const [emailErrorMessage, setemailErrorMessage] = useState(false);
   const [mobileErrorMessage, setmobileErrorMessage] = useState('');
   const [InfoError, setInfoError] = useState(false);
   const [AddressError, setAddressError] = useState(false);
@@ -87,8 +90,8 @@ const SignUpScreen = () => {
   const [resourcePathProfile, setresourcePathProfile] = useState(null);
   const [imageresponse, setimageresponse] = useState(null);
   const [profileimageresponse, setprofileimageresponse] = useState(null);
-  const [showpass, setshowpass] = useState(false);
-  const [iconpass, seticonpass] = useState(false);
+  const [showpass, setshowpass] = useState(true);
+  const [iconpass, seticonpass] = useState(true);
   const [showconfirmpass, setshowconfirmpass] = useState(false);
   const [iconconfirmpass, seticonconfirmpass] = useState(false);
   const [stepError, setstepError] = useState(false);
@@ -99,6 +102,10 @@ const SignUpScreen = () => {
   const [houseownedby, sethouseownedby] = useState('');
   const [VotingPrecint, setVotingPrecint] = useState('');
   const [HouseStatus, setHouseStatus] = useState('');
+
+  const [alerttitle, setalerttitle] = useState('');
+  const [alertmessage, setalertmessage] = useState('');
+  const [alertshow, setalertshow] = useState(false);
 
   const [PeopleInsidetheHouse, setPeopleInsidetheHouse] = useState([]);
   const [PhotoSingleFile, setPhotoSingleFile] = useState('');
@@ -160,32 +167,36 @@ const SignUpScreen = () => {
   const handlePassword = (password) => {
     setPassword(password);
     if (password != confirmpassword) {
-      setErrorMessage('Password mismatch');
+      // setErrorMessage('Password mismatch');
+      setErrorMessage(true);
       setstepError(true);
     } else {
       let reg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
       if (reg.test(password) === false) {
-        setErrorMessage(
-          'Minimum eight characters, at least one uppercase letter, one lowercase letter and one number:',
-        );
+        setErrorMessage(true);
+        // setErrorMessage(
+        //   'Minimum eight characters, at least one uppercase letter, one lowercase letter and one number:',
+        // );
       } else {
         setmobileErrorMessage();
         setstepError(false);
-        setErrorMessage('');
+        setErrorMessage(false);
       }
     }
   };
   const handleConfirmPassword = (confirmpassword) => {
-    setPassword(password);
+    setconfirmpassword(confirmpassword);
     if (password != confirmpassword) {
-      setErrorMessage('Password mismatch');
+      // setErrorMessage('Password mismatch');
+      setErrorMessage(true);
       setstepError(true);
     } else {
       let reg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
       if (reg.test(password) === false) {
-        setErrorMessage(
-          'Minimum eight characters, at least one uppercase letter, one lowercase letter and one number:',
-        );
+        // setErrorMessage(
+        //   'Minimum eight characters, at least one uppercase letter, one lowercase letter and one number:',
+        // );
+        setErrorMessage(true);
       } else {
         setmobileErrorMessage();
         setstepError(false);
@@ -202,19 +213,19 @@ const SignUpScreen = () => {
       setshowpass(false);
       seticonpass(true);
     } else {
-      setshowpass(false);
-      seticonpass(true);
+      setshowpass(true);
+      seticonpass(false);
     }
-  });
+  }, [showpass, iconpass]);
   const showconfirmpassword = useCallback(() => {
     if (showconfirmpass == true) {
       setshowconfirmpass(false);
       seticonconfirmpass(true);
     } else {
-      setshowconfirmpass(false);
-      seticonconfirmpass(true);
+      setshowconfirmpass(true);
+      seticonconfirmpass(false);
     }
-  });
+  }, [showconfirmpass, iconconfirmpass]);
   const handleNationality = useCallback((pickNationality) => {
     setnationality(pickNationality);
   });
@@ -255,7 +266,7 @@ const SignUpScreen = () => {
   const showDatepicker = useCallback(() => {
     showMode('date');
   }, []);
-  const handleNextInfo = useCallback(() => {
+  const handleNextInfo = useCallback(async () => {
     if (
       firstname == '' ||
       middlename == '' ||
@@ -263,33 +274,49 @@ const SignUpScreen = () => {
       gender == '' ||
       birthdate == ''
     ) {
-      setInfoError(true);
+      await setInfoError(true);
       alert('Please Fill All Fields');
-    }
-    if (PhotoResource == null) {
-      alert('Please Take Profile Image');
-      setInfoError(true);
+    } else if (PhotoSingleFile == '') {
+      await setInfoError(true);
+      await alert('Please Take Profile Image');
     } else {
-      setInfoError(false);
+      await setInfoError(false);
     }
-    console.log(resourcePathProfile);
-  }, [resourcePathProfile, firstname, middlename, lastname, gender, birthdate]);
+  }, [PhotoSingleFile, firstname, middlename, lastname, gender, birthdate]);
   const handleNextAddress = useCallback(() => {
-    // if (
-    //   nationality == '' ||
-    //   region == '' ||
-    //   province == '' ||
-    //   city == '' ||
-    //   barangay == '' ||
-    //   fulladdress == ''
-    // ) {
-    //   setAddressError(true);
-    //   alert('Please Fill All Fields');
-    // } else {
-    //   setAddressError(false);
-    // }
-    setAddressError(false);
-  }, [nationality, region, province, city, barangay, fulladdress]);
+    if (
+      nationality == '' ||
+      religion == '' ||
+      civilstatus == '' ||
+      dialect == '' ||
+      tribe == '' ||
+      disability == '' ||
+      purok == '' ||
+      jobspecs == '' ||
+      HouseIncome == '' ||
+      HouseStatus == '' ||
+      VotingPrecint == '' ||
+      houseownedby == ''
+    ) {
+      setAddressError(true);
+      alert('Please Fill All Fields');
+    } else {
+      setAddressError(false);
+    }
+  }, [
+    nationality,
+    religion,
+    civilstatus,
+    dialect,
+    tribe,
+    disability,
+    purok,
+    jobspecs,
+    HouseIncome,
+    HouseStatus,
+    VotingPrecint,
+    houseownedby,
+  ]);
   const handleNextCredentials = useCallback(() => {
     // if (
     //   nationality == '' ||
@@ -327,11 +354,12 @@ const SignUpScreen = () => {
     [nationality, region, province, city, barangay, fulladdress],
   );
   const validate = (email) => {
+    setemail(email);
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (reg.test(email) === false) {
-      setemailErrorMessage('Email is Not valid');
+      setemailErrorMessage(true);
     } else {
-      setemailErrorMessage();
+      setemailErrorMessage(false);
       setemail(email);
     }
   };
@@ -498,26 +526,35 @@ const SignUpScreen = () => {
     });
   }, [setresourcePath]);
   const profileImage = useCallback(() => {
-    ImagePicker.launchCamera(
-      {base64: true, maxWidth: 1280, maxHeight: 720},
-      (response) => {
-        console.log('Request =', response);
-        setresourcePathProfile(response.uri); // update the local state, this will rerender your TomarFoto component with the photo uri path.
-        setPhotoSingleFile(response.data); // update the local state, this will rerender your TomarFoto component with the photo uri path.
-        if (response.didCancel) {
-          alert('Action cancelled ');
-        } else if (response.error) {
-          alert('Error : ', response.error);
-        } else {
-          const source = {uri: response.uri};
-          console.log(response.uri);
-          setprofileimageresponse(response);
-          //  dispatch(action_POST_FileImageProfile(response, username));
-        }
+    let options = {
+      title: 'You can choose one image',
+      maxWidth: 1280,
+      maxHeight: 720,
+      base64: true,
+      storageOptions: {
+        skipBackup: true,
       },
-    );
+    };
+    ImagePicker.launchImageLibrary(options, (response) => {
+      console.log({response});
+      setresourcePathProfile(response.uri); // update the local state, this will rerender your TomarFoto component with the photo uri path.
+      setPhotoSingleFile(response.data); // update the local state, this will rerender your TomarFoto component with the photo uri path.
+
+      if (response.didCancel) {
+        console.log('User cancelled photo picker');
+        Alert.alert('You did not select any image');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        const source = {uri: response.uri};
+        console.log(response.uri);
+        setprofileimageresponse(response);
+      }
+    });
   }, [setresourcePathProfile]);
-  const handleSubmitCredentials = useCallback(() => {
+  const handleSubmitCredentials = useCallback(async () => {
     if (stepError == false) {
       dispatch(
         action_SignUp_user(
@@ -547,6 +584,10 @@ const SignUpScreen = () => {
           password,
         ),
       );
+      await setalertshow(true);
+      await setalertmessage('Registered Successfully');
+      await setalerttitle('User Registration');
+      await Actions.home();
     } else {
       alert('Please Provide Valid Data');
     }
@@ -585,6 +626,11 @@ const SignUpScreen = () => {
   return (
     <ScrollView style={{backgroundScrollViewColor: 'white'}}>
       <View style={styles.container}>
+        <CustomAlert
+          title={alerttitle}
+          message={alertmessage}
+          show={alertshow}
+        />
         <View style={{flex: 1}}>
           <ProgressSteps>
             <ProgressStep
@@ -630,38 +676,90 @@ const SignUpScreen = () => {
               )}
 
               <View style={styles.Inputcontainer}>
-                <Input
+                <TextInput
+                  theme={{
+                    colors: {
+                      primary: '#3eb2fa',
+                      background: 'white',
+                      underlineColor: 'transparent',
+                    },
+                  }}
+                  mode="outlined"
+                  onChangeText={(text) => setfirstname(text)}
+                  label="First Name"
+                  value={firstname}
+                />
+                {/* <Input
                   style={styles.textInput}
                   placeholder="First Name"
                   inputContainerStyle={styles.inputContainer}
                   inputStyle={styles.inputText}
                   onChangeText={(text) => setfirstname(text)}
                   defaultValue={firstname}
+                /> */}
+                <TextInput
+                  theme={{
+                    colors: {
+                      primary: '#3eb2fa',
+                      background: 'white',
+                      underlineColor: 'transparent',
+                    },
+                  }}
+                  mode="outlined"
+                  onChangeText={(text) => setmiddlename(text)}
+                  label="Middle Name"
+                  value={middlename}
                 />
-                <Input
+                {/* <Input
                   style={styles.textInput}
                   placeholder="Middle Name"
                   inputContainerStyle={styles.inputContainer}
                   inputStyle={styles.inputText}
                   onChangeText={(text) => setmiddlename(text)}
                   defaultValue={middlename}
+                /> */}
+                <TextInput
+                  theme={{
+                    colors: {
+                      primary: '#3eb2fa',
+                      background: 'white',
+                      underlineColor: 'transparent',
+                    },
+                  }}
+                  mode="outlined"
+                  onChangeText={(text) => setlastname(text)}
+                  label="Last Name"
+                  value={lastname}
                 />
-                <Input
+                {/* <Input
                   style={styles.textInput}
                   placeholder="Last Name"
                   inputContainerStyle={styles.inputContainer}
                   inputStyle={styles.inputText}
                   onChangeText={(text) => setlastname(text)}
                   defaultValue={lastname}
+                /> */}
+                <TextInput
+                  theme={{
+                    colors: {
+                      primary: '#3eb2fa',
+                      background: 'white',
+                      underlineColor: 'transparent',
+                    },
+                  }}
+                  mode="outlined"
+                  onChangeText={(text) => setSuffix(text)}
+                  label="Suffix"
+                  value={suffix}
                 />
-                <Input
+                {/* <Input
                   style={styles.textInput}
                   placeholder="Suffix"
                   inputContainerStyle={styles.inputContainer}
                   inputStyle={styles.inputText}
                   onChangeText={(text) => setSuffix(text)}
                   defaultValue={suffix}
-                />
+                /> */}
 
                 <View style={{flex: 1, flexDirection: 'row'}}>
                   <View
@@ -669,13 +767,28 @@ const SignUpScreen = () => {
                       width: '85%',
                       height: '100%',
                     }}>
-                    <Input
-                      style={styles.textInput}
-                      placeholder="Birthdate"
+                    <TextInput
+                      theme={{
+                        colors: {
+                          primary: '#3eb2fa',
+                          underlineColor: 'transparent',
+                          background: 'white',
+                        },
+                      }}
+                      disabled={true}
+                      mode="outlined"
                       inputContainerStyle={styles.inputContainer}
                       inputStyle={styles.inputText}
-                      defaultValue={birthdate}
+                      onChangeText={(text) => setSuffix(text)}
+                      label="Birthdate"
+                      value={birthdate}
                     />
+                    {/* <Input
+                      style={styles.textInput}
+                      placeholder="Birthdate"
+                    
+                      defaultValue={birthdate}
+                    /> */}
                   </View>
                   <View
                     style={{
@@ -690,14 +803,14 @@ const SignUpScreen = () => {
                         alignItems: 'center',
                         justifyContent: 'center',
                         width: 55,
-                        height: 55,
+                        height: 65,
                         backgroundColor: '#fff',
                         borderRadius: 50,
                       }}
                       onPress={showDatepicker}>
                       <Image
                         style={{
-                          height: 40,
+                          height: 60,
                           width: '100%',
                           resizeMode: 'center',
                           alignContent: 'flex-start',
@@ -741,22 +854,48 @@ const SignUpScreen = () => {
               onNext={handleNextAddress}
               errors={AddressError}>
               <View style={styles.Inputcontainer}>
-                <Input
+                <TextInput
+                  theme={{
+                    colors: {
+                      primary: '#3eb2fa',
+                      background: 'white',
+                      underlineColor: 'transparent',
+                    },
+                  }}
+                  mode="outlined"
+                  onChangeText={(text) => handleNationality(text)}
+                  label="Nationality"
+                  value={nationality}
+                />
+                {/* <Input
                   style={styles.textInput}
                   placeholder="Nationality"
                   inputContainerStyle={styles.inputContainer}
                   inputStyle={styles.inputText}
                   onChangeText={(text) => handleNationality(text)}
                   defaultValue={nationality}
+                /> */}
+                <TextInput
+                  theme={{
+                    colors: {
+                      primary: '#3eb2fa',
+                      background: 'white',
+                      underlineColor: 'transparent',
+                    },
+                  }}
+                  mode="outlined"
+                  onChangeText={(text) => handleRegligion(text)}
+                  label="Religion"
+                  value={religion}
                 />
-                <Input
+                {/* <Input
                   style={styles.textInput}
                   placeholder="Religion"
                   inputContainerStyle={styles.inputContainer}
                   inputStyle={styles.inputText}
                   onChangeText={(text) => handleRegligion(text)}
                   defaultValue={religion}
-                />
+                /> */}
                 <Picker
                   selectedValue={civilstatus}
                   style={styles.PickerContainer}
@@ -769,22 +908,48 @@ const SignUpScreen = () => {
                   <Picker.Item label="Annulled" value="annulled" />
                   <Picker.Item label="Divorced" value="divorced" />
                 </Picker>
-                <Input
+                <TextInput
+                  theme={{
+                    colors: {
+                      primary: '#3eb2fa',
+                      background: 'white',
+                      underlineColor: 'transparent',
+                    },
+                  }}
+                  mode="outlined"
+                  onChangeText={(text) => handleDialect(text)}
+                  label="Dialect"
+                  value={dialect}
+                />
+                {/* <Input
                   style={styles.textInput}
                   placeholder="Dialect"
                   inputContainerStyle={styles.inputContainer}
                   inputStyle={styles.inputText}
                   onChangeText={(text) => handleDialect(text)}
                   defaultValue={dialect}
+                /> */}
+                <TextInput
+                  theme={{
+                    colors: {
+                      primary: '#3eb2fa',
+                      background: 'white',
+                      underlineColor: 'transparent',
+                    },
+                  }}
+                  mode="outlined"
+                  onChangeText={(text) => handleTribe(text)}
+                  label="Tribe"
+                  value={tribe}
                 />
-                <Input
+                {/* <Input
                   style={styles.textInput}
                   placeholder="Tribe"
                   inputContainerStyle={styles.inputContainer}
                   inputStyle={styles.inputText}
                   onChangeText={(text) => handleTribe(text)}
                   defaultValue={tribe}
-                />
+                /> */}
 
                 <Picker
                   selectedValue={disability}
@@ -796,46 +961,111 @@ const SignUpScreen = () => {
                   <Picker.Item label="Yes" value="y" />
                   <Picker.Item label="No" value="n" />
                 </Picker>
-                <Input
+                <TextInput
+                  theme={{
+                    colors: {
+                      primary: '#3eb2fa',
+                      background: 'white',
+                      underlineColor: 'transparent',
+                    },
+                  }}
+                  mode="outlined"
+                  onChangeText={(text) => handlePurok(text)}
+                  label="Purok"
+                  value={purok}
+                />
+                {/* <Input
                   style={styles.textInput}
                   placeholder="Purok"
                   inputContainerStyle={styles.inputContainer}
                   inputStyle={styles.inputText}
                   onChangeText={(text) => handlePurok(text)}
                   defaultValue={purok}
+                /> */}
+                <TextInput
+                  theme={{
+                    colors: {
+                      primary: '#3eb2fa',
+                      background: 'white',
+                      underlineColor: 'transparent',
+                    },
+                  }}
+                  mode="outlined"
+                  onChangeText={(text) => handleJobSpecs(text)}
+                  label="Job Specification"
+                  value={jobspecs}
                 />
-                <Input
+                {/* <Input
                   style={styles.textInput}
                   placeholder="Job Specification"
                   inputContainerStyle={styles.inputContainer}
                   inputStyle={styles.inputText}
                   onChangeText={(text) => handleJobSpecs(text)}
                   defaultValue={jobspecs}
+                /> */}
+                <TextInput
+                  theme={{
+                    colors: {
+                      primary: '#3eb2fa',
+                      background: 'white',
+                      underlineColor: 'transparent',
+                    },
+                  }}
+                  mode="outlined"
+                  onChangeText={(text) => handleHouseIncome(text)}
+                  label="House Income"
+                  value={HouseIncome}
                 />
-                <Input
+                {/* <Input
                   style={styles.textInput}
                   placeholder="House Income"
                   inputContainerStyle={styles.inputContainer}
                   inputStyle={styles.inputText}
                   onChangeText={(text) => handleHouseIncome(text)}
                   defaultValue={HouseIncome}
+                /> */}
+                <TextInput
+                  theme={{
+                    colors: {
+                      primary: '#3eb2fa',
+                      background: 'white',
+                      underlineColor: 'transparent',
+                    },
+                  }}
+                  mode="outlined"
+                  onChangeText={(text) => handleHouseStatus(text)}
+                  label="House Status"
+                  value={HouseStatus}
                 />
-                <Input
+                {/* <Input
                   style={styles.textInput}
                   placeholder="House Status"
                   inputContainerStyle={styles.inputContainer}
                   inputStyle={styles.inputText}
                   onChangeText={(text) => handleHouseStatus(text)}
                   defaultValue={HouseStatus}
+                /> */}
+                <TextInput
+                  theme={{
+                    colors: {
+                      primary: '#3eb2fa',
+                      background: 'white',
+                      underlineColor: 'transparent',
+                    },
+                  }}
+                  mode="outlined"
+                  onChangeText={(text) => handleVotingPrecint(text)}
+                  label="Voting Precint"
+                  value={VotingPrecint}
                 />
-                <Input
+                {/* <Input
                   style={styles.textInput}
                   placeholder="Voting Precint"
                   inputContainerStyle={styles.inputContainer}
                   inputStyle={styles.inputText}
                   onChangeText={(text) => handleVotingPrecint(text)}
                   defaultValue={VotingPrecint}
-                />
+                /> */}
                 <Picker
                   selectedValue={houseownedby}
                   style={styles.PickerContainer}
@@ -854,7 +1084,21 @@ const SignUpScreen = () => {
               label="Credentials"
               onSubmit={handleSubmitCredentials}>
               <View style={styles.Inputcontainer}>
-                <Input
+                <TextInput
+                  theme={{
+                    colors: {
+                      primary: '#3eb2fa',
+                      background: 'white',
+                      underlineColor: 'transparent',
+                    },
+                  }}
+                  mode="outlined"
+                  error={emailErrorMessage}
+                  onChangeText={(text) => validate(text)}
+                  label="Email"
+                  value={email}
+                />
+                {/* <Input
                   style={styles.textInput}
                   placeholder="Email"
                   inputContainerStyle={styles.inputContainer}
@@ -862,8 +1106,21 @@ const SignUpScreen = () => {
                   errorMessage={emailErrorMessage}
                   onChangeText={(text) => validate(text)}
                   defaultValue={email}
+                /> */}
+                <TextInput
+                  theme={{
+                    colors: {
+                      primary: '#3eb2fa',
+                      background: 'white',
+                      underlineColor: 'transparent',
+                    },
+                  }}
+                  mode="outlined"
+                  onChangeText={(text) => setmobile(text)}
+                  label="Mobile No."
+                  value={mobile}
                 />
-                <Input
+                {/* <Input
                   style={styles.textInput}
                   placeholder="Mobile No."
                   inputContainerStyle={styles.inputContainer}
@@ -871,13 +1128,28 @@ const SignUpScreen = () => {
                   //errorMessage={mobileErrorMessage}
                   onChangeText={(text) => setmobile(text)}
                   defaultValue={mobile}
-                />
+                /> */}
                 <View style={{flex: 1, flexDirection: 'row'}}>
                   <View
                     style={{
                       width: '85%',
                     }}>
-                    <Input
+                    <TextInput
+                      theme={{
+                        colors: {
+                          primary: '#3eb2fa',
+                          background: 'white',
+                          underlineColor: 'transparent',
+                        },
+                      }}
+                      mode="outlined"
+                      onChangeText={(text) => handlePassword(text)}
+                      label="Password"
+                      secureTextEntry={showpass}
+                      error={errorMessage}
+                      value={password}
+                    />
+                    {/* <Input
                       style={styles.textInput}
                       placeholder="Password"
                       inputContainerStyle={styles.inputContainer}
@@ -886,7 +1158,7 @@ const SignUpScreen = () => {
                       errorMessage={errorMessage}
                       onChangeText={(text) => handlePassword(text)}
                       defaultValue={password}
-                    />
+                    /> */}
                   </View>
                   <View
                     style={{
@@ -918,7 +1190,22 @@ const SignUpScreen = () => {
                     style={{
                       width: '85%',
                     }}>
-                    <Input
+                    <TextInput
+                      theme={{
+                        colors: {
+                          primary: '#3eb2fa',
+                          background: 'white',
+                          underlineColor: 'transparent',
+                        },
+                      }}
+                      mode="outlined"
+                      onChangeText={(text) => handleConfirmPassword(text)}
+                      label="Confirm Password"
+                      secureTextEntry={showconfirmpass}
+                      error={errorMessage}
+                      value={confirmpassword}
+                    />
+                    {/* <Input
                       style={styles.textInput}
                       placeholder="Confirm Password"
                       inputContainerStyle={styles.inputContainer}
@@ -927,7 +1214,7 @@ const SignUpScreen = () => {
                       secureTextEntry={showconfirmpass}
                       onChangeText={(text) => handleConfirmPassword(text)}
                       defaultValue={confirmpassword}
-                    />
+                    /> */}
                   </View>
                   <View
                     style={{

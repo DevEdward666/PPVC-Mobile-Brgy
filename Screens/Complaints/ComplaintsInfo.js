@@ -237,7 +237,7 @@ const ComplaintsInfo = () => {
           }}>
           <Divider style={{backgroundColor: 'grey'}} />
 
-          {complaint_info?.complaint_file.map((item, index) => (
+          {complaint_info?.complaint_file?.map((item, index) => (
             <View style={{width: 100 + '%'}} key={index}>
               <TouchableNativeFeedback key={index} underlayColor="white">
                 <CardView

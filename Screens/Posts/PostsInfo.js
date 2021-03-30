@@ -98,6 +98,7 @@ const PostsInfo = () => {
       await setcomment('');
     }
   }, [dispatch, comment, posts_pk]);
+  console.log(posts_info);
   const component1 = () => {
     return (
       <>
