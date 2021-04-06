@@ -4,16 +4,17 @@ import {ScrollView} from 'react-native-gesture-handler';
 import {ProgressStep, ProgressSteps} from 'react-native-progress-steps';
 import {
   View,
+  TouchableHighlight,
   StyleSheet,
-  Text,
   Button,
   Dimensions,
   TouchableNativeFeedback,
+  Text,
   SafeAreaView,
 } from 'react-native';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import DropDownPicker from 'react-native-dropdown-picker';
-import {TextInput} from 'react-native-paper';
+import {TextInput, Searchbar, Card} from 'react-native-paper';
 import {Picker} from '@react-native-community/picker';
 import {Icon, Input} from 'react-native-elements';
 import Icons from 'react-native-vector-icons/FontAwesome';
@@ -21,6 +22,7 @@ import CardView from 'react-native-rn-cardview';
 import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
 import CustomBottomSheet from '../../Plugins/CustomBottomSheet';
 import {useDispatch, useSelector} from 'react-redux';
+import wait from '../../Plugins/waitinterval';
 import {
   action_get_residents_list,
   action_addfamily,
@@ -28,6 +30,7 @@ import {
 } from '../../Services/Actions/ResidentsActions';
 import CustomAlert from '../../Plugins/CustomAlert';
 import CustomSnackBar from '../../Plugins/CustomSnackBar';
+import {Actions} from 'react-native-router-flux';
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const FADForm = () => {
   const users_reducers = useSelector((state) => state.UserInfoReducers.data);
@@ -55,35 +58,56 @@ const FADForm = () => {
   const [PeopleInsidetheHouse, setPeopleInsidetheHouse] = useState([]);
   const [ADDPeopleInsidetheHouse, setADDPeopleInsidetheHouse] = useState([]);
   const [fam_member, setfam_member] = useState([]);
+  const [fam_member_add, setfam_member_add] = useState([]);
   const [structure, setStructure] = useState('');
   const [yearsstayed, setyearsstayed] = useState('');
   const [Alerttitle, setAlerttitle] = useState('');
   const [Alertmessage, setAlertmessage] = useState('');
-  const [Alertshow, setAlertshow] = useState('');
+  const [Alertshow, setAlertshow] = useState(false);
+  const [searchvalue, setsearchvalue] = useState(null);
   const [InfoError, setInfoError] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const handleSubmit = useCallback(async () => {
-    await dispatch(
-      action_addfamily(
-        users_reducers.resident_pk,
-        Occationofthehouse,
-        structure,
-        yearsstayed,
-        Occationfortheland,
-        qualityness,
-        fam_member,
-      ),
-    );
+    if (residents_data_exist[0]?.fam_members === '') {
+      await dispatch(
+        action_addfamily(
+          users_reducers.resident_pk,
+          Occationofthehouse,
+          structure,
+          yearsstayed,
+          Occationfortheland,
+          qualityness,
+          fam_member,
+        ),
+      );
+      console.log('not exist');
+    } else {
+      await dispatch(
+        action_addfamily(
+          users_reducers.resident_pk,
+          Occationofthehouse,
+          structure,
+          yearsstayed,
+          Occationfortheland,
+          qualityness,
+          fam_member_add,
+        ),
+      );
+    }
     if (residents_issuccess) {
       setAlertshow(true);
       setAlertmessage(
         'Your Application for Family Assesment Data has been submitted successfully',
       );
       setAlerttitle('Family Assesment Data');
+      wait(1000).then(() => {
+        Actions.index();
+        setAlertshow(false);
+      });
     }
-    setshowsnackbar(true);
-    setsubmitmessage('Submitted');
-  }, [dispatch, fam_member, showsnackbar]);
+    // setshowsnackbar(true);
+    // setsubmitmessage('Submitted');
+  }, [dispatch, fam_member, fam_member_add]);
   const handleNextInfo = useCallback(async () => {
     if (
       qualityness == undefined ||
@@ -104,6 +128,17 @@ const FADForm = () => {
     yearsstayed,
     structure,
   ]);
+  const onChangeSearch = useCallback(
+    async (value) => {
+      if (value === ' ') {
+        await setsearchvalue(null);
+      } else {
+        await setsearchvalue(value);
+        await dispatch(action_get_residents_list(searchvalue));
+      }
+    },
+    [dispatch, searchvalue],
+  );
   const handleOccationfortheland = useCallback((value) => {
     setOccationfortheland(value);
   });
@@ -124,12 +159,12 @@ const FADForm = () => {
   );
   const hadnlePeopleName = useCallback(
     (value) => {
-      const getid = value.split('-')[0].trim();
-      const getname = value.split('-')[1].trim();
-      console.log(value);
-      setpeopleid(getid);
-      setpeoplename(value);
-      setresidentname(getname);
+      // const getid = value.split('-')[0].trim();
+      // const getname = value.split('-')[1].trim();
+
+      setpeopleid(value.resident_pk);
+      setpeoplename(value.first_name + ' ' + value.last_name);
+      setresidentname(value.first_name + ' ' + value.last_name);
     },
     [PeopleName],
   );
@@ -141,11 +176,12 @@ const FADForm = () => {
     [relationship],
   );
   const handlePeopleLivingInsideTheHouse = useCallback((item) => {
-    console.log(item);
+    // console.log(item);
   });
   const handlePeopleAdd = useCallback(async () => {
     setIsVisible(false);
     let found = false;
+
     // if (residents_data_exist !== []) {
     //   ADDPeopleInsidetheHouse.map((item) => {
     //     console.log(item.resident_pk === peopleid + '' + item.resident_pk);
@@ -170,33 +206,63 @@ const FADForm = () => {
     //     alert('Resident already exist in the list');
     //   }
     // } else {
-    PeopleInsidetheHouse.map((item) => {
-      console.log(item.resident_pk === peopleid + '' + item.resident_pk);
-      if (item.PeopleName === residentname) {
-        found = true;
-      }
-    });
-    if (!found) {
-      setPeopleInsidetheHouse((prev) => [
-        ...prev,
-        {
-          resident_pk: parseInt(peopleid),
-          PeopleName: residentname,
-          realationship: relationship,
-        },
-      ]);
-      setfam_member((prev) => [
-        ...prev,
-        {resident_pk: parseInt(peopleid), rel: relationship},
-      ]);
+    if (relationship === '') {
+      await setAlertshow(true);
+      await setAlertmessage('Please select relationship of the person');
+      await setAlerttitle('Try Again');
+      wait(1000).then(() => {
+        setAlertshow(false);
+      });
     } else {
-      alert('Resident already exist in the list');
+      PeopleInsidetheHouse.map((item) => {
+        // console.log(item.resident_pk === peopleid + '' + item.resident_pk);
+        if (item.PeopleName === residentname) {
+          found = true;
+        }
+      });
+      if (!found) {
+        if (residents_data_exist[0]?.fam_members === '') {
+          setPeopleInsidetheHouse((prev) => [
+            ...prev,
+            {
+              resident_pk: parseInt(peopleid),
+              PeopleName: residentname,
+              realationship: relationship,
+            },
+          ]);
+          setfam_member((prev) => [
+            ...prev,
+            {resident_pk: parseInt(peopleid), rel: relationship},
+          ]);
+          console.log('add');
+        } else {
+          setPeopleInsidetheHouse((prev) => [
+            ...prev,
+            {
+              resident_pk: parseInt(peopleid),
+              PeopleName: residentname,
+              realationship: relationship,
+            },
+          ]);
+          setfam_member_add((prev) => [
+            ...prev,
+            {resident_pk: parseInt(peopleid), rel: relationship},
+          ]);
+        }
+      } else {
+        alert('Resident already exist in the list');
+      }
     }
-    console.log(PeopleInsidetheHouse);
-
     // }
-  }, [PeopleInsidetheHouse, PeopleName, parseInt(peopleid), relationship]);
-
+  }, [
+    PeopleInsidetheHouse,
+    fam_member_add,
+    fam_member,
+    PeopleName,
+    parseInt(peopleid),
+    relationship,
+  ]);
+  console.log(fam_member_add);
   const handleAddPeople = useCallback(async () => {
     await setIsVisible(true);
   });
@@ -208,14 +274,20 @@ const FADForm = () => {
       PeopleInsidetheHouse.filter((item) => item.PeopleName !== e.PeopleName),
     );
     setfam_member(fam_member.filter((item) => item.peopleid !== e.peopleid));
+    setfam_member_add(
+      fam_member_add.filter((item) => item.peopleid !== e.peopleid),
+    );
   });
   useEffect(() => {
     let mounted = true;
     const listofresident = async () => {
+      if (searchvalue === '') {
+        await setsearchvalue(null);
+      }
       setPeopleInsidetheHouse([]);
-      await dispatch(action_get_residents_list());
+      await dispatch(action_get_residents_list(searchvalue));
       await dispatch(action_get_FAD_exist(users_reducers.resident_pk));
-      if (residents_data_exist === []) {
+      if (residents_data_exist === '') {
         await setAlertshow(true);
         await setAlertmessage(
           'Make sure you are the head of the family before filling it',
@@ -226,26 +298,28 @@ const FADForm = () => {
         await setOccationfortheland(residents_data_exist[0]?.okasyon_yuta);
         await setStructure(residents_data_exist[0]?.straktura);
         await setQualityness(residents_data_exist[0]?.kaligon_balay);
-        await setyearsstayed(residents_data_exist[0]?.kadugayon_pagpuyo);
-
-        await residents_data_exist[0]?.fam_members?.map((item) => {
-          setPeopleInsidetheHouse((prev) => [
-            ...prev,
-            {
-              PeopleName: item.first_name + ' ' + item.last_name,
-              realationship: item.rel,
-            },
-          ]);
-          setfam_member((prev) => [
-            ...prev,
-            {resident_pk: parseInt(item.resident_pk), rel: item.rel},
-          ]);
+        await setyearsstayed('' + residents_data_exist[0]?.kadugayon_pagpuyo);
+        wait(100).then(() => {
+          residents_data_exist[0]?.fam_members?.map((item) => {
+            setPeopleInsidetheHouse((prev) => [
+              ...prev,
+              {
+                PeopleName: item.first_name + ' ' + item.last_name,
+                realationship: item.rel,
+              },
+            ]);
+            setfam_member((prev) => [
+              ...prev,
+              {resident_pk: parseInt(item.resident_pk), rel: item.rel},
+            ]);
+          });
         });
       }
     };
     mounted && listofresident();
     return () => (mounted = false);
-  }, [dispatch, Alertshow]);
+  }, [dispatch]);
+
   const onSwipe = useCallback((gestureName, gestureState) => {
     const {SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT} = swipeDirections;
     setgestureName({gestureName: gestureName});
@@ -325,7 +399,7 @@ const FADForm = () => {
                 />
 
                 <View style={styles.container}>
-                  <CardView
+                  {/* <CardView
                     style={{
                       marginTop: 20,
                       marginBottom: 20,
@@ -335,7 +409,7 @@ const FADForm = () => {
                     <Text style={{textAlign: 'center'}}>
                       Family Assesment Data
                     </Text>
-                  </CardView>
+                  </CardView> */}
                   <Picker
                     selectedValue={Occationofthehouse}
                     // value={Occationofthehouse}
@@ -381,6 +455,7 @@ const FADForm = () => {
                     />
                   </Picker>
                   <TextInput
+                    disabled={true}
                     theme={{
                       colors: {
                         primary: '#3eb2fa',
@@ -388,7 +463,7 @@ const FADForm = () => {
                         underlineColor: 'transparent',
                       },
                     }}
-                    keyboardType="numeric"
+                    keyboardType={'number-pad'}
                     onChangeText={(text) => handleYearsStayedChange(text)}
                     mode="outlined"
                     label="Kadugayon sa pagpuyo diha sa Barangay"
@@ -507,8 +582,56 @@ const FADForm = () => {
                             //     value: item?.resident_pk,
                             //   },
                             // ])} */}
+                          <Searchbar
+                            placeholder="Search Person"
+                            onChangeText={onChangeSearch}
+                            defaultValue={null}
+                            value={searchvalue}
+                          />
+                          <ScrollView
+                            style={{
+                              marginBottom: 10,
+                              padding: 5,
+                              height: screenHeight - 600,
+                            }}>
+                            <SafeAreaView>
+                              {residents_list.map((item, index) => (
+                                <TouchableHighlight
+                                  onPress={() => hadnlePeopleName(item)}
+                                  ker={item.first_name}
+                                  underlayColor="white">
+                                  <CardView
+                                    style={{
+                                      textAlign: 'center',
+                                      height: 40,
 
-                          <Picker
+                                      padding: 5,
+                                    }}>
+                                    <Text
+                                      styles={{
+                                        height: screenHeight,
+
+                                        padding: 5,
+                                      }}>
+                                      {item.first_name + ' ' + item.last_name}
+                                    </Text>
+                                  </CardView>
+                                </TouchableHighlight>
+                              ))}
+                            </SafeAreaView>
+                          </ScrollView>
+
+                          <Text
+                            styles={{
+                              textAlign: 'center',
+                              fontWeight: 'bold',
+                              fontSize: 14,
+                              padding: 5,
+                            }}>
+                            Selected Person: {residentname}
+                          </Text>
+
+                          {/* <Picker
                             selectedValue={PeopleName}
                             style={styles.PickerContainer}
                             onValueChange={(itemValue, itemIndex) =>
@@ -528,7 +651,8 @@ const FADForm = () => {
                                 }
                               />
                             ))}
-                          </Picker>
+                          </Picker> */}
+
                           {/* <DropDownPicker
                             items={residents_list.map((item, index) => [
                               {
@@ -582,9 +706,8 @@ const FADForm = () => {
                               />
                             }
                             title="Add People"
-                            onPress={() => handlePeopleAdd()}>
-                            Add
-                          </Button>
+                            onPress={() => handlePeopleAdd()}
+                          />
                         </View>
                       </View>
                     }
@@ -610,6 +733,11 @@ const FADForm = () => {
 };
 
 const styles = StyleSheet.create({
+  CardContainer: {
+    flex: 1,
+    width: '100%',
+    height: 300,
+  },
   container: {
     flex: 1,
     width: '100%',

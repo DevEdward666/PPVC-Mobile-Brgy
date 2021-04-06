@@ -457,7 +457,7 @@ const UINews = () => {
           <TouchableHighlight
             onPress={() => gotopostsinfo(item)}
             underlayColor="white">
-            <CardView style={{marginTop: 10}} radius={1}>
+            <CardView style={{marginTop: 10, marginBottom: 20}} radius={1}>
               <View
                 style={{
                   flexDirection: 'row',

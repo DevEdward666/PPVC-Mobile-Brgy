@@ -4,6 +4,7 @@ import {
   Image,
   RefreshControl,
   ScrollView,
+  Dimensions,
   StyleSheet,
   Text,
   TouchableHighlight,
@@ -15,7 +16,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {action_get_userinfo} from '../../Services/Actions/UserInfoActions';
 import wait from '../../Plugins/waitinterval';
 import {action_get_complaints} from '../../Services/Actions/ComplaintsActions';
-
+const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const MORE_ICON = Platform.OS === 'ios' ? 'dots-horizontal' : 'dots-vertical';
 const MeScreen = () => {
   const users_reducers = useSelector((state) => state.UserInfoReducers.data);
@@ -53,7 +54,7 @@ const MeScreen = () => {
       );
       await Actions.home();
     } catch (e) {
-      // remove error
+      AsyncStorage.multiRemove(keys);
     }
   };
 
@@ -81,13 +82,26 @@ const MeScreen = () => {
   const gotocomplaints = useCallback(() => {
     Actions.complaints();
   }, []);
+  const gotonews = useCallback(() => {
+    Actions.newsfeed();
+  }, []);
+  const gotoposts = useCallback(() => {
+    Actions.posts();
+  }, []);
+  const gotobrgy = useCallback(() => {
+    Actions.officials();
+  }, []);
   const gotofad = useCallback(() => {
     Actions.fad();
+  }, []);
+  const gotosettings = useCallback(() => {
+    Actions.settings();
   }, []);
   let imageUri = 'data:image/png;base64,' + users_reducers.pic;
   const gotoinfo = useCallback(() => {
     Actions.profile();
   }, []);
+  console.log(users_reducers);
   return (
     <ScrollView
       style={{backgroundScrollViewColor: 'white'}}
@@ -128,143 +142,368 @@ const MeScreen = () => {
                     <Text style={{textAlign: 'justify', fontSize: 22}}>
                       {users_reducers.full_name}
                     </Text>
-                  </View>
-                </View>
-              </CardView>
-            </TouchableHighlight>
-            <TouchableHighlight
-              onPress={() => gotocomplaints()}
-              underlayColor="white">
-              <CardView radius={1} backgroundColor={'#ffffff'}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    height: 70,
-                    alignItems: 'center',
-                  }}>
-                  <View
-                    style={{
-                      width: '80%',
-                      height: 50,
-                      justifyContent: 'center',
-                    }}>
                     <Text
                       style={{
-                        textAlign: 'left',
-                        marginStart: 10,
-                        fontSize: 14,
-                        alignContent: 'center',
+                        textAlign: 'justify',
+                        fontSize: 16,
+                        textTransform: 'capitalize',
                       }}>
-                      Complaints
+                      {users_reducers.user_type}
                     </Text>
-                  </View>
-                  <View
-                    style={{
-                      width: '10%',
-                      height: 50,
-                      justifyContent: 'center',
-                    }}>
-                    <Image
-                      style={{
-                        height: 50,
-                        width: '100%',
-                        resizeMode: 'center',
-                        alignContent: 'flex-start',
-                      }}
-                      source={require('../../assets/icons/complaints.png')}
-                    />
                   </View>
                 </View>
               </CardView>
             </TouchableHighlight>
-            <TouchableHighlight onPress={() => gotofad()} underlayColor="white">
-              <CardView radius={1} backgroundColor={'#ffffff'}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    height: 70,
-                    alignItems: 'center',
-                  }}>
-                  <View
-                    style={{
-                      width: '80%',
-                      height: 50,
-                      justifyContent: 'center',
-                    }}>
-                    <Text
+            <View style={{flexDirection: 'row'}}>
+              <View style={{width: '50%'}}>
+                <TouchableHighlight
+                  onPress={() => gotonews()}
+                  underlayColor="white">
+                  <CardView radius={10} backgroundColor={'#ffffff'}>
+                    <View
                       style={{
-                        textAlign: 'left',
-                        marginStart: 10,
-                        fontSize: 14,
-                        alignContent: 'center',
+                        flexDirection: 'column',
+                        height: 100,
+                        padding: 10,
+                        alignItems: 'center',
                       }}>
-                      Family Assesment Data
-                    </Text>
-                  </View>
-                  <View
-                    style={{
-                      width: '10%',
-                      height: 50,
-                      justifyContent: 'center',
-                    }}>
-                    <Image
+                      <View
+                        style={{
+                          width: '100%',
+                          height: 50,
+                          justifyContent: 'center',
+                        }}>
+                        <Image
+                          style={{
+                            height: 50,
+                            width: '100%',
+                            resizeMode: 'center',
+                            alignContent: 'flex-start',
+                          }}
+                          source={require('../../assets/icons/news.png')}
+                        />
+                      </View>
+                      <View
+                        style={{
+                          width: '100%',
+                          height: 50,
+                          justifyContent: 'center',
+                        }}>
+                        <Text
+                          style={{
+                            textAlign: 'center',
+                            marginBottom: 10,
+                            fontSize: 12,
+                            alignContent: 'center',
+                          }}>
+                          News
+                        </Text>
+                      </View>
+                    </View>
+                  </CardView>
+                </TouchableHighlight>
+              </View>
+
+              <View style={{width: '50%'}}>
+                <TouchableHighlight
+                  onPress={() => gotoposts()}
+                  underlayColor="white">
+                  <CardView radius={10} backgroundColor={'#ffffff'}>
+                    <View
                       style={{
-                        height: 50,
-                        width: '100%',
-                        resizeMode: 'center',
-                        alignContent: 'flex-start',
-                      }}
-                      source={require('../../assets/icons/ic_admission_prem-playstore.png')}
-                    />
-                  </View>
-                </View>
-              </CardView>
-            </TouchableHighlight>
-            <TouchableHighlight
-              onPress={() => removeValue()}
-              underlayColor="white">
-              <CardView radius={10} backgroundColor={'#ffffff'}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    height: 70,
-                    alignItems: 'center',
-                  }}>
-                  <View
-                    style={{
-                      width: '80%',
-                      height: 50,
-                      justifyContent: 'center',
-                    }}>
-                    <Text
-                      style={{
-                        textAlign: 'left',
-                        marginStart: 10,
-                        fontSize: 14,
-                        alignContent: 'center',
+                        flexDirection: 'column',
+                        height: 100,
+                        padding: 10,
+                        alignItems: 'center',
                       }}>
-                      Logout
-                    </Text>
-                  </View>
-                  <View
-                    style={{
-                      width: '10%',
-                      height: 50,
-                      justifyContent: 'center',
-                    }}>
-                    <Image
+                      <View
+                        style={{
+                          width: '100%',
+                          height: 50,
+
+                          justifyContent: 'center',
+                        }}>
+                        <Image
+                          style={{
+                            height: 50,
+                            width: '100%',
+                            resizeMode: 'center',
+                            alignContent: 'flex-start',
+                          }}
+                          source={require('../../assets/icons/logs.jpg')}
+                        />
+                      </View>
+                      <View
+                        style={{
+                          width: '100%',
+                          height: 50,
+                          justifyContent: 'center',
+                        }}>
+                        <Text
+                          style={{
+                            textAlign: 'center',
+                            marginBottom: 10,
+                            fontSize: 12,
+                            alignContent: 'center',
+                          }}>
+                          Posts
+                        </Text>
+                      </View>
+                    </View>
+                  </CardView>
+                </TouchableHighlight>
+              </View>
+            </View>
+
+            <View style={{flexDirection: 'row'}}>
+              <View style={{width: '50%'}}>
+                <TouchableHighlight
+                  onPress={() => gotocomplaints()}
+                  underlayColor="white">
+                  <CardView radius={1} backgroundColor={'#ffffff'}>
+                    <View
                       style={{
-                        height: 50,
-                        width: '100%',
-                        resizeMode: 'center',
-                        alignContent: 'flex-start',
-                      }}
-                      source={require('../../assets/icons/logout.png')}
-                    />
-                  </View>
-                </View>
-              </CardView>
-            </TouchableHighlight>
+                        flexDirection: 'column',
+                        height: 100,
+                        padding: 10,
+                        alignItems: 'center',
+                      }}>
+                      <View
+                        style={{
+                          width: '100%',
+                          height: 50,
+                          justifyContent: 'center',
+                        }}>
+                        <Image
+                          style={{
+                            height: 50,
+                            width: '100%',
+                            resizeMode: 'center',
+                            alignContent: 'flex-start',
+                          }}
+                          source={require('../../assets/icons/complaints.png')}
+                        />
+                      </View>
+                      <View
+                        style={{
+                          width: '100%',
+                          height: 50,
+                          justifyContent: 'center',
+                        }}>
+                        <Text
+                          style={{
+                            textAlign: 'center',
+                            marginBottom: 10,
+                            fontSize: 12,
+                            alignContent: 'center',
+                          }}>
+                          Complaints
+                        </Text>
+                      </View>
+                    </View>
+                  </CardView>
+                </TouchableHighlight>
+              </View>
+
+              <View style={{width: '50%'}}>
+                <TouchableHighlight
+                  onPress={() => gotofad()}
+                  underlayColor="white">
+                  <CardView radius={1} backgroundColor={'#ffffff'}>
+                    <View
+                      style={{
+                        flexDirection: 'column',
+                        height: 100,
+                        padding: 10,
+                        alignItems: 'center',
+                      }}>
+                      <View
+                        style={{
+                          width: '100%',
+                          height: 50,
+                          justifyContent: 'center',
+                        }}>
+                        <Image
+                          style={{
+                            height: 50,
+                            width: '100%',
+                            resizeMode: 'center',
+                            alignContent: 'flex-start',
+                          }}
+                          source={require('../../assets/icons/ic_admission_prem-playstore.png')}
+                        />
+                      </View>
+                      <View
+                        style={{
+                          width: '100%',
+                          height: 50,
+                          justifyContent: 'center',
+                        }}>
+                        <Text
+                          style={{
+                            textAlign: 'center',
+                            marginBottom: 10,
+                            fontSize: 12,
+                            alignContent: 'center',
+                          }}>
+                          Family Assesment Data
+                        </Text>
+                      </View>
+                    </View>
+                  </CardView>
+                </TouchableHighlight>
+              </View>
+            </View>
+
+            <View style={{flexDirection: 'row'}}>
+              <View style={{width: '50%'}}>
+                <TouchableHighlight
+                  onPress={() => gotobrgy()}
+                  underlayColor="white">
+                  <CardView radius={10} backgroundColor={'#ffffff'}>
+                    <View
+                      style={{
+                        flexDirection: 'column',
+                        height: 100,
+                        padding: 10,
+                        alignItems: 'center',
+                      }}>
+                      <View
+                        style={{
+                          width: '100%',
+                          height: 50,
+                          justifyContent: 'center',
+                        }}>
+                        <Image
+                          style={{
+                            height: 50,
+                            width: '100%',
+                            resizeMode: 'center',
+                            alignContent: 'flex-start',
+                          }}
+                          source={require('../../assets/icons/officials.png')}
+                        />
+                      </View>
+                      <View
+                        style={{
+                          width: '100%',
+                          height: 50,
+                          justifyContent: 'center',
+                        }}>
+                        <Text
+                          style={{
+                            textAlign: 'center',
+                            marginBottom: 10,
+                            fontSize: 12,
+                            alignContent: 'center',
+                          }}>
+                          Brgy. Officials
+                        </Text>
+                      </View>
+                    </View>
+                  </CardView>
+                </TouchableHighlight>
+              </View>
+
+              <View style={{width: '50%'}}>
+                <TouchableHighlight
+                  onPress={() => gotosettings()}
+                  underlayColor="white">
+                  <CardView radius={10} backgroundColor={'#ffffff'}>
+                    <View
+                      style={{
+                        flexDirection: 'column',
+                        height: 100,
+                        padding: 10,
+                        alignItems: 'center',
+                      }}>
+                      <View
+                        style={{
+                          width: '100%',
+                          height: 50,
+                          justifyContent: 'center',
+                        }}>
+                        <Image
+                          style={{
+                            height: 50,
+                            width: '100%',
+                            resizeMode: 'center',
+                            alignContent: 'flex-start',
+                          }}
+                          source={require('../../assets/icons/settings.webp')}
+                        />
+                      </View>
+                      <View
+                        style={{
+                          width: '100%',
+                          height: 50,
+                          justifyContent: 'center',
+                        }}>
+                        <Text
+                          style={{
+                            textAlign: 'center',
+                            marginBottom: 10,
+                            fontSize: 12,
+                            alignContent: 'center',
+                          }}>
+                          Settings
+                        </Text>
+                      </View>
+                    </View>
+                  </CardView>
+                </TouchableHighlight>
+              </View>
+            </View>
+            <View style={{flexDirection: 'row'}}>
+              <View style={{width: '50%'}}>
+                <TouchableHighlight
+                  onPress={() => removeValue()}
+                  underlayColor="white">
+                  <CardView radius={10} backgroundColor={'#ffffff'}>
+                    <View
+                      style={{
+                        flexDirection: 'column',
+                        height: 100,
+                        padding: 10,
+                        alignItems: 'center',
+                      }}>
+                      <View
+                        style={{
+                          width: '100%',
+                          height: 50,
+                          justifyContent: 'center',
+                        }}>
+                        <Image
+                          style={{
+                            height: 50,
+                            width: '100%',
+                            resizeMode: 'center',
+                            alignContent: 'flex-start',
+                          }}
+                          source={require('../../assets/icons/ic_logout_prem-playstore.png')}
+                        />
+                      </View>
+                      <View
+                        style={{
+                          width: '100%',
+                          height: 50,
+                          justifyContent: 'center',
+                        }}>
+                        <Text
+                          style={{
+                            textAlign: 'center',
+                            marginBottom: 10,
+                            fontSize: 12,
+                            alignContent: 'center',
+                          }}>
+                          Logout
+                        </Text>
+                      </View>
+                    </View>
+                  </CardView>
+                </TouchableHighlight>
+              </View>
+            </View>
 
             <View style={{flexDirection: 'row', height: 50}}>
               <View

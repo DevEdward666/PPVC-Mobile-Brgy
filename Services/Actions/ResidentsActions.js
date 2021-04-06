@@ -5,20 +5,24 @@ import {
   GET_RESIDENTS_LIST,
   GET_RESIDENTS_ISSUCCESS,
   GET_RESIDENTS_FAD_DATA,
+  GET_FORGOT_PASSWORD_PROMISE,
 } from '../Types/ResidentsTypes';
 
-export const action_get_residents_list = () => async (dispatch) => {
+export const action_get_residents_list = (searchname) => async (dispatch) => {
   //   var url = `${BASE_URL}/api/user/currentUser`;
   var url = `${BASE_URL}/api/residentmobile/getresidents`;
   const token = await AsyncStorage.getItem('tokenizer');
   const bearer_token = token;
   const bearer = 'Bearer ' + bearer_token;
+  let formdata = new FormData();
+  formdata.append('searchname', searchname);
   const fetchdata = await fetch(url, {
     method: 'POST',
     withCredentials: true,
     headers: {
       Authorization: bearer,
     },
+    body: formdata,
   });
   const parseData = await fetchdata.json();
   if (parseData.status != 400) {
@@ -30,6 +34,7 @@ export const action_get_residents_list = () => async (dispatch) => {
     }
   }
 };
+
 export const action_get_FAD_exist = (resident_pk) => async (dispatch) => {
   //   var url = `${BASE_URL}/api/user/currentUser`;
   var url = `${BASE_URL}/api/familymobile/getfamilyexist`;
@@ -57,6 +62,86 @@ export const action_get_FAD_exist = (resident_pk) => async (dispatch) => {
   }
 };
 
+export const action_reset_password = (
+  email,
+  password,
+  currentpassword,
+) => async (dispatch) => {
+  //   var url = `${BASE_URL}/api/user/currentUser`;
+  var url = `${BASE_URL}/api/residentmobile/updatepassword`;
+  const token = await AsyncStorage.getItem('tokenizer');
+  const bearer_token = token;
+  const bearer = 'Bearer ' + bearer_token;
+  let formdata = new FormData();
+  formdata.append('email', email);
+  formdata.append('password', password);
+  formdata.append('currentpassword', currentpassword);
+  const fetchdata = await fetch(url, {
+    method: 'POST',
+    withCredentials: true,
+    headers: {
+      Authorization: bearer,
+    },
+    body: formdata,
+  });
+  const parseData = await fetchdata.json();
+  if (parseData.status != 400) {
+    if (parseData.success != false) {
+      dispatch({
+        type: GET_FORGOT_PASSWORD_PROMISE,
+        payload: {message: parseData.message, success: parseData.success},
+      });
+    } else {
+      dispatch({
+        type: GET_FORGOT_PASSWORD_PROMISE,
+        payload: {message: parseData.message, success: parseData.success},
+      });
+    }
+  } else {
+    dispatch({
+      type: GET_FORGOT_PASSWORD_PROMISE,
+      payload: {message: parseData.message, success: parseData.success},
+    });
+  }
+};
+
+export const action_forgot_password = (email, password) => async (dispatch) => {
+  //   var url = `${BASE_URL}/api/user/currentUser`;
+  var url = `${BASE_URL}/api/residentmobile/forgotpassword`;
+  const token = await AsyncStorage.getItem('tokenizer');
+  const bearer_token = token;
+  const bearer = 'Bearer ' + bearer_token;
+  let formdata = new FormData();
+  formdata.append('email', email);
+  formdata.append('password', password);
+  const fetchdata = await fetch(url, {
+    method: 'POST',
+    withCredentials: true,
+    headers: {
+      Authorization: bearer,
+    },
+    body: formdata,
+  });
+  const parseData = await fetchdata.json();
+  if (parseData.status != 400) {
+    if (parseData.success != false) {
+      dispatch({
+        type: GET_FORGOT_PASSWORD_PROMISE,
+        payload: {message: parseData.message, success: parseData.success},
+      });
+    } else {
+      dispatch({
+        type: GET_FORGOT_PASSWORD_PROMISE,
+        payload: {message: parseData.message, success: parseData.success},
+      });
+    }
+  } else {
+    dispatch({
+      type: GET_FORGOT_PASSWORD_PROMISE,
+      payload: {message: parseData.message, success: parseData.success},
+    });
+  }
+};
 export const action_addfamily = (
   resident_pk,
   okasyon_balay,
@@ -66,6 +151,7 @@ export const action_addfamily = (
   kaligon_balay,
   fam_member,
 ) => async (dispatch) => {
+  console.log(parseInt(kadugayon_pagpuyo));
   //   var url = `${BASE_URL}/api/user/currentUser`;
   var url = `${BASE_URL}/api/family/addFamily`;
   const token = await AsyncStorage.getItem('tokenizer');

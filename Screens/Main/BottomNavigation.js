@@ -7,52 +7,50 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Actions} from 'react-native-router-flux';
 
-import Posts from '../Posts/Posts';
-import NewsFeed from '../News/NewsFeed';
-import BarangayOfficials from '../BarangayOfficials/BarangayOfficialsList';
 import MeScreen from '../Me/MeScreen';
 import {useDispatch, useSelector} from 'react-redux';
 import {action_get_userinfo} from '../../Services/Actions/UserInfoActions';
+import {View} from 'react-native';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-function NewsStack() {
-  return (
-    <Stack.Navigator
-      initialRouteName="News Feed"
-      screenOptions={{headerShown: false, headerLeft: null}}>
-      <Stack.Screen name="News Feed" component={NewsFeed} />
-    </Stack.Navigator>
-  );
-}
-function PostsStack() {
-  return (
-    <Stack.Navigator
-      initialRouteName="Posts"
-      screenOptions={{headerShown: false, headerLeft: null}}>
-      <Stack.Screen name="Posts" component={Posts} />
-    </Stack.Navigator>
-  );
-}
+// function NewsStack() {
+//   return (
+//     <Stack.Navigator
+//       initialRouteName="News Feed"
+//       screenOptions={{headerShown: false, headerLeft: null}}>
+//       <Stack.Screen name="News Feed" component={NewsFeed} />
+//     </Stack.Navigator>
+//   );
+// }
+// function PostsStack() {
+//   return (
+//     <Stack.Navigator
+//       initialRouteName="Posts"
+//       screenOptions={{headerShown: false, headerLeft: null}}>
+//       <Stack.Screen name="Posts" component={Posts} />
+//     </Stack.Navigator>
+//   );
+// }
 
-function BarangayStack() {
-  return (
-    <Stack.Navigator
-      initialRouteName="Brgy. Officials"
-      screenOptions={{headerShown: false, headerLeft: null}}>
-      <Stack.Screen name="Brgy. Officials" component={BarangayOfficials} />
-    </Stack.Navigator>
-  );
-}
+// function BarangayStack() {
+//   return (
+//     <Stack.Navigator
+//       initialRouteName="Brgy. Officials"
+//       screenOptions={{headerShown: false, headerLeft: null}}>
+//       <Stack.Screen name="Brgy. Officials" component={BarangayOfficials} />
+//     </Stack.Navigator>
+//   );
+// }
 
-function MeStack() {
-  return (
-    <Stack.Navigator initialRouteName="Me" screenOptions={{headerShown: false}}>
-      <Stack.Screen name="Me" component={MeScreen} />
-    </Stack.Navigator>
-  );
-}
+// function MeStack() {
+//   return (
+//     <Stack.Navigator initialRouteName="Me" screenOptions={{headerShown: false}}>
+//       <Stack.Screen name="Me" component={MeScreen} />
+//     </Stack.Navigator>
+//   );
+// }
 
 // function SettingsStack() {
 //   return (
@@ -97,68 +95,71 @@ function BottomNavigation() {
     }
   });
   return (
-    <NavigationContainer>
-      <Tab.Navigator
-        initialRouteName="Home"
-        tabBarOptions={{
-          activeTintColor: '#3b5998',
-        }}>
-        <Tab.Screen
-          name="NewsStack"
-          component={NewsStack}
-          options={{
-            tabBarLabel: 'News Feed',
-            tabBarIcon: ({color, size}) => (
-              <MaterialCommunityIcons
-                name="compass"
-                color={color}
-                size={size}
-              />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="PostsStack"
-          component={PostsStack}
-          options={{
-            tabBarLabel: 'Posts',
-            tabBarIcon: ({color, size}) => (
-              <MaterialCommunityIcons name="post" color={color} size={size} />
-            ),
-          }}
-        />
+    <View>
+      <MeScreen />
+    </View>
+    // <NavigationContainer>
+    //   <Tab.Navigator
+    //     initialRouteName="Home"
+    //     tabBarOptions={{
+    //       activeTintColor: '#3b5998',
+    //     }}>
+    //     <Tab.Screen
+    //       name="NewsStack"
+    //       component={NewsStack}
+    //       options={{
+    //         tabBarLabel: 'News Feed',
+    //         tabBarIcon: ({color, size}) => (
+    //           <MaterialCommunityIcons
+    //             name="compass"
+    //             color={color}
+    //             size={size}
+    //           />
+    //         ),
+    //       }}
+    //     />
+    //     <Tab.Screen
+    //       name="PostsStack"
+    //       component={PostsStack}
+    //       options={{
+    //         tabBarLabel: 'Posts',
+    //         tabBarIcon: ({color, size}) => (
+    //           <MaterialCommunityIcons name="post" color={color} size={size} />
+    //         ),
+    //       }}
+    //     />
 
-        <Tab.Screen
-          name="Brgy.Officials"
-          component={BarangayStack}
-          options={{
-            tabBarLabel: 'Brgy.Officials',
-            tabBarIcon: ({color, size}) => (
-              <MaterialCommunityIcons
-                name="account-cowboy-hat"
-                color={color}
-                size={size}
-              />
-            ),
-          }}
-        />
+    //     <Tab.Screen
+    //       name="Brgy.Officials"
+    //       component={BarangayStack}
+    //       options={{
+    //         tabBarLabel: 'Brgy.Officials',
+    //         tabBarIcon: ({color, size}) => (
+    //           <MaterialCommunityIcons
+    //             name="account-cowboy-hat"
+    //             color={color}
+    //             size={size}
+    //           />
+    //         ),
+    //       }}
+    //     />
 
-        <Tab.Screen
-          name="MeStack"
-          component={MeStack}
-          options={{
-            tabBarLabel: 'Me',
-            tabBarIcon: ({color, size}) => (
-              <MaterialCommunityIcons
-                name="account"
-                color={color}
-                size={size}
-              />
-            ),
-          }}
-        />
-      </Tab.Navigator>
-    </NavigationContainer>
+    //     <Tab.Screen
+    //       name="MeStack"
+    //       component={MeStack}
+    //       options={{
+    //         tabBarLabel: 'Me',
+    //         tabBarIcon: ({color, size}) => (
+    //           <MaterialCommunityIcons
+    //             name="account"
+    //             color={color}
+    //             size={size}
+    //           />
+    //         ),
+    //       }}
+    //     />
+    //   </Tab.Navigator>
+    // </NavigationContainer>
   );
 }
 export default BottomNavigation;

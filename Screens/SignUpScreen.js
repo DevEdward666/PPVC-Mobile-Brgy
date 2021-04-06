@@ -670,7 +670,7 @@ const SignUpScreen = () => {
                     source={{
                       uri: 'https://bootdey.com/img/Content/avatar/avatar6.png',
                     }}>
-                    <Text style={styles.text}>Take a Photo</Text>
+                    <Text style={styles.text}>Choose Image</Text>
                   </ImageBackground>
                 </TouchableHighlight>
               )}
@@ -1012,6 +1012,7 @@ const SignUpScreen = () => {
                     },
                   }}
                   mode="outlined"
+                  keyboardType="number-pad"
                   onChangeText={(text) => handleHouseIncome(text)}
                   label="House Income"
                   value={HouseIncome}

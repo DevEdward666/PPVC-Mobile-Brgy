@@ -4,10 +4,12 @@ import {
   SafeAreaView,
   ScrollView,
   View,
+  Dimensions,
   Image,
   Text,
   StyleSheet,
 } from 'react-native';
+const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 import CardView from 'react-native-rn-cardview';
 import {action_get_barangay_officials_list} from '../../Services/Actions/BarangayOfficialsActions';
 import {useDispatch, useSelector} from 'react-redux';
@@ -30,12 +32,19 @@ const BarangayOfficials = () => {
 
   return (
     <SafeAreaView>
-      <CardView>
-        <Text style={{textAlign: 'center', fontSize: 22, height: 50}}>
+      <CardView
+        style={{
+          height: screenHeight - 780,
+        }}>
+        <Text
+          style={{
+            textAlign: 'center',
+            fontSize: 22,
+          }}>
           Barangay Officials
         </Text>
       </CardView>
-      <ScrollView>
+      <ScrollView style={{height: screenHeight}}>
         {brgyofficiallist.map((items, index) => {
           return (
             <CardView key={index}>
@@ -45,8 +54,9 @@ const BarangayOfficials = () => {
                   flexDirection: 'row',
                   justifyContent: 'space-around',
                   marginBottom: 50,
+                  height: screenHeight - 800,
                 }}>
-                <View style={{width: 50, height: 20}}>
+                <View style={{width: 50}}>
                   <Image
                     source={{
                       uri: `data:image/png;base64,${items?.pic}`,
@@ -62,7 +72,7 @@ const BarangayOfficials = () => {
                     }}
                   />
                 </View>
-                <View style={{width: 300, height: 20}}>
+                <View style={{width: 300}}>
                   <Text style={styles.containerNOTIFICATION}>
                     {items?.first_name} {items?.middle_name} {items?.last_name}{' '}
                     {items?.suffix}
@@ -83,6 +93,7 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
     paddingRight: 16,
     paddingVertical: 10,
+    fontSize: 14,
     flexDirection: 'row',
     alignItems: 'flex-start',
   },

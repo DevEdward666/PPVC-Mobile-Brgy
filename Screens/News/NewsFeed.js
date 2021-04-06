@@ -129,7 +129,7 @@ const UINews = () => {
             onPress={() => gotonewsinfo(item)}
             underlayColor="white">
             <CardView
-              style={{marginTop: -5}}
+              style={{marginTop: -5, marginBottom: 20}}
               radius={1}
               backgroundColor={'#ffffff'}>
               <View
@@ -167,7 +167,7 @@ const UINews = () => {
                   </View>
                 </ImageBackground>
               </View>
-              <View
+              {/* <View
                 style={{
                   flexDirection: 'row',
                   height: 30,
@@ -190,7 +190,7 @@ const UINews = () => {
                 onPress={(index) => updateIndex(item, index)}
                 buttons={buttons}
                 containerStyle={{height: 35, marginBottom: 15}}
-              />
+              /> */}
             </CardView>
           </TouchableHighlight>
         )}

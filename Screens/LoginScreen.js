@@ -22,16 +22,20 @@ const LoginScreen = () => {
 
   const dispatch = useDispatch();
   const handleSubmit = useCallback(() => {
-    dispatch(action_Login_user(username, password));
+    dispatch(action_Login_user(username.trim(), password));
   });
   const goToSignup = useCallback(() => {
     Actions.signup();
+  });
+  const gotoreset = useCallback(() => {
+    Actions.resetpassword();
   });
   AsyncStorage.getItem('tokenizer').then((item) => {
     if (item !== null) {
       Actions.index();
     }
   });
+
   return (
     <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
       <View style={styles.container}>
@@ -118,6 +122,13 @@ const LoginScreen = () => {
             Not Yet Registered?{' '}
             <Text onPress={() => goToSignup()} style={{color: 'blue'}}>
               Sign Up
+            </Text>
+          </Text>
+        </View>
+        <View style={{flex: 1, width: '100%', padding: 10, marginTop: 5}}>
+          <Text style={{textAlign: 'center'}}>
+            <Text onPress={() => gotoreset()} style={{color: 'blue'}}>
+              Forgot Password
             </Text>
           </Text>
         </View>

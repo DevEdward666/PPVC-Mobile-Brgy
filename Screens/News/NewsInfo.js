@@ -31,7 +31,7 @@ import {
 import BASE_URL from '../../Services/Types/Default_Types';
 import CustomBottomSheet from '../../Plugins/CustomBottomSheet';
 import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
-const {width: screenWidth} = Dimensions.get('window');
+const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const UINews = () => {
   const [offset, setoffset] = useState(10);
   const [refreshing, setRefreshing] = useState(false);
@@ -199,7 +199,7 @@ const UINews = () => {
         <View
           style={{
             flexDirection: 'row',
-            height: 300,
+            height: screenHeight - 500,
             alignItems: 'center',
           }}>
           <Text style={styles.baseText}>
@@ -210,7 +210,7 @@ const UINews = () => {
           </Text>
         </View>
       </ScrollView>
-      <Text style={styles.commentlabel}>Comments</Text>
+      {/* <Text style={styles.commentlabel}>Comments</Text>
       <FlatList
         style={{
           backgroundColor: '#ffffff',
@@ -295,7 +295,7 @@ const UINews = () => {
             />
           </View>
         </View>
-      </View>
+      </View> */}
       <GestureRecognizer
         onSwipe={(direction, state) => onSwipe(direction, state)}
         config={config}
@@ -444,7 +444,6 @@ const styles = StyleSheet.create({
   baseText: {
     textAlign: 'justify',
     padding: 15,
-    marginTop: -150,
     color: 'black',
   },
   textTitle: {

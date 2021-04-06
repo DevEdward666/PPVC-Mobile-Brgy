@@ -24,7 +24,6 @@ export const action_SignUp_user = (
   HouseStatus,
   VotingPrecint,
   houseownedby,
-  username,
   password,
 ) => async () => {
   var url = `${BASE_URL}/api/residentmobile/addMobileResident`;
@@ -69,8 +68,11 @@ export const action_SignUp_user = (
   const parseData = await fetchdata.json();
   if (parseData.status != 400) {
     if (parseData.success != false) {
-      console.log(parseData);
+      alert(parseData.message);
+    } else {
+      alert(parseData.message);
     }
+  } else {
+    alert(parseData.message);
   }
-  console.log(parseData);
 };

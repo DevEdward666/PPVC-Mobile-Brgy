@@ -8,6 +8,7 @@ import {
   View,
   Text,
   StyleSheet,
+  Dimensions,
   RefreshControl,
   ImageBackground,
   FlatList,
@@ -32,6 +33,8 @@ import {
   action_posts_add_comment,
   action_set_posts,
 } from '../../Services/Actions/PostsActions';
+import Dateconverter from '../../Plugins/Dateconverter';
+const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const MeInfo = () => {
   const users_reducers = useSelector((state) => state.UserInfoReducers.data);
   const user_posts = useSelector(
@@ -43,6 +46,7 @@ const MeInfo = () => {
   const posts_comments = useSelector(
     (state) => state.PostsReducers.posts_comments,
   );
+
   const dispatch = useDispatch();
   const [PostIsVisible, setPostIsVisible] = useState(false);
   const [isVisible, setisVisible] = useState(false);
@@ -50,6 +54,7 @@ const MeInfo = () => {
   const [posts_id, setposts_id] = useState('');
   const [refreshing, setRefreshing] = useState(false);
   const [post, setpost] = useState('');
+  const [age, setage] = useState('');
   useEffect(() => {
     let mounted = true;
 
@@ -61,6 +66,27 @@ const MeInfo = () => {
     mounted && userinfoanduserposts();
     return () => (mounted = false);
   }, [dispatch]);
+  const calculate_age = (dob1) => {
+    var today = new Date();
+    var birthDate = new Date(dob1); // create a date object directly from `dob1` argument
+    var age_now = today.getFullYear() - birthDate.getFullYear();
+    var m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age_now--;
+    }
+    setage(age_now);
+    return age_now;
+  };
+  useEffect(() => {
+    let mounted = true;
+
+    const userinfoanduserposts = () => {
+      calculate_age(users_reducers?.birth_date);
+    };
+
+    mounted && userinfoanduserposts();
+    return () => (mounted = false);
+  }, []);
   let imageUri = 'data:image/png;base64,' + users_reducers?.pic;
 
   const handleAddPostPress = useCallback(() => {
@@ -168,12 +194,12 @@ const MeInfo = () => {
         <View
           radius={1}
           backgroundColor={'#ffffff'}
-          style={{height: 300, marginBottom: 10}}>
+          style={{height: screenHeight - 500, marginBottom: 10}}>
           <View style={{flexDirection: 'row', justifyContent: 'center'}}>
             <View
               style={{
                 width: '100%',
-                height: 100,
+                height: screenHeight,
                 textAlign: 'center',
               }}>
               <Image
@@ -181,8 +207,8 @@ const MeInfo = () => {
                   marginTop: 10,
                   marginStart: 10,
                   alignSelf: 'center',
-                  width: 200,
-                  height: 200,
+                  width: 150,
+                  height: 150,
                   borderRadius: 200 / 2,
                   overflow: 'hidden',
                   borderWidth: 3,
@@ -194,10 +220,18 @@ const MeInfo = () => {
                 {users_reducers?.full_name}
               </Text>
               <Text style={{textAlign: 'center', fontSize: 14}}>
-                Mobile No.: {users_reducers?.phone}
+                Age :{age}
               </Text>
               <Text style={{textAlign: 'center', fontSize: 14}}>
-                Email: {users_reducers?.email}
+                Birthday : {Dateconverter(users_reducers?.birth_date)}
+              </Text>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  fontSize: 14,
+                  textTransform: 'capitalize',
+                }}>
+                Civil Status : {users_reducers?.civil_status}
               </Text>
               <View style={{width: '100%', height: 50, padding: 5}}></View>
             </View>
@@ -221,12 +255,13 @@ const MeInfo = () => {
         keyExtractor={(item, index) => index.toString()}
         onEndReachedThreshold={0.1}
         renderItem={({item, index}) => (
-          <CardView style={{marginTop: -5}} radius={1}>
+          <CardView style={{marginTop: -5, marginBottom: 20}} radius={1}>
             <View
               style={{
                 flexDirection: 'row',
                 height: 50,
                 padding: 10,
+
                 flex: 1,
                 alignItems: 'center',
               }}>
