@@ -56,7 +56,7 @@ export const action_SignUp_user = (
   formdata.append('house_ownership', houseownedby);
   formdata.append('password', password);
   formdata.append('encoder_pk', '0');
-
+  console.log(PhotoSingleFile);
   const fetchdata = await fetch(url, {
     method: 'POST',
     headers: {

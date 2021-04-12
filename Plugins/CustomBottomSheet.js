@@ -1,7 +1,7 @@
 import React, {useState, useCallback, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import {SafeAreaView, View, ScrollView} from 'react-native';
-import {BottomSheet} from 'react-native-elements/dist/bottomSheet/BottomSheet';
+import {BottomSheet} from 'react-native-elements';
 import {Card} from 'react-native-elements/dist/card/Card';
 import CardView from 'react-native-rn-cardview';
 
@@ -25,7 +25,6 @@ const CustomBottomSheet = ({isVisible, color, UI, Footer}) => {
   return (
     <BottomSheet
       isVisible={isVisible}
-      modalProps={{animationType: 'slide'}}
       containerStyle={{backgroundColor: color}}>
       <CardView>{UI}</CardView>
 

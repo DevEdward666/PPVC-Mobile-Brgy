@@ -91,8 +91,8 @@ const SignUpScreen = () => {
   const [imageresponse, setimageresponse] = useState(null);
   const [profileimageresponse, setprofileimageresponse] = useState(null);
   const [showpass, setshowpass] = useState(true);
-  const [iconpass, seticonpass] = useState(true);
-  const [showconfirmpass, setshowconfirmpass] = useState(false);
+  const [iconpass, seticonpass] = useState(false);
+  const [showconfirmpass, setshowconfirmpass] = useState(true);
   const [iconconfirmpass, seticonconfirmpass] = useState(false);
   const [stepError, setstepError] = useState(false);
   const [region, setregion] = useState('');
@@ -530,15 +530,16 @@ const SignUpScreen = () => {
       title: 'You can choose one image',
       maxWidth: 1280,
       maxHeight: 720,
+      includeBase64: true,
       base64: true,
       storageOptions: {
         skipBackup: true,
       },
     };
     ImagePicker.launchImageLibrary(options, (response) => {
-      console.log({response});
+      console.log(response.base64);
       setresourcePathProfile(response.uri); // update the local state, this will rerender your TomarFoto component with the photo uri path.
-      setPhotoSingleFile(response.data); // update the local state, this will rerender your TomarFoto component with the photo uri path.
+      setPhotoSingleFile(response.base64); // update the local state, this will rerender your TomarFoto component with the photo uri path.
 
       if (response.didCancel) {
         console.log('User cancelled photo picker');
@@ -553,7 +554,7 @@ const SignUpScreen = () => {
         setprofileimageresponse(response);
       }
     });
-  }, [setresourcePathProfile]);
+  }, [setresourcePathProfile, PhotoSingleFile]);
   const handleSubmitCredentials = useCallback(async () => {
     if (stepError == false) {
       dispatch(
@@ -591,7 +592,32 @@ const SignUpScreen = () => {
     } else {
       alert('Please Provide Valid Data');
     }
-  });
+  }, [
+    PhotoSingleFile,
+    firstname,
+    middlename,
+    lastname,
+    suffix,
+    gender,
+    birthdate,
+    nationality,
+    religion,
+    civilstatus,
+    purok,
+    mobile,
+    email,
+    dialect,
+    tribe,
+    disability,
+    isemployed,
+    jobspecs,
+    HouseIncome,
+    HouseStatus,
+    VotingPrecint,
+    houseownedby,
+    username,
+    password,
+  ]);
   const [isVisibles, setIsVisibles] = useState(false);
   const [gestureName, setgestureName] = useState('');
   const [list, updateList] = useState(PeopleInsidetheHouse);
@@ -843,8 +869,8 @@ const SignUpScreen = () => {
                       setgender(itemValue)
                     }>
                     <Picker.Item label="Gender" />
-                    <Picker.Item label="Male" value="M" />
-                    <Picker.Item label="Female" value="F" />
+                    <Picker.Item label="Male" value="m" />
+                    <Picker.Item label="Female" value="f" />
                   </Picker>
                 </View>
               </View>

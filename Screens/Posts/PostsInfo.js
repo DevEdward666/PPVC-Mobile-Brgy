@@ -212,7 +212,11 @@ const PostsInfo = () => {
           </View>
 
           <View style={{width: 1}}>
-            <Badge status="primary" value={posts_info[0]?.likes} />
+            {posts_info[0]?.reactions.map((likes, index) => {
+              return (
+                <Badge status="primary" key={index} value={likes?.likes} />
+              );
+            })}
           </View>
         </View>
 

@@ -12,6 +12,8 @@ target 'barangay_react' do
 
   pod 'react-native-document-picker', :path => '../node_modules/react-native-document-picker'
 
+  pod 'RNNotificationBanner', :path => '../node_modules/react-native-notification-banner'
+
   target 'barangay_reactTests' do
     inherit! :complete
     # Pods for testing

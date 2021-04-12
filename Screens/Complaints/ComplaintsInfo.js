@@ -21,7 +21,9 @@ import {
   action_get_complaints_info,
   action_get_complaints_messages,
   action_set_complaints_messages,
+  action_notify,
 } from '../../Services/Actions/ComplaintsActions';
+
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CustomBottomSheet from '../../Plugins/CustomBottomSheet';
 import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
@@ -29,6 +31,7 @@ import {ImageBackground} from 'react-native';
 import io from 'socket.io-client';
 const ComplaintsInfo = () => {
   const users_reducers = useSelector((state) => state.UserInfoReducers.data);
+
   const [complaint_pk, setcomplaint_pk] = useState('');
   const [sendmessage, setsendmessage] = useState('');
   const [messages, getmessages] = useState('');
@@ -79,6 +82,26 @@ const ComplaintsInfo = () => {
 
       socketRef.current.on('allMessage', () => {
         set_reload_messages((prev) => prev + 1);
+        dispatch(
+          action_notify([
+            {
+              title: 'Message',
+              message: 'New Message',
+              notify: true,
+            },
+          ]),
+        );
+        setTimeout(() => {
+          dispatch(
+            action_notify([
+              {
+                title: 'Message',
+                message: 'New Message',
+                notify: false,
+              },
+            ]),
+          );
+        }, 500);
       });
 
       socketRef.current.on('failedMessage', (error) => {
@@ -92,7 +115,8 @@ const ComplaintsInfo = () => {
 
     mounted && socketsio();
     return () => (mounted = false);
-  }, [complaint_pk, token]);
+  }, [complaint_pk, token, dispatch, sendmessage]);
+
   useEffect(() => {
     let mounted = true;
 
@@ -104,7 +128,7 @@ const ComplaintsInfo = () => {
     mounted && getcomplintsinfo();
     return () => (mounted = false);
   }, [dispatch, complaint_pk, reload_messages]);
-  console.log(complaint_info);
+
   const onChangeMessageText = useCallback((text) => {
     setsendmessage(text);
   }, []);

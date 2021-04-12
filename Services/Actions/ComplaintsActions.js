@@ -5,6 +5,7 @@ import {
   GET_COMPLAINTS_INFO,
   GET_COMPLAINTS_MESSAGE,
 } from '../Types/Complaints_Types';
+import {NOTIFY} from '../Types/Default_Types';
 
 export const action_get_complaints = (reported_by) => async (dispatch) => {
   var url = `${BASE_URL}/api/complaintmobile/getComplaintList`;
@@ -143,4 +144,11 @@ export const action_set_complaints_messages = (body, complaint_pk) => async (
     if (parseData.success != false) {
     }
   }
+};
+
+export const action_notify = (notify) => async (dispatch) => {
+  dispatch({
+    type: NOTIFY,
+    payload: notify,
+  });
 };

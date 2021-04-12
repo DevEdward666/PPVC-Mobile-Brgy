@@ -64,29 +64,20 @@ const UINews = () => {
   useEffect(() => {
     let mounted = true;
 
-    const getcommentsandinfo = () => {
-      setSpinner(true);
-      setTimeout(() => {
+    const getcommentsandinfo = async () => {
+      await setSpinner(true);
+
+      wait(1000).then(() => {
         setSpinner(false);
-      }, 1000);
-      setEntries(news_reducers_info[0]?.upload_files);
-      dispatch(action_get_news_info(news_id.toString()));
-      dispatch(action_get_news_comments(news_id.toString()));
+      });
+      await dispatch(action_get_news_info(news_id.toString()));
+      await dispatch(action_get_news_comments(news_id.toString()));
+      await setEntries(ENTRIES1);
     };
 
     mounted && getcommentsandinfo();
     return () => (mounted = false);
   }, [dispatch, news_id]);
-  useEffect(() => {
-    let mounted = true;
-    const getcommentsandinfo = () => {
-      setEntries(ENTRIES1);
-      dispatch(action_get_news_info(news_id.toString()));
-      dispatch(action_get_news_comments(news_id.toString()));
-    };
-    mounted && getcommentsandinfo();
-    return () => (mounted = false);
-  }, [dispatch, news_id, ENTRIES1]);
 
   const carouselRef = useRef(null);
 
@@ -94,22 +85,25 @@ const UINews = () => {
     carouselRef.current.snapToNext();
   };
 
-  const renderItem = ({item, index}, parallaxProps) => {
-    return (
-      <View style={styles.item}>
-        <ParallaxImage
-          source={{uri: `${base_url}/${item?.file_path}`}}
-          containerStyle={styles.imageContainer}
-          style={styles.image}
-          parallaxFactor={0.1}
-          {...parallaxProps}
-        />
-        {/* <Text style={styles.title} numberOfLines={2}>
+  const renderItem = useCallback(
+    ({item, index}, parallaxProps) => {
+      return (
+        <View style={styles.item}>
+          <ParallaxImage
+            source={{uri: `${base_url}/${item?.file_path}`}}
+            containerStyle={styles.imageContainer}
+            style={styles.image}
+            parallaxFactor={0.1}
+            {...parallaxProps}
+          />
+          {/* <Text style={styles.title} numberOfLines={2}>
           {item.filename}
         </Text> */}
-      </View>
-    );
-  };
+        </View>
+      );
+    },
+    [base_url],
+  );
   const onChangeText = useCallback((text) => {
     setcomment(text);
   }, []);
@@ -199,7 +193,7 @@ const UINews = () => {
         <View
           style={{
             flexDirection: 'row',
-            height: screenHeight - 500,
+            height: screenHeight - 400,
             alignItems: 'center',
           }}>
           <Text style={styles.baseText}>

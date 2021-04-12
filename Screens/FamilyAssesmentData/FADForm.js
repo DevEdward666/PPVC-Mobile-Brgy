@@ -11,7 +11,9 @@ import {
   TouchableNativeFeedback,
   Text,
   SafeAreaView,
+  RefreshControl,
 } from 'react-native';
+import Spinner from 'react-native-loading-spinner-overlay';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {TextInput, Searchbar, Card} from 'react-native-paper';
@@ -48,12 +50,15 @@ const FADForm = () => {
   const [Occationfortheland, setOccationfortheland] = useState('');
   const [Occationofthehouse, setOccationofthehouse] = useState('');
   const [submitmessage, setsubmitmessage] = useState('');
+  const [isDisabled, setisDisabled] = useState(true);
+  const [spinner, setspinner] = useState(false);
 
   const [relationship, setrelationship] = useState('');
   const [PeopleName, setpeoplename] = useState('');
   const [residentname, setresidentname] = useState('');
   const [peopleid, setpeopleid] = useState('');
   const [showsnackbar, setshowsnackbar] = useState(false);
+  const [tickrefresh, settickrefresh] = useState(0);
 
   const [PeopleInsidetheHouse, setPeopleInsidetheHouse] = useState([]);
   const [ADDPeopleInsidetheHouse, setADDPeopleInsidetheHouse] = useState([]);
@@ -64,70 +69,84 @@ const FADForm = () => {
   const [Alerttitle, setAlerttitle] = useState('');
   const [Alertmessage, setAlertmessage] = useState('');
   const [Alertshow, setAlertshow] = useState(false);
-  const [searchvalue, setsearchvalue] = useState(null);
+  const [searchvalue, setsearchvalue] = useState(' ');
   const [InfoError, setInfoError] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const handleSubmit = useCallback(async () => {
-    if (residents_data_exist[0]?.fam_members === '') {
-      await dispatch(
-        action_addfamily(
-          users_reducers.resident_pk,
-          Occationofthehouse,
-          structure,
-          yearsstayed,
-          Occationfortheland,
-          qualityness,
-          fam_member,
-        ),
-      );
-      console.log('not exist');
-    } else {
-      await dispatch(
-        action_addfamily(
-          users_reducers.resident_pk,
-          Occationofthehouse,
-          structure,
-          yearsstayed,
-          Occationfortheland,
-          qualityness,
-          fam_member_add,
-        ),
-      );
-    }
+    setspinner(true);
+
+    await dispatch(
+      action_addfamily(
+        residents_data_exist[0]?.fam_pk,
+        users_reducers.resident_pk,
+        Occationofthehouse,
+        structure,
+        yearsstayed,
+        Occationfortheland,
+        qualityness,
+        fam_member,
+      ),
+    );
+    setspinner(false);
     if (residents_issuccess) {
-      setAlertshow(true);
-      setAlertmessage(
+      alert(
         'Your Application for Family Assesment Data has been submitted successfully',
       );
-      setAlerttitle('Family Assesment Data');
+
       wait(1000).then(() => {
         Actions.index();
         setAlertshow(false);
       });
     }
-    // setshowsnackbar(true);
-    // setsubmitmessage('Submitted');
-  }, [dispatch, fam_member, fam_member_add]);
-  const handleNextInfo = useCallback(async () => {
-    if (
-      qualityness == undefined ||
-      Occationfortheland == undefined ||
-      Occationofthehouse == undefined ||
-      yearsstayed == undefined ||
-      structure == undefined
-    ) {
-      await setInfoError(true);
-      alert('Please Fill All Fields');
-    } else {
-      await setInfoError(false);
-    }
-  }, [
-    qualityness,
-    Occationfortheland,
-    Occationofthehouse,
-    yearsstayed,
-    structure,
-  ]);
+  }, [dispatch, fam_member, residents_issuccess]);
+
+  const handleNextInfo = useCallback(
+    async () => {
+      setRefreshing(true);
+      setPeopleInsidetheHouse([]);
+      setfam_member([]);
+      setRefreshing(false);
+      dispatch(action_get_FAD_exist(users_reducers?.resident_pk));
+      residents_data_exist[0]?.fam_members?.map((item) => {
+        setPeopleInsidetheHouse((prev) => [
+          ...prev,
+          {
+            PeopleName: item?.first_name + ' ' + item?.last_name,
+            realationship: item?.rel,
+          },
+        ]);
+        setfam_member((prev) => [
+          ...prev,
+          {
+            PeopleName: item?.first_name + ' ' + item?.last_name,
+            resident_pk: parseInt(item?.resident_pk),
+            rel: item?.rel,
+          },
+        ]);
+      });
+      if (
+        qualityness == undefined ||
+        Occationfortheland == undefined ||
+        Occationofthehouse == undefined ||
+        yearsstayed == undefined ||
+        structure == undefined
+      ) {
+        await setInfoError(true);
+        alert('Please Fill All Fields');
+      } else {
+        await setInfoError(false);
+      }
+    },
+    [
+      qualityness,
+      Occationfortheland,
+      Occationofthehouse,
+      yearsstayed,
+      structure,
+    ],
+    [fam_member, PeopleInsidetheHouse, users_reducers?.resident_pk],
+  );
   const onChangeSearch = useCallback(
     async (value) => {
       if (value === ' ') {
@@ -232,9 +251,12 @@ const FADForm = () => {
           ]);
           setfam_member((prev) => [
             ...prev,
-            {resident_pk: parseInt(peopleid), rel: relationship},
+            {
+              PeopleName: residentname,
+              resident_pk: parseInt(peopleid),
+              rel: relationship,
+            },
           ]);
-          console.log('add');
         } else {
           setPeopleInsidetheHouse((prev) => [
             ...prev,
@@ -244,9 +266,13 @@ const FADForm = () => {
               realationship: relationship,
             },
           ]);
-          setfam_member_add((prev) => [
+          setfam_member((prev) => [
             ...prev,
-            {resident_pk: parseInt(peopleid), rel: relationship},
+            {
+              PeopleName: residentname,
+              resident_pk: parseInt(peopleid),
+              rel: relationship,
+            },
           ]);
         }
       } else {
@@ -262,63 +288,100 @@ const FADForm = () => {
     parseInt(peopleid),
     relationship,
   ]);
-  console.log(fam_member_add);
   const handleAddPeople = useCallback(async () => {
     await setIsVisible(true);
   });
 
   const [gestureName, setgestureName] = useState('');
   const [list, updateList] = useState(PeopleInsidetheHouse);
-  const handleRemoveItem = useCallback((e) => {
-    setPeopleInsidetheHouse(
-      PeopleInsidetheHouse.filter((item) => item.PeopleName !== e.PeopleName),
-    );
-    setfam_member(fam_member.filter((item) => item.peopleid !== e.peopleid));
-    setfam_member_add(
-      fam_member_add.filter((item) => item.peopleid !== e.peopleid),
-    );
-  });
+  const handleRemoveItem = useCallback(
+    (e) => {
+      setPeopleInsidetheHouse(
+        PeopleInsidetheHouse.filter((item) => item.PeopleName !== e.PeopleName),
+      );
+      setfam_member(
+        fam_member.filter((item) => item.PeopleName !== e.PeopleName),
+      );
+    },
+    [(fam_member, PeopleInsidetheHouse)],
+  );
+  console.log(fam_member);
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setPeopleInsidetheHouse([]);
+    setfam_member([]);
+    setRefreshing(false);
+    dispatch(action_get_FAD_exist(users_reducers?.resident_pk));
+    residents_data_exist[0]?.fam_members?.map((item) => {
+      setPeopleInsidetheHouse((prev) => [
+        ...prev,
+        {
+          PeopleName: item?.first_name + ' ' + item?.last_name,
+          realationship: item?.rel,
+        },
+      ]);
+      setfam_member((prev) => [
+        ...prev,
+        {
+          PeopleName: item?.first_name + ' ' + item?.last_name,
+          resident_pk: parseInt(item?.resident_pk),
+          rel: item?.rel,
+        },
+      ]);
+    });
+  }, [dispatch, users_reducers?.resident_pk, PeopleInsidetheHouse, fam_member]);
+  useEffect(() => {
+    let mounted = true;
+    const index = () => {
+      dispatch(action_get_FAD_exist(users_reducers?.resident_pk));
+    };
+    mounted && index();
+    return () => (mounted = false);
+  }, [dispatch, users_reducers?.resident_pk, fam_member, PeopleInsidetheHouse]);
   useEffect(() => {
     let mounted = true;
     const listofresident = async () => {
       if (searchvalue === '') {
-        await setsearchvalue(null);
+        setsearchvalue(null);
       }
       setPeopleInsidetheHouse([]);
-      await dispatch(action_get_residents_list(searchvalue));
-      await dispatch(action_get_FAD_exist(users_reducers.resident_pk));
-      if (residents_data_exist === '') {
-        await setAlertshow(true);
-        await setAlertmessage(
-          'Make sure you are the head of the family before filling it',
-        );
-        await setAlerttitle('Family Assesment Data');
+      dispatch(action_get_residents_list(searchvalue));
+
+      if (residents_data_exist[0]?.kadugayon_pagpuyo === undefined) {
+        alert('Make sure you are the head of the family before filling it');
+        setisDisabled(false);
       } else {
-        await setOccationofthehouse(residents_data_exist[0]?.okasyon_balay);
-        await setOccationfortheland(residents_data_exist[0]?.okasyon_yuta);
-        await setStructure(residents_data_exist[0]?.straktura);
-        await setQualityness(residents_data_exist[0]?.kaligon_balay);
-        await setyearsstayed('' + residents_data_exist[0]?.kadugayon_pagpuyo);
-        wait(100).then(() => {
-          residents_data_exist[0]?.fam_members?.map((item) => {
-            setPeopleInsidetheHouse((prev) => [
-              ...prev,
-              {
-                PeopleName: item.first_name + ' ' + item.last_name,
-                realationship: item.rel,
-              },
-            ]);
-            setfam_member((prev) => [
-              ...prev,
-              {resident_pk: parseInt(item.resident_pk), rel: item.rel},
-            ]);
-          });
+        setisDisabled(true);
+        setspinner(true);
+        setOccationofthehouse(residents_data_exist[0]?.okasyon_balay);
+        setOccationfortheland(residents_data_exist[0]?.okasyon_yuta);
+        setStructure(residents_data_exist[0]?.straktura);
+        setQualityness(residents_data_exist[0]?.kaligon_balay);
+        setyearsstayed('' + residents_data_exist[0]?.kadugayon_pagpuyo);
+
+        setspinner(false);
+        residents_data_exist[0]?.fam_members?.map((item) => {
+          setPeopleInsidetheHouse((prev) => [
+            ...prev,
+            {
+              PeopleName: item?.first_name + ' ' + item?.last_name,
+              realationship: item?.rel,
+            },
+          ]);
+          setfam_member((prev) => [
+            ...prev,
+            {
+              PeopleName: item?.first_name + ' ' + item?.last_name,
+              resident_pk: parseInt(item?.resident_pk),
+              rel: item?.rel,
+            },
+          ]);
         });
       }
     };
     mounted && listofresident();
     return () => (mounted = false);
-  }, [dispatch]);
+  }, [dispatch, tickrefresh, residents_data_exist[0]?.kadugayon_pagpuyo]);
 
   const onSwipe = useCallback((gestureName, gestureState) => {
     const {SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT} = swipeDirections;
@@ -345,6 +408,11 @@ const FADForm = () => {
   };
   return (
     <ScrollView style={{height: screenHeight}}>
+      <Spinner
+        visible={spinner}
+        textContent={'Loading...'}
+        textStyle={styles.spinnerTextStyle}
+      />
       <View style={styles.container}>
         <CustomAlert
           title={Alerttitle}
@@ -417,15 +485,17 @@ const FADForm = () => {
                     onValueChange={(itemValue, itemIndex) =>
                       handleOccationofthehouse(itemValue)
                     }>
-                    <Picker.Item label="Okasyon sa balay" />
-                    <Picker.Item label="Tag-iya" value="Tag-iya" />
-                    <Picker.Item label="Renta" value="Renta" />
-                    <Picker.Item label="Boarder" value="Boarder" />
+                    <Picker.Item key={0} label="Okasyon sa balay" />
+                    <Picker.Item key={1} label="Tag-iya" value="Tag-iya" />
+                    <Picker.Item key={2} label="Renta" value="Renta" />
+                    <Picker.Item key={3} label="Boarder" value="Boarder" />
                     <Picker.Item
+                      key={4}
                       label="Nangipon ug puyo"
                       value="Nangipon ug puyo"
                     />
                     <Picker.Item
+                      key={5}
                       label="Nisumpay ug balay"
                       value="Nisumpay ug balay"
                     />
@@ -438,24 +508,28 @@ const FADForm = () => {
                     }>
                     <Picker.Item label="Okasyon sa Yuta" />
                     <Picker.Item
+                      key={0}
                       label="Nanag-iya sa yuta"
                       value="Nanag-iya sa yuta"
                     />
                     <Picker.Item
+                      key={1}
                       label="Nang arkila sa yuta"
                       value="Nang arkila sa yuta"
                     />
                     <Picker.Item
+                      key={2}
                       label="Informal settler"
                       value="Informal settler"
                     />
                     <Picker.Item
+                      key={3}
                       label="Tigbantay sa yuta"
                       value="Tigbantay sa yuta"
                     />
                   </Picker>
                   <TextInput
-                    disabled={true}
+                    disabled={isDisabled}
                     theme={{
                       colors: {
                         primary: '#3eb2fa',
@@ -478,18 +552,22 @@ const FADForm = () => {
                     }>
                     <Picker.Item label="Straktura sa Balay" />
                     <Picker.Item
+                      key={0}
                       label="Binuhat sa kahoy"
                       value="Binuhat sa kahoy"
                     />
                     <Picker.Item
+                      key={1}
                       label="Binuhat sa Semento"
                       value="Binuhat sa Semento"
                     />
                     <Picker.Item
+                      key={2}
                       label="Kombinasyon sa kahoy ug semento"
                       value="Kombinasyon sa kahoy ug semento"
                     />
                     <Picker.Item
+                      key={3}
                       label="Binuhat sa mga nilabay na materyales sama sa (karton,plastic,etc.)"
                       value="Binuhat sa mga nilabay na materyales sama sa (karton,plastic,etc.)"
                     />
@@ -501,9 +579,9 @@ const FADForm = () => {
                     onValueChange={(itemValue, itemIndex) =>
                       handleQualityness(itemValue)
                     }>
-                    <Picker.Item label="Kalig-on sa balay" />
-                    <Picker.Item label="Huyang" value="Huyang" />
-                    <Picker.Item label="Lig-on" value="Lig-on" />
+                    <Picker.Item key={0} label="Kalig-on sa balay" />
+                    <Picker.Item key={1} label="Huyang" value="Huyang" />
+                    <Picker.Item key={2} label="Lig-on" value="Lig-on" />
                   </Picker>
                 </View>
               </View>
@@ -511,6 +589,12 @@ const FADForm = () => {
             <ProgressStep label="Sakop sa Panimalay" onSubmit={handleSubmit}>
               <View style={styles.Inputcontainer}>
                 <ScrollView
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={refreshing}
+                      onRefresh={onRefresh}
+                    />
+                  }
                   style={{
                     height: screenHeight - 500,
                     padding: 10,
@@ -597,6 +681,7 @@ const FADForm = () => {
                             <SafeAreaView>
                               {residents_list.map((item, index) => (
                                 <TouchableHighlight
+                                  key={index}
                                   onPress={() => hadnlePeopleName(item)}
                                   ker={item.first_name}
                                   underlayColor="white">
@@ -799,6 +884,9 @@ const styles = StyleSheet.create({
     height: 220,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  spinnerTextStyle: {
+    color: '#FFF',
   },
 });
 

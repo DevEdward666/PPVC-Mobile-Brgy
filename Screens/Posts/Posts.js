@@ -11,8 +11,10 @@ import {
   View,
   ImageBackground,
   TouchableNativeFeedback,
+  BackHandler,
   Text,
 } from 'react-native';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 import DocumentPicker from 'react-native-document-picker';
 import Icons from 'react-native-vector-icons/FontAwesome';
 import {
@@ -103,9 +105,9 @@ const UINews = () => {
 
   const updateIndex = useCallback(
     async (item, index) => {
-      await setposts_id(item?.posts_pk);
-      dispatch(action_get_posts_comments(item?.posts_pk));
       if (index !== 0) {
+        await setposts_id(item?.posts_pk);
+        dispatch(action_get_posts_comments(item?.posts_pk));
         setisVisible(true);
       } else {
         dispatch(action_set_posts_reactions(item?.posts_pk, 'Like'));
@@ -138,7 +140,7 @@ const UINews = () => {
       dispatch(action_get_posts_comments(posts_id));
       await setcomment('');
     }
-  }, [dispatch, comment]);
+  }, [dispatch, comment, posts_id]);
   const handleChangeTextPost = useCallback(
     async (text) => {
       await setpost(text);
@@ -161,9 +163,22 @@ const UINews = () => {
       </Text>
     );
   };
+  const backAction = () => {
+    setisVisible(false);
+    setaddpostVisible(false);
+    console.log('backing');
+    return true;
+  };
+
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', backAction);
+
+    return () =>
+      BackHandler.removeEventListener('hardwareBackPress', backAction);
+  }, []);
   const buttons = [{element: component1}, {element: component2}];
   const [gestureName, setgestureName] = useState('');
-  const onSwipe = useCallback((gestureName, gestureState) => {
+  const onSwipePostComment = useCallback((gestureName, gestureState) => {
     const {SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT} = swipeDirections;
     setgestureName({gestureName: gestureName});
     switch (gestureName) {
@@ -294,14 +309,22 @@ const UINews = () => {
           </View>
         </View>
       </CardView>
-      <GestureRecognizer
-        onSwipe={(direction, state) => onSwipeAddPost(direction, state)}
-        config={config}>
-        <CustomBottomSheet
-          isVisible={addpostVisible}
-          color="white"
-          UI={
+
+      <CustomBottomSheet
+        isVisible={addpostVisible}
+        color="white"
+        UI={
+          <GestureRecognizer
+            onSwipe={(direction, state) => onSwipeAddPost(direction, state)}
+            config={config}>
             <SafeAreaView>
+              <View style={styles.containerclose}>
+                <TouchableHighlight
+                  onPress={() => setaddpostVisible(false)}
+                  underlayColor={'white'}>
+                  <Icons size={25} name={'close'} />
+                </TouchableHighlight>
+              </View>
               <View
                 style={{
                   flex: 1,
@@ -442,9 +465,10 @@ const UINews = () => {
                 </View>
               </View>
             </SafeAreaView>
-          }
-        />
-      </GestureRecognizer>
+          </GestureRecognizer>
+        }
+      />
+
       <FlatList
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -560,7 +584,15 @@ const UINews = () => {
                       <Icons name="thumbs-up" size={15} color="grey" />
                     </View>
                     <View style={{width: 80}}>
-                      <Badge status="primary" value={item?.likes} />
+                      {item?.reactions.map((likes, index) => {
+                        return (
+                          <Badge
+                            status="primary"
+                            key={index}
+                            value={likes?.likes}
+                          />
+                        );
+                      })}
                     </View>
                   </View>
                 </View>
@@ -575,19 +607,35 @@ const UINews = () => {
         )}
       />
       <GestureRecognizer
-        onSwipe={(direction, state) => onSwipe(direction, state)}
+        onSwipe={(direction, state) => onSwipePostComment(direction, state)}
         config={config}>
         <CustomBottomSheet
           isVisible={isVisible}
           color="white"
           UI={
-            <SafeAreaView>
-              <ScrollView>
-                <CardView>
+            <View>
+              <CardView>
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    marginBottom: 50,
+                    height: 10,
+                  }}>
                   <View style={styles.containerNOTIFICATION}>
                     <Text>Comments</Text>
                   </View>
-                </CardView>
+                  <View style={styles.containerclose}>
+                    <TouchableHighlight
+                      onPress={() => setisVisible(false)}
+                      underlayColor={'white'}>
+                      <Icons size={25} name={'close'} />
+                    </TouchableHighlight>
+                  </View>
+                </View>
+              </CardView>
+              <ScrollView>
                 {posts_comments.map((Notification) => {
                   return (
                     <CardView key={Notification.posts_comment_pk}>
@@ -633,6 +681,7 @@ const UINews = () => {
                   );
                 })}
               </ScrollView>
+
               <CardView>
                 <View style={styles.containerNOTIFICATION}>
                   <View style={styles.contentNOTIFICATION}>
@@ -665,7 +714,7 @@ const UINews = () => {
                   </View>
                 </View>
               </CardView>
-            </SafeAreaView>
+            </View>
           }
         />
       </GestureRecognizer>
@@ -694,6 +743,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     maxHeight: 1000,
     alignItems: 'flex-start',
+  },
+  containerclose: {
+    paddingRight: 16,
+    marginBottom: 10,
+    maxHeight: 1000,
+    alignItems: 'flex-end',
   },
   containercomment: {
     paddingLeft: 19,

@@ -15,7 +15,7 @@ export const action_get_residents_list = (searchname) => async (dispatch) => {
   const bearer_token = token;
   const bearer = 'Bearer ' + bearer_token;
   let formdata = new FormData();
-  formdata.append('searchname', searchname);
+  formdata.append('search', searchname);
   const fetchdata = await fetch(url, {
     method: 'POST',
     withCredentials: true,
@@ -143,6 +143,7 @@ export const action_forgot_password = (email, password) => async (dispatch) => {
   }
 };
 export const action_addfamily = (
+  fam_pk,
   resident_pk,
   okasyon_balay,
   straktura,
@@ -166,6 +167,7 @@ export const action_addfamily = (
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
+      fam_pk: fam_pk,
       ulo_pamilya: resident_pk,
       okasyon_balay: okasyon_balay,
       straktura: straktura,

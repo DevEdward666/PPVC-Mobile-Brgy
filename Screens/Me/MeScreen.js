@@ -101,7 +101,6 @@ const MeScreen = () => {
   const gotoinfo = useCallback(() => {
     Actions.profile();
   }, []);
-  console.log(users_reducers);
   return (
     <ScrollView
       style={{backgroundScrollViewColor: 'white'}}

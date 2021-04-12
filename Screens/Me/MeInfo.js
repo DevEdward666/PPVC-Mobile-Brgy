@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useEffect, useState, useCallback} from 'react';
 import PropTypes from 'prop-types';
 import {useDispatch, useSelector} from 'react-redux';
@@ -12,7 +13,11 @@ import {
   RefreshControl,
   ImageBackground,
   FlatList,
+  TouchableNativeFeedback,
+  TouchableHighlight,
 } from 'react-native';
+import {Actions} from 'react-native-router-flux';
+import DocumentPicker from 'react-native-document-picker';
 import {action_get_userinfo} from '../../Services/Actions/UserInfoActions';
 import Icons from 'react-native-vector-icons/FontAwesome';
 import {
@@ -35,6 +40,7 @@ import {
 } from '../../Services/Actions/PostsActions';
 import Dateconverter from '../../Plugins/Dateconverter';
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
+import CustomFlexBox from '../../Plugins/CustomFlexBox';
 const MeInfo = () => {
   const users_reducers = useSelector((state) => state.UserInfoReducers.data);
   const user_posts = useSelector(
@@ -46,6 +52,8 @@ const MeInfo = () => {
   const posts_comments = useSelector(
     (state) => state.PostsReducers.posts_comments,
   );
+  const [postResource, setpostResource] = useState([]);
+  const [multipleFile, setmultipleFile] = useState([]);
 
   const dispatch = useDispatch();
   const [PostIsVisible, setPostIsVisible] = useState(false);
@@ -95,9 +103,12 @@ const MeInfo = () => {
   const handleChangeTextPost = useCallback((text) => {
     setpost(text);
   }, []);
-  const onCommentChangeText = useCallback((text) => {
-    setcomment(text);
-  }, []);
+  const onCommentChangeText = useCallback(
+    (text) => {
+      setcomment(text);
+    },
+    [comment],
+  );
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     wait(1000).then(() => {
@@ -107,13 +118,48 @@ const MeInfo = () => {
     });
   }, [dispatch]);
   const handleCommentSend = useCallback(async () => {
+    await dispatch(action_get_posts_comments(posts_id));
     if (comment !== '') {
-      await dispatch(action_get_posts_comments(posts_id));
       await dispatch(action_posts_add_comment(posts_id, comment));
       await setcomment('');
     }
-  }, [dispatch]);
-  console.log(posts_id);
+  }, [dispatch, comment, posts_id]);
+  const handleSubmitPostPress = useCallback(async () => {
+    if (post.length > 0) {
+      await dispatch(action_set_posts(post, post, multipleFile));
+
+      await setPostIsVisible(false);
+      await dispatch(action_get_posts());
+      await setpost('');
+      await setmultipleFile([]);
+      await setpostResource([]);
+    }
+  }, [dispatch, post, multipleFile]);
+  const selectFile = async () => {
+    // Opening Document Picker to select one file
+    try {
+      const results = await DocumentPicker.pickMultiple({
+        type: [DocumentPicker.types.images],
+      });
+      for (const res of results) {
+        setpostResource((prev) => [...prev, {uri: res.uri}]);
+        setmultipleFile((prev) => [...prev, res]);
+      }
+
+      // Setting the state to show single file attributes
+    } catch (err) {
+      setmultipleFile(null);
+      // Handling any exception (If any)
+      if (DocumentPicker.isCancel(err)) {
+        // If user canceled the document selection
+        alert('Canceled');
+      } else {
+        // For Unknown Error
+        alert('Unknown Error: ' + JSON.stringify(err));
+        throw err;
+      }
+    }
+  };
   const updateIndex = useCallback(
     (item, index) => {
       setposts_id(item?.posts_pk);
@@ -147,6 +193,10 @@ const MeInfo = () => {
         break;
     }
   });
+  const gotopostsinfo = useCallback(async (item) => {
+    await AsyncStorage.setItem('posts_id', item?.posts_pk.toString());
+    Actions.postsinfo();
+  }, []);
   const onSwipeComments = useCallback((gestureName, gestureState) => {
     const {SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT} = swipeDirections;
     setgestureName({gestureName: gestureName});
@@ -194,7 +244,7 @@ const MeInfo = () => {
         <View
           radius={1}
           backgroundColor={'#ffffff'}
-          style={{height: screenHeight - 500, marginBottom: 10}}>
+          style={{height: screenHeight - 450, marginBottom: 10}}>
           <View style={{flexDirection: 'row', justifyContent: 'center'}}>
             <View
               style={{
@@ -245,8 +295,144 @@ const MeInfo = () => {
           />
         </CardView>
       </ScrollView>
-
       <FlatList
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        style={styles.container}
+        data={user_posts}
+        keyExtractor={(item, index) => index.toString()}
+        onEndReachedThreshold={0.1}
+        renderItem={({item, index}) => (
+          <TouchableHighlight
+            onPress={() => gotopostsinfo(item)}
+            underlayColor="white">
+            <CardView style={{marginTop: 10, marginBottom: 20}} radius={1}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  height: 50,
+                  padding: 10,
+                  marginTop: 10,
+                  alignItems: 'center',
+                }}>
+                <View style={styles.contentNOTIFICATION}>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: 'row',
+                      justifyContent: 'space-around',
+                      marginBottom: 50,
+                    }}>
+                    <View style={{width: 20 + '%', height: 20}}>
+                      <Image
+                        source={{
+                          uri: `data:image/png;base64,${item?.user_pic}`,
+                        }}
+                        style={{
+                          marginTop: 10,
+                          marginStart: 10,
+                          width: 40,
+                          height: 40,
+                          borderRadius: 120 / 2,
+                          overflow: 'hidden',
+                          borderWidth: 3,
+                        }}
+                      />
+                    </View>
+                    <View style={{width: 95 + '%', height: 50}}>
+                      <Text style={styles.containerNOTIFICATION}>
+                        {item?.user_full_name}
+                        {'\n'}
+                        {item?.TIMESTAMP}
+                      </Text>
+                    </View>
+                  </View>
+
+                  <Text rkType="primary3 mediumLine"></Text>
+                </View>
+              </View>
+              {item.upload_files[0]?.file_path ? (
+                <View
+                  style={{
+                    flexDirection: 'column',
+                    height: 300,
+                    alignItems: 'center',
+                  }}>
+                  <View style={{width: '100%', height: screenHeight - 1000}}>
+                    <Text numberOfLines={6} style={styles.text}>
+                      {item.title}
+                    </Text>
+                  </View>
+                  <View style={{width: '100%', height: screenHeight - 500}}>
+                    <ImageBackground
+                      source={item.upload_files.map((item) => {
+                        return {
+                          uri: `${base_url}/${item.file_path}`,
+                          width: 400,
+                          height: 100,
+                        };
+                      })}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        flex: 1,
+                        resizeMode: 'cover',
+                        justifyContent: 'center',
+                      }}></ImageBackground>
+                  </View>
+                </View>
+              ) : (
+                <>
+                  <Text numberOfLines={6} style={styles.noimagetext}>
+                    {item.body}
+                  </Text>
+                </>
+              )}
+              <CardView>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    height: 30,
+                    alignItems: 'center',
+                  }}>
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: 'flex-start',
+                    }}>
+                    <View
+                      style={{
+                        width: 30,
+                        marginBottom: -20,
+                        marginStart: 20,
+                      }}>
+                      <Icons name="thumbs-up" size={15} color="grey" />
+                    </View>
+                    <View style={{width: 80}}>
+                      {item?.reactions.map((likes, index) => {
+                        return (
+                          <Badge
+                            status="primary"
+                            key={index}
+                            value={likes?.likes}
+                          />
+                        );
+                      })}
+                    </View>
+                  </View>
+                </View>
+                <ButtonGroup
+                  onPress={(index) => updateIndex(item, index)}
+                  buttons={buttons}
+                  containerStyle={{height: 35, marginBottom: 15}}
+                />
+              </CardView>
+            </CardView>
+          </TouchableHighlight>
+        )}
+      />
+      {/* <FlatList
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
@@ -374,7 +560,7 @@ const MeInfo = () => {
             />
           </CardView>
         )}
-      />
+      /> */}
 
       <GestureRecognizer
         onSwipe={(direction, state) => onSwipe(direction, state)}
@@ -447,7 +633,7 @@ const MeInfo = () => {
                     </View>
                   </View>
                 </View>
-                <View style={{width: '100%', height: 1000}}>
+                <View style={{width: '100%', height: screenHeight - 300}}>
                   <TextInput
                     style={{
                       borderWidth: 2,
@@ -462,6 +648,61 @@ const MeInfo = () => {
                     value={post}
                   />
                 </View>
+                <View style={{width: 30 + '%', height: 50, padding: 5}}>
+                  <Button
+                    style={{color: 'black'}}
+                    icon={<Icons name="file-image-o" size={15} color="green" />}
+                    iconLeft
+                    type="outline"
+                    title=" Photo"
+                    onPress={selectFile}
+                  />
+                </View>
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: 'column',
+                    justifyContent: 'flex-start',
+                  }}>
+                  <View
+                    style={{
+                      width: '100%',
+                      height: screenHeight - 1000,
+                    }}>
+                    <ScrollView>
+                      <CustomFlexBox
+                        label="flexDirection"
+                        selectedValue={'column'}>
+                        {postResource.map((item, index) => (
+                          <View style={{width: '100%'}} key={index}>
+                            <TouchableNativeFeedback
+                              onLongPress={() => handleRemoveItem(item, index)}
+                              underlayColor="white">
+                              <CardView
+                                style={styles.avatar}
+                                radius={1}
+                                backgroundColor={'#ffffff'}>
+                                <View
+                                  style={{
+                                    flexDirection: 'row',
+                                    width: '100%',
+                                    height: screenHeight - 500,
+                                    alignItems: 'center',
+                                  }}>
+                                  <ImageBackground
+                                    source={{
+                                      uri: item.uri,
+                                    }}
+                                    style={styles.avatar}></ImageBackground>
+                                </View>
+                              </CardView>
+                            </TouchableNativeFeedback>
+                          </View>
+                        ))}
+                      </CustomFlexBox>
+                    </ScrollView>
+                  </View>
+                </View>
               </View>
             </SafeAreaView>
           }
@@ -474,13 +715,27 @@ const MeInfo = () => {
           isVisible={isVisible}
           color="white"
           UI={
-            <SafeAreaView>
+            <View>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginBottom: 50,
+                  height: 10,
+                }}>
+                <View style={styles.containerNOTIFICATION}>
+                  <Text>Comments</Text>
+                </View>
+                <View style={styles.containerclose}>
+                  <TouchableHighlight
+                    onPress={() => setisVisible(false)}
+                    underlayColor={'white'}>
+                    <Icons size={20} name={'close'} />
+                  </TouchableHighlight>
+                </View>
+              </View>
               <ScrollView>
-                <CardView>
-                  <View style={styles.containerNOTIFICATION}>
-                    <Text>Comments</Text>
-                  </View>
-                </CardView>
                 {posts_comments.map((Notification) => {
                   return (
                     <CardView key={Notification.posts_comment_pk}>
@@ -558,7 +813,7 @@ const MeInfo = () => {
                   </View>
                 </View>
               </CardView>
-            </SafeAreaView>
+            </View>
           }
         />
       </GestureRecognizer>
@@ -567,6 +822,19 @@ const MeInfo = () => {
 };
 
 const styles = StyleSheet.create({
+  containerclose: {
+    paddingRight: 16,
+    marginBottom: 10,
+    maxHeight: 1000,
+    alignItems: 'flex-end',
+  },
+  avatar: {
+    width: '100%',
+    height: 500,
+    borderColor: 'white',
+    alignSelf: 'center',
+    resizeMode: 'contain',
+  },
   spinnerTextStyle: {
     color: '#FFF',
   },
@@ -597,7 +865,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     padding: 15,
     textAlign: 'justify',
-    backgroundColor: '#000000a0',
+    color: 'black',
   },
   noimagetext: {
     color: 'black',

@@ -102,6 +102,7 @@ export const action_posts_add_comment = (posts_pk, body) => async () => {
     if (parseData.success != false) {
     }
   }
+  console.log(parseData);
 };
 
 export const action_set_posts_reactions = (posts_pk, reaction) => async (
@@ -136,7 +137,7 @@ export const action_set_posts_reactions = (posts_pk, reaction) => async (
 
 export const action_get_posts_comments = (posts_pk) => async (dispatch) => {
   //   var url = `${BASE_URL}/api/user/currentUser`;
-  var url = `${BASE_URL}/api/postsmobile/getPostCommentsAdmin`;
+  var url = `${BASE_URL}/api/postsMobile/getPostsComments`;
   const token = await AsyncStorage.getItem('tokenizer');
   const bearer_token = token;
   const bearer = 'Bearer ' + bearer_token;
@@ -159,6 +160,7 @@ export const action_get_posts_comments = (posts_pk) => async (dispatch) => {
       });
     }
   }
+  console.log(posts_pk);
 };
 
 export const action_set_posts = (title, body, upload_files) => async () => {
