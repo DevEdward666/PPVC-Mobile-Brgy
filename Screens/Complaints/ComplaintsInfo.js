@@ -8,6 +8,7 @@ import {
   StyleSheet,
   TextInput,
   TouchableHighlight,
+  Dimensions,
   TouchableNativeFeedback,
   ScrollView,
 } from 'react-native';
@@ -23,7 +24,7 @@ import {
   action_set_complaints_messages,
   action_notify,
 } from '../../Services/Actions/ComplaintsActions';
-
+const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CustomBottomSheet from '../../Plugins/CustomBottomSheet';
 import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
@@ -38,6 +39,7 @@ const ComplaintsInfo = () => {
   const [isVisible, setisVisible] = useState(false);
   const [sendClicked, setsendClicked] = useState(0);
   const [token, settoken] = useState('');
+  const [uri, seturi] = useState('');
 
   const [reload_messages, set_reload_messages] = useState(0);
   let imageUri = 'data:image/png;base64,' + users_reducers.pic;
@@ -313,6 +315,8 @@ const ComplaintsInfo = () => {
                 </View>
               </CardView>
               {complaint_messages.map((Notification) => {
+                console.log(Notification?.user?.pic);
+
                 return (
                   <CardView key={Notification.complaint_msg_pk}>
                     <View style={styles.containerNOTIFICATION}>
@@ -355,16 +359,15 @@ const ComplaintsInfo = () => {
                               />
                             )}
                           </View>
-                          <View style={{width: 90 + '%', height: 20}}>
-                            <CardView key={Notification.complaint_msg_pk}>
-                              <Text style={styles.messagesText}>
-                                {Notification?.first_name}
-                                {Notification?.middle_name}
-                                {Notification?.last_name}
-                                {'\n'}
-                                {Notification?.body}
-                              </Text>
-                            </CardView>
+                          <View
+                            style={{
+                              width: screenWidth - 50,
+                              maxheight: screenHeight,
+                            }}>
+                            <Text style={{textAlign: 'justify'}}>
+                              {'\n'}
+                              {Notification?.body}
+                            </Text>
                           </View>
                         </View>
 
@@ -377,7 +380,6 @@ const ComplaintsInfo = () => {
               <CardView>
                 <View style={styles.containerNOTIFICATION}>
                   <View style={styles.contentNOTIFICATION}>
-                    <Text style={styles.messagesText}>Messages</Text>
                     <View
                       style={{
                         flex: 1,
@@ -414,7 +416,7 @@ const ComplaintsInfo = () => {
           }
         />
       </GestureRecognizer>
-      <FAB style={styles.fab} icon="plus" onPress={() => onFABPress()} />
+      <FAB style={styles.fab} icon="comment" onPress={() => onFABPress()} />
     </SafeAreaView>
   );
 };
@@ -437,11 +439,7 @@ const styles = StyleSheet.create({
     right: 16,
     backgroundColor: '#a0c2fa',
   },
-  messagesText: {
-    padding: 5,
-    height: 70,
-    maxHeight: 700,
-  },
+
   messagesCard: {
     borderRadius: 20,
   },

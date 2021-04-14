@@ -348,7 +348,6 @@ const FADForm = () => {
       dispatch(action_get_residents_list(searchvalue));
 
       if (residents_data_exist[0]?.kadugayon_pagpuyo === undefined) {
-        alert('Make sure you are the head of the family before filling it');
         setisDisabled(false);
       } else {
         setisDisabled(true);
@@ -790,7 +789,7 @@ const FADForm = () => {
                                 color="white"
                               />
                             }
-                            title="Add People"
+                            title="Add to family"
                             onPress={() => handlePeopleAdd()}
                           />
                         </View>
@@ -801,7 +800,7 @@ const FADForm = () => {
 
                 <Button
                   icon={<Icons name="arrow-right" size={20} color="white" />}
-                  title="Add People"
+                  title="Add family members"
                   onPress={() => handleAddPeople()}>
                   Add People
                 </Button>

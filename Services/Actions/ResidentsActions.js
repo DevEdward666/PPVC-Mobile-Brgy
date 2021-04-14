@@ -187,3 +187,27 @@ export const action_addfamily = (
     }
   }
 };
+export const action_upadatenewuser = (user_pk) => async (dispatch) => {
+  var url = `${BASE_URL}/api/residentmobile/upadatenewuser`;
+  const token = await AsyncStorage.getItem('tokenizer');
+  const bearer_token = token;
+  const bearer = 'Bearer ' + bearer_token;
+
+  const fetchdata = await fetch(url, {
+    method: 'POST',
+    withCredentials: true,
+    headers: {
+      Authorization: bearer,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      user_pk: user_pk,
+    }),
+  });
+  const parseData = await fetchdata.json();
+  if (parseData.status != 400) {
+    if (parseData.success != false) {
+      console.log(parseData.success);
+    }
+  }
+};

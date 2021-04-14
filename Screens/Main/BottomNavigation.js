@@ -11,10 +11,13 @@ import MeScreen from '../Me/MeScreen';
 import {useDispatch, useSelector} from 'react-redux';
 import {action_get_userinfo} from '../../Services/Actions/UserInfoActions';
 import {action_notify} from '../../Services/Actions/ComplaintsActions';
+import {action_netinfo} from '../../Services/Actions/DefaultActions';
 import {action_get_complaints} from '../../Services/Actions/ComplaintsActions';
 import {View} from 'react-native';
 import io from 'socket.io-client';
+
 import {compose} from 'redux';
+import CustomSnackBar from '../../Plugins/CustomSnackBar';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -91,6 +94,7 @@ function BottomNavigation() {
   const notify = useSelector((state) => state.Default_Reducer.notify);
   const base_url = useSelector((state) => state.NewsReducers.base_url);
   const complaintslist = useSelector((state) => state.ComplaintsReducers.data);
+  const netinformation = useSelector((state) => state.Default_Reducer.netinfo);
   AsyncStorage.getItem('tokenizer').then((item) => {
     if (item === null) {
       Actions.home();
@@ -108,9 +112,9 @@ function BottomNavigation() {
   AsyncStorage.getItem('complaint_pk').then(async (item) => {
     await setcomplaint_pk(item);
   });
-  console.log(notify);
   const [Visible, setVisible] = useState(true);
   const [didMount, setDidMount] = useState(false);
+  const [isConnected, setisConnected] = useState(false);
   const socketRef = useRef();
 
   useEffect(() => {
@@ -162,8 +166,22 @@ function BottomNavigation() {
 
     mounted && notify();
     return () => (mounted = false);
-  }, [complaintslist, token, dispatch, reported_by]);
+  }, [
+    complaintslist,
+    token,
+    dispatch,
+    reported_by,
+    netinformation?.isConnected,
+  ]);
 
+  useEffect(() => {
+    let mounted = true;
+    const netinfo = () => {
+      dispatch(action_netinfo());
+    };
+    mounted && netinfo();
+    return () => (mounted = false);
+  }, [dispatch, isConnected]);
   return (
     <View>
       <CustomNotification
@@ -172,6 +190,10 @@ function BottomNavigation() {
         show={notify[0]?.notify}
       />
       <MeScreen />
+      <CustomSnackBar
+        show={netinformation?.isConnected}
+        message={netinformation?.message}
+      />
     </View>
     // <NavigationContainer>
     //   <Tab.Navigator

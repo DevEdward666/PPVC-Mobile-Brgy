@@ -31,6 +31,6 @@ export const action_Login_user = (email, password) => async () => {
       alert('Wrong Username/Password');
     }
   } else {
-    alert('Wrong Username/Password');
+    console.log('Wrong Username/Password');
   }
 };

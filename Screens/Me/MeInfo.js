@@ -287,13 +287,13 @@ const MeInfo = () => {
             </View>
           </View>
         </View>
-        <CardView style={{height: 70, padding: 10}}>
+        {/* <CardView style={{height: 70, padding: 10}}>
           <Button
             title="What's on your mind?"
             type="clear"
             onPress={() => handleAddPostPress()}
           />
-        </CardView>
+        </CardView> */}
       </ScrollView>
       <FlatList
         refreshControl={

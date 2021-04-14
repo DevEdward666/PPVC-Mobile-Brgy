@@ -166,43 +166,43 @@ const SignUpScreen = () => {
   };
   const handlePassword = (password) => {
     setPassword(password);
-    if (password != confirmpassword) {
-      // setErrorMessage('Password mismatch');
-      setErrorMessage(true);
-      setstepError(true);
-    } else {
-      let reg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
-      if (reg.test(password) === false) {
-        setErrorMessage(true);
-        // setErrorMessage(
-        //   'Minimum eight characters, at least one uppercase letter, one lowercase letter and one number:',
-        // );
-      } else {
-        setmobileErrorMessage();
-        setstepError(false);
-        setErrorMessage(false);
-      }
-    }
+    // if (password != confirmpassword) {
+    // setErrorMessage('Password mismatch');
+    // setErrorMessage(true);
+    // setstepError(true);
+    // } else {
+    // let reg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+    // if (reg.test(password) === false) {
+    //   setErrorMessage(true);
+    // setErrorMessage(
+    //   'Minimum eight characters, at least one uppercase letter, one lowercase letter and one number:',
+    // );
+    // } else {
+    //   setmobileErrorMessage();
+    //   setstepError(false);
+    //   setErrorMessage(false);
+    // }
+    // }
   };
   const handleConfirmPassword = (confirmpassword) => {
-    setconfirmpassword(confirmpassword);
-    if (password != confirmpassword) {
-      // setErrorMessage('Password mismatch');
-      setErrorMessage(true);
-      setstepError(true);
-    } else {
-      let reg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
-      if (reg.test(password) === false) {
-        // setErrorMessage(
-        //   'Minimum eight characters, at least one uppercase letter, one lowercase letter and one number:',
-        // );
-        setErrorMessage(true);
-      } else {
-        setmobileErrorMessage();
-        setstepError(false);
-        setErrorMessage('');
-      }
-    }
+    // setconfirmpassword(confirmpassword);
+    // if (password != confirmpassword) {
+    //   // setErrorMessage('Password mismatch');
+    //   setErrorMessage(true);
+    //   setstepError(true);
+    // } else {
+    //   let reg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+    //   if (reg.test(password) === false) {
+    //     // setErrorMessage(
+    //     //   'Minimum eight characters, at least one uppercase letter, one lowercase letter and one number:',
+    //     // );
+    //     setErrorMessage(true);
+    //   } else {
+    //     setmobileErrorMessage();
+    //     setstepError(false);
+    //     setErrorMessage('');
+    //   }
+    // }
   };
   const showMode = useCallback((currentMode) => {
     setShow(true);
@@ -1156,6 +1156,8 @@ const SignUpScreen = () => {
                   onChangeText={(text) => setmobile(text)}
                   defaultValue={mobile}
                 /> */}
+
+                {/*                 
                 <View style={{flex: 1, flexDirection: 'row'}}>
                   <View
                     style={{
@@ -1176,16 +1178,7 @@ const SignUpScreen = () => {
                       error={errorMessage}
                       value={password}
                     />
-                    {/* <Input
-                      style={styles.textInput}
-                      placeholder="Password"
-                      inputContainerStyle={styles.inputContainer}
-                      inputStyle={styles.inputText}
-                      secureTextEntry={showpass}
-                      errorMessage={errorMessage}
-                      onChangeText={(text) => handlePassword(text)}
-                      defaultValue={password}
-                    /> */}
+                
                   </View>
                   <View
                     style={{
@@ -1232,16 +1225,7 @@ const SignUpScreen = () => {
                       error={errorMessage}
                       value={confirmpassword}
                     />
-                    {/* <Input
-                      style={styles.textInput}
-                      placeholder="Confirm Password"
-                      inputContainerStyle={styles.inputContainer}
-                      inputStyle={styles.inputText}
-                      errorMessage={errorMessage}
-                      secureTextEntry={showconfirmpass}
-                      onChangeText={(text) => handleConfirmPassword(text)}
-                      defaultValue={confirmpassword}
-                    /> */}
+                   
                   </View>
                   <View
                     style={{
@@ -1268,6 +1252,7 @@ const SignUpScreen = () => {
                     </TouchableHighlight>
                   </View>
                 </View>
+               */}
               </View>
             </ProgressStep>
             {/* <ProgressStep label="FAD" onSubmit={handleSubmitCredentials}>
@@ -1578,7 +1563,7 @@ const SignUpScreen = () => {
                 </Button>
               </View>
             </ProgressStep>
-          */}
+                  */}
           </ProgressSteps>
         </View>
       </View>

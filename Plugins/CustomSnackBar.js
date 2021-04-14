@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Dimensions} from 'react-native';
 import {Button, Snackbar} from 'react-native-paper';
+const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const CustomSnackBar = ({show, message}) => {
   const [visible, setVisible] = React.useState(false);
 
@@ -10,19 +11,22 @@ const CustomSnackBar = ({show, message}) => {
   const onDismissSnackBar = () => setVisible(false);
 
   return (
-    <View style={styles.container}>
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'space-between',
+        bottom: screenHeight - 1000,
+        right: 0,
+        left: 0,
+        position: 'absolute',
+      }}>
       <Snackbar duration={3000} visible={show} onDismiss={onDismissSnackBar}>
         {message}
       </Snackbar>
     </View>
   );
 };
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'space-between',
-  },
-});
+const styles = StyleSheet.create({});
 
 CustomSnackBar.propTypes = {};
 

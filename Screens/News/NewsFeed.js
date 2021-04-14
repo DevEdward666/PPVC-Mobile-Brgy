@@ -11,6 +11,7 @@ import {
   TouchableHighlight,
   View,
 } from 'react-native';
+import {Picker} from '@react-native-community/picker';
 import Icons from 'react-native-vector-icons/FontAwesome';
 import {
   Button,
@@ -29,18 +30,52 @@ import {
   action_get_news_comments,
   action_set_news_reactions,
   action_get_news_add_comment,
+  action_filter_news,
+  action_get_news_lastweek,
+  // action_get_news_bymonth,
+  action_filter,
 } from '../../Services/Actions/NewsActions';
+import {HelperText} from 'react-native-paper';
 import Carousel, {ParallaxImage} from 'react-native-snap-carousel';
 const UINews = () => {
   const news_reducers = useSelector((state) => state.NewsReducers.data);
   const base_url = useSelector((state) => state.NewsReducers.base_url);
+  const selected_filter = useSelector(
+    (state) => state.NewsReducers.selected_filter,
+  );
+  const selected_filter_month = useSelector(
+    (state) => state.NewsReducers.selected_filter_month,
+  );
   const [offset, setoffset] = useState(10);
   const [refreshing, setRefreshing] = useState(false);
+  const [isvisible, setvisible] = useState(false);
   const [news_id, setnews_id] = useState('');
 
   const [spinner, setSpinner] = useState(false);
   const dispatch = useDispatch();
-
+  const handleSelectedMonth = useCallback(
+    async (value, index) => {
+      dispatch(action_filter_news(value, index, value));
+      // dispatch(action_get_news_bymonth(value));
+    },
+    [dispatch],
+  );
+  const handleSelectedFilter = useCallback(
+    (value, index) => {
+      dispatch(action_filter(value, index, value));
+      if (value !== 'month') {
+        setvisible(false);
+        if (value === 'today') {
+          dispatch(action_get_news());
+        } else {
+          dispatch(action_get_news_lastweek());
+        }
+      } else {
+        setvisible(true);
+      }
+    },
+    [dispatch],
+  );
   // const news_reducers_url = useSelector((state) => state.News_Reducers.url);
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -69,7 +104,7 @@ const UINews = () => {
       setSpinner(false);
     }, 1000);
     setoffset((prev) => prev + 10);
-    await dispatch(action_get_news());
+    // await dispatch(action_get_news());
   };
   const gotonewsinfo = async (item) => {
     await AsyncStorage.setItem('news_id', item.news_pk.toString());
@@ -107,6 +142,20 @@ const UINews = () => {
     );
   };
   const buttons = [{element: component1}, {element: component2}];
+  var months = [
+    {month: 'January', number: 1},
+    {month: 'February', number: 2},
+    {month: 'March', number: 3},
+    {month: 'April', number: 4},
+    {month: 'May', number: 5},
+    {month: 'June', number: 6},
+    {month: 'July', number: 7},
+    {month: 'August', number: 8},
+    {month: 'September', number: 9},
+    {month: 'October', number: 10},
+    {month: 'November', number: 11},
+    {month: 'December', number: 12},
+  ];
   return (
     <SafeAreaView style={styles.flatlistcontainer}>
       <Spinner
@@ -114,7 +163,44 @@ const UINews = () => {
         textContent={'Loading...'}
         textStyle={styles.spinnerTextStyle}
       />
-
+      <View style={{flexDirection: 'row', paddingLeft: 15}}>
+        <View style={{width: '50%'}}>
+          <HelperText type="info" visible={true} padding="none">
+            Filter Data
+          </HelperText>
+          <Picker
+            selectedValue={selected_filter?.value}
+            style={{height: 50, width: 150}}
+            onValueChange={(itemValue, itemIndex) =>
+              handleSelectedFilter(itemValue, itemIndex)
+            }>
+            <Picker.Item key={0} label="Today" value="today" />
+            <Picker.Item key={1} label="Last Week" value="week" />
+            <Picker.Item key={2} label="By Month" value="month" />
+          </Picker>
+        </View>
+        {isvisible ? (
+          <View style={{width: '50%'}}>
+            <HelperText type="info" visible={isvisible} padding="none">
+              Months
+            </HelperText>
+            <Picker
+              selectedValue={selected_filter_month?.value}
+              style={{height: 50, width: 150}}
+              onValueChange={(itemValue, itemIndex) =>
+                handleSelectedMonth(itemValue, itemIndex)
+              }>
+              {months.map((item) => (
+                <Picker.Item
+                  key={item.number}
+                  label={item.month}
+                  value={item.number}
+                />
+              ))}
+            </Picker>
+          </View>
+        ) : null}
+      </View>
       <FlatList
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

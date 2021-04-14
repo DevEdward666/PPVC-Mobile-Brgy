@@ -7,7 +7,38 @@ import {
   GET_DATA,
   GET_INFO,
   GET_NEWS_REACTION,
+  SELECTED_FILTER,
+  SELECTED_FILTER_MONTH,
 } from '../Types/NewsTypes';
+
+// export const action_get_news_bymonth = (month) => async (dispatch) => {
+//   //   var url = `${BASE_URL}/api/user/currentUser`;
+
+// };
+
+export const action_get_news_lastweek = () => async (dispatch) => {
+  //   var url = `${BASE_URL}/api/user/currentUser`;
+  var url = `${BASE_URL}/api/newsmobile/getNewsDataPublishedLastWeek`;
+  const token = await AsyncStorage.getItem('tokenizer');
+  const bearer_token = token;
+  const bearer = 'Bearer ' + bearer_token;
+  const fetchdata = await fetch(url, {
+    method: 'POST',
+    withCredentials: true,
+    headers: {
+      Authorization: bearer,
+    },
+  });
+  const parseData = await fetchdata.json();
+  if (parseData.status != 400) {
+    if (parseData.success != false) {
+      dispatch({
+        type: GET_DATA,
+        payload: parseData.data,
+      });
+    }
+  }
+};
 
 export const action_get_news = () => async (dispatch) => {
   //   var url = `${BASE_URL}/api/user/currentUser`;
@@ -138,4 +169,40 @@ export const action_get_news_add_comment = (news_pk, body) => async () => {
     if (parseData.success != false) {
     }
   }
+};
+export const action_filter_news = (value, index, text) => async (dispatch) => {
+  dispatch({
+    type: SELECTED_FILTER_MONTH,
+    payload: {value: value, index: index, text: text},
+  });
+
+  var url = `${BASE_URL}/api/newsmobile/getNewsDataPublishedByMonth`;
+  const token = await AsyncStorage.getItem('tokenizer');
+  const bearer_token = token;
+  const bearer = 'Bearer ' + bearer_token;
+  let formdata = new FormData();
+  formdata.append('month', value);
+  const fetchdata = await fetch(url, {
+    method: 'POST',
+    withCredentials: true,
+    headers: {
+      Authorization: bearer,
+    },
+    body: formdata,
+  });
+  const parseData = await fetchdata.json();
+  if (parseData.status != 400) {
+    if (parseData.success != false) {
+      dispatch({
+        type: GET_DATA,
+        payload: parseData.data,
+      });
+    }
+  }
+};
+export const action_filter = (value, index, text) => async (dispatch) => {
+  dispatch({
+    type: SELECTED_FILTER,
+    payload: {value: value, index: index, text: text},
+  });
 };

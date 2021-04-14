@@ -103,7 +103,7 @@ const ResetPassword = () => {
             ),
           );
           wait(2000).then(() => {
-            Actions.index();
+            Actions.home();
           });
         }
       } else {
