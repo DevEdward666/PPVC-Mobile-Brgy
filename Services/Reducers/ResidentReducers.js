@@ -4,6 +4,7 @@ import {
   GET_RESIDENTS_FAD_DATA,
   GET_SINGLE_MEDICAL_RECORDS,
   GET_FORGOT_PASSWORD_PROMISE,
+  GET_MEMBERS,
 } from '../Types/ResidentsTypes';
 
 const residentslist = {
@@ -12,6 +13,7 @@ const residentslist = {
   residents_exist_data: [],
   issuccess: false,
   forgotpassissuccess: {},
+  members: {data: [], loading: false},
 };
 const ResidentReducers = (data_state = residentslist, actions) => {
   switch (actions.type) {
@@ -25,6 +27,8 @@ const ResidentReducers = (data_state = residentslist, actions) => {
       return {...data_state, single_medical_records: actions.payload};
     case GET_FORGOT_PASSWORD_PROMISE:
       return {...data_state, forgotpassissuccess: actions.payload};
+    case GET_MEMBERS:
+      return {...data_state, members: actions.payload};
 
     default:
       return data_state;

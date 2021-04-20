@@ -1,4 +1,4 @@
-import {BASE_URL, NETINFO} from '../Types/Default_Types';
+import {BASE_URL, NETINFO, CHECK_NEW_USER} from '../Types/Default_Types';
 import NetInfo from '@react-native-community/netinfo';
 export const action_netinfo = () => (dispatch) => {
   NetInfo.fetch().then((state) => {
@@ -17,5 +17,12 @@ export const action_netinfo = () => (dispatch) => {
         },
       });
     }
+  });
+};
+
+export const aciton_check_new_user = (checked) => (dispatch) => {
+  dispatch({
+    type: CHECK_NEW_USER,
+    payload: checked,
   });
 };

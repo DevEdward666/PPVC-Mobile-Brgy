@@ -13,7 +13,9 @@ import MeInfo from '../Screens/Me/MeInfo';
 import Posts from '../Screens/Posts/Posts';
 import BarangayOfficials from '../Screens/BarangayOfficials/BarangayOfficialsList';
 import ResetPassword from '../Screens/Me/ResetPassword';
+import UpdateInfo from '../Screens/Me/UpdateInfo';
 import Settings from '../Screens/Me/Settings';
+import Family_Members from '../Screens/Me/Family/Family_Members';
 const Routes = () => (
   <Router>
     <Scene key="root">
@@ -34,6 +36,16 @@ const Routes = () => (
         key="resetpassword"
         component={ResetPassword}
         title="Reset Password"
+      />
+      <Scene
+        key="updateinfo"
+        component={UpdateInfo}
+        title="Update Information"
+      />
+      <Scene
+        key="family_member"
+        component={Family_Members}
+        title="My Family Members"
       />
       <Scene key="settings" component={Settings} title="Settings" />
       <Scene key="fad" component={FADForm} title="Family Assesment Data Form" />

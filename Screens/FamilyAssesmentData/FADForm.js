@@ -337,7 +337,7 @@ const FADForm = () => {
     };
     mounted && index();
     return () => (mounted = false);
-  }, [dispatch, users_reducers?.resident_pk, fam_member, PeopleInsidetheHouse]);
+  }, [dispatch]);
   useEffect(() => {
     let mounted = true;
     const listofresident = async () => {
@@ -380,7 +380,7 @@ const FADForm = () => {
     };
     mounted && listofresident();
     return () => (mounted = false);
-  }, [dispatch, tickrefresh, residents_data_exist[0]?.kadugayon_pagpuyo]);
+  }, [dispatch]);
 
   const onSwipe = useCallback((gestureName, gestureState) => {
     const {SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT} = swipeDirections;

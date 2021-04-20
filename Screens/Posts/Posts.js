@@ -43,7 +43,8 @@ import {
 import CustomBottomSheet from '../../Plugins/CustomBottomSheet';
 import {ScrollView, TextInput} from 'react-native-gesture-handler';
 import CustomFlexBox from '../../Plugins/CustomFlexBox';
-
+import {HelperText} from 'react-native-paper';
+import CustomBottomSheetV2 from '../../Plugins/CustomBottomSheetV2';
 const UINews = () => {
   const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
   var IMAGES_PER_ROW = 3;
@@ -93,25 +94,25 @@ const UINews = () => {
     let mounted = true;
     const getposts = () => {
       setSpinner(true);
-      setInterval(() => {
+
+      if (posts_reducers.loading) {
         setSpinner(false);
-      }, 1000);
+        dispatch(action_get_posts());
+      }
       dispatch(action_get_posts());
     };
-
     mounted && getposts();
     return () => (mounted = false);
-  }, [dispatch]);
-
+  }, [dispatch, posts_reducers.loading, spinner]);
   const updateIndex = useCallback(
     async (item, index) => {
       if (index !== 0) {
         await setposts_id(item?.posts_pk);
-        dispatch(action_get_posts_comments(item?.posts_pk));
-        setisVisible(true);
+        await dispatch(action_get_posts_comments(item?.posts_pk));
+        await setisVisible(true);
       } else {
-        dispatch(action_set_posts_reactions(item?.posts_pk, 'Like'));
-        dispatch(action_get_posts());
+        await dispatch(action_set_posts_reactions(item?.posts_pk, 'Like'));
+        await dispatch(action_get_posts());
       }
     },
     [dispatch],
@@ -135,9 +136,9 @@ const UINews = () => {
   }, [dispatch, post, multipleFile]);
   const handleCommentSend = useCallback(async () => {
     if (comment.length > 0) {
-      dispatch(action_posts_add_comment(posts_id, comment));
+      await dispatch(action_posts_add_comment(posts_id, comment));
 
-      dispatch(action_get_posts_comments(posts_id));
+      await dispatch(action_get_posts_comments(posts_id));
       await setcomment('');
     }
   }, [dispatch, comment, posts_id]);
@@ -154,6 +155,23 @@ const UINews = () => {
           <Icons name="thumbs-up" size={15} color="grey" /> Like
         </Text>
       </>
+    );
+  };
+  const liked = () => {
+    return (
+      <View
+        style={{
+          backgroundColor: '#0099ff',
+
+          width: '100%',
+          overflow: 'hidden',
+          height: '100%',
+          borderColor: '',
+        }}>
+        <Text style={{textAlign: 'center', color: 'white', marginTop: 5}}>
+          <Icons name="thumbs-up" size={15} color="white" /> Like
+        </Text>
+      </View>
     );
   };
   const component2 = () => {
@@ -177,6 +195,7 @@ const UINews = () => {
       BackHandler.removeEventListener('hardwareBackPress', backAction);
   }, []);
   const buttons = [{element: component1}, {element: component2}];
+  const buttonliked = [{element: liked}, {element: component2}];
   const [gestureName, setgestureName] = useState('');
   const onSwipePostComment = useCallback((gestureName, gestureState) => {
     const {SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT} = swipeDirections;
@@ -245,6 +264,7 @@ const UINews = () => {
       }
     }
   };
+
   const BadgedIcon = withBadge(1)(Icons);
   let imageUri = 'data:image/png;base64,' + users_reducers?.pic;
   return (
@@ -254,6 +274,7 @@ const UINews = () => {
         textContent={'Loading...'}
         textStyle={styles.spinnerTextStyle}
       />
+
       <CardView
         style={{marginTop: -5, marginBottom: 30, height: 80}}
         radius={1}>
@@ -403,7 +424,7 @@ const UINews = () => {
                     onChangeText={(text) => handleChangeTextPost(text)}
                     value={post}
                   />
-                  <View style={{width: 30 + '%', height: 50, padding: 5}}>
+                  <View style={{width: '50%', height: 50, padding: 5}}>
                     <Button
                       style={{color: 'black'}}
                       icon={
@@ -417,48 +438,56 @@ const UINews = () => {
                   </View>
                   <View
                     style={{
-                      flex: 1,
                       flexDirection: 'column',
                       justifyContent: 'flex-start',
                     }}>
                     <View
                       style={{
-                        width: '100%',
-                        height: screenHeight - 1000,
+                        width: screenWidth,
+                        height: screenHeight,
                       }}>
-                      <ScrollView>
-                        <CustomFlexBox
-                          label="flexDirection"
-                          selectedValue={'column'}>
-                          {postResource.map((item, index) => (
-                            <View style={{width: 100 + '%'}} key={index}>
-                              <TouchableNativeFeedback
-                                onLongPress={() =>
-                                  handleRemoveItem(item, index)
-                                }
-                                underlayColor="white">
-                                <CardView
-                                  style={styles.avatar}
-                                  radius={1}
-                                  backgroundColor={'#ffffff'}>
-                                  <View
-                                    style={{
-                                      flexDirection: 'row',
-                                      height: 500,
-                                      maxHeight: 2000,
-                                      alignItems: 'center',
-                                    }}>
-                                    <ImageBackground
-                                      source={{
-                                        uri: item.uri,
-                                      }}
-                                      style={styles.avatar}></ImageBackground>
-                                  </View>
-                                </CardView>
-                              </TouchableNativeFeedback>
-                            </View>
-                          ))}
-                        </CustomFlexBox>
+                      <HelperText
+                        type="info"
+                        visible={true}
+                        padding="none"
+                        style={{overflow: 'visible'}}>
+                        Long press image to remove & swipe left right to show
+                        other image
+                      </HelperText>
+                      <ScrollView horizontal={true}>
+                        {postResource.map((item, index) => (
+                          <View
+                            style={{
+                              flex: 1,
+                              width: screenWidth,
+                              height: screenHeight,
+                              marginTop: screenHeight - 1000,
+                              justifyContent: 'center',
+                            }}
+                            key={index}>
+                            <TouchableNativeFeedback
+                              onLongPress={() => handleRemoveItem(item, index)}
+                              underlayColor="white">
+                              <CardView
+                                style={styles.avatar}
+                                radius={1}
+                                backgroundColor={'#ffffff'}>
+                                <View
+                                  style={{
+                                    flexDirection: 'row',
+                                    maxHeight: 500,
+                                    alignItems: 'center',
+                                  }}>
+                                  <ImageBackground
+                                    source={{
+                                      uri: item.uri,
+                                    }}
+                                    style={styles.avatar}></ImageBackground>
+                                </View>
+                              </CardView>
+                            </TouchableNativeFeedback>
+                          </View>
+                        ))}
                       </ScrollView>
                     </View>
                   </View>
@@ -474,7 +503,7 @@ const UINews = () => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         style={styles.container}
-        data={posts_reducers}
+        data={posts_reducers.data}
         keyExtractor={(item, index) => index.toString()}
         onEndReachedThreshold={0.1}
         renderItem={({item, index}) => (
@@ -595,12 +624,82 @@ const UINews = () => {
                       })}
                     </View>
                   </View>
+                  <View
+                    style={{
+                      alignItems: 'stretch',
+                      width: screenWidth - 270,
+                    }}>
+                    <View style={{width: '100%'}}>
+                      {item?.totalcomments.map((comments, index) => {
+                        return (
+                          <Text key={index}>
+                            <Text> {comments.comments} </Text>
+                            Comments
+                          </Text>
+                        );
+                      })}
+                    </View>
+                  </View>
                 </View>
-                <ButtonGroup
-                  onPress={(index) => updateIndex(item, index)}
-                  buttons={buttons}
-                  containerStyle={{height: 35, marginBottom: 15}}
-                />
+                {item?.liked[0]?.reaction ? (
+                  <ButtonGroup
+                    onPress={(index) => updateIndex(item, index)}
+                    buttons={buttonliked}
+                    containerStyle={{height: 35, marginBottom: 15}}
+                  />
+                ) : (
+                  <ButtonGroup
+                    onPress={(index) => updateIndex(item, index)}
+                    buttons={buttons}
+                    containerStyle={{height: 35, marginBottom: 15}}
+                  />
+                )}
+                <ScrollView>
+                  {item.comments.map((comments) => {
+                    return (
+                      <CardView key={comments.posts_comment_pk}>
+                        <View style={styles.containercomment}>
+                          <View style={styles.contentNOTIFICATION}>
+                            <View
+                              style={{
+                                flex: 1,
+                                flexDirection: 'row',
+                                justifyContent: 'space-around',
+                                marginBottom: 50,
+                                height: 100,
+                              }}>
+                              <View style={{width: 30 + '%', height: 100}}>
+                                <Image
+                                  source={{
+                                    uri: `${base_url}/${comments?.pic}`,
+                                  }}
+                                  style={{
+                                    marginTop: 10,
+                                    marginStart: 10,
+                                    width: 40,
+                                    height: 40,
+                                    borderRadius: 120 / 2,
+                                    overflow: 'hidden',
+                                    borderWidth: 3,
+                                  }}
+                                />
+                              </View>
+                              <View style={{width: 95 + '%', height: 100}}>
+                                <CardView key={comments.posts_comment_pk}>
+                                  <Text style={styles.containerNOTIFICATION}>
+                                    {comments?.fullname}
+                                    {'\n'}
+                                    {comments?.body}
+                                  </Text>
+                                </CardView>
+                              </View>
+                            </View>
+                          </View>
+                        </View>
+                      </CardView>
+                    );
+                  })}
+                </ScrollView>
               </CardView>
             </CardView>
           </TouchableHighlight>
@@ -652,7 +751,7 @@ const UINews = () => {
                             <View style={{width: 30 + '%', height: 100}}>
                               <Image
                                 source={{
-                                  uri: `data:image/png;base64,${Notification?.user_pic}`,
+                                  uri: `${base_url}/${Notification?.pic}`,
                                 }}
                                 style={{
                                   marginTop: 10,

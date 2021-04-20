@@ -33,6 +33,7 @@
     "react-native-image-helper": "0.0.3",
     "react-native-image-picker": "^3.2.1",
     "react-native-loading-spinner-overlay": "^2.0.0",
+    "react-native-modalize": "^2.0.8",
     "react-native-notification-banner": "^2.0.0",
     "react-native-paper": "^4.7.2",
     "react-native-photo-grid": "0.0.2",

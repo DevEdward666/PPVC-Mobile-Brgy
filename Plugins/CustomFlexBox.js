@@ -1,6 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ScrollView,
+} from 'react-native';
+
 const CustomFlexBox = ({label, children, selectedValue}) => (
   <View style={{padding: 10, flex: 1}}>
     <View style={[styles.container, {[label]: selectedValue}]}>{children}</View>

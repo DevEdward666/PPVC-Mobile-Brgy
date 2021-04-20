@@ -12,9 +12,24 @@ const Settings = () => {
   const handlePressReset = useCallback(() => {
     Actions.resetpassword();
   }, []);
+  const handlePressUpdateInfo = useCallback(() => {
+    Actions.updateinfo();
+  }, []);
   return (
     <SafeAreaView>
       <ScrollView>
+        <TouchableNativeFeedback onPress={() => handlePressUpdateInfo()}>
+          <CardView style={{width: '100%', height: 70, padding: 20}}>
+            <Text
+              style={{
+                fontSize: 14,
+                textAlign: 'left',
+                fontWeight: 'bold',
+              }}>
+              Update Info
+            </Text>
+          </CardView>
+        </TouchableNativeFeedback>
         <TouchableNativeFeedback onPress={() => handlePressReset()}>
           <CardView style={{width: '100%', height: 70, padding: 20}}>
             <Text

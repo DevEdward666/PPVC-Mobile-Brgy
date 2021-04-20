@@ -41,6 +41,7 @@ import {
 import Dateconverter from '../../Plugins/Dateconverter';
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 import CustomFlexBox from '../../Plugins/CustomFlexBox';
+import {HelperText} from 'react-native-paper';
 const MeInfo = () => {
   const users_reducers = useSelector((state) => state.UserInfoReducers.data);
   const user_posts = useSelector(
@@ -98,7 +99,7 @@ const MeInfo = () => {
   let imageUri = 'data:image/png;base64,' + users_reducers?.pic;
 
   const handleAddPostPress = useCallback(() => {
-    setPostIsVisible(true);
+    Actions.family_member();
   }, []);
   const handleChangeTextPost = useCallback((text) => {
     setpost(text);
@@ -230,6 +231,23 @@ const MeInfo = () => {
       </>
     );
   };
+  const liked = () => {
+    return (
+      <View
+        style={{
+          backgroundColor: '#0099ff',
+
+          width: '100%',
+          overflow: 'hidden',
+          height: '100%',
+          borderColor: '',
+        }}>
+        <Text style={{textAlign: 'center', color: 'white', marginTop: 5}}>
+          <Icons name="thumbs-up" size={15} color="white" /> Like
+        </Text>
+      </View>
+    );
+  };
   const component2 = () => {
     return (
       <Text>
@@ -238,6 +256,7 @@ const MeInfo = () => {
     );
   };
   const buttons = [{element: component1}, {element: component2}];
+  const buttonliked = [{element: liked}, {element: component2}];
   return (
     <SafeAreaView style={styles.flatlistcontainer}>
       <ScrollView>
@@ -287,13 +306,13 @@ const MeInfo = () => {
             </View>
           </View>
         </View>
-        {/* <CardView style={{height: 70, padding: 10}}>
+        <CardView style={{height: 70, padding: 10}}>
           <Button
-            title="What's on your mind?"
+            title="Show family members"
             type="clear"
             onPress={() => handleAddPostPress()}
           />
-        </CardView> */}
+        </CardView>
       </ScrollView>
       <FlatList
         refreshControl={
@@ -421,12 +440,36 @@ const MeInfo = () => {
                       })}
                     </View>
                   </View>
+                  <View
+                    style={{
+                      alignItems: 'stretch',
+                      width: screenWidth - 270,
+                    }}>
+                    <View style={{width: '100%'}}>
+                      {item?.totalcomments.map((comments, index) => {
+                        return (
+                          <Text key={index}>
+                            <Text> {comments.comments} </Text>
+                            Comments
+                          </Text>
+                        );
+                      })}
+                    </View>
+                  </View>
                 </View>
-                <ButtonGroup
-                  onPress={(index) => updateIndex(item, index)}
-                  buttons={buttons}
-                  containerStyle={{height: 35, marginBottom: 15}}
-                />
+                {item?.liked[0]?.reaction ? (
+                  <ButtonGroup
+                    onPress={(index) => updateIndex(item, index)}
+                    buttons={buttonliked}
+                    containerStyle={{height: 35, marginBottom: 15}}
+                  />
+                ) : (
+                  <ButtonGroup
+                    onPress={(index) => updateIndex(item, index)}
+                    buttons={buttons}
+                    containerStyle={{height: 35, marginBottom: 15}}
+                  />
+                )}
               </CardView>
             </CardView>
           </TouchableHighlight>
@@ -669,37 +712,33 @@ const MeInfo = () => {
                       width: '100%',
                       height: screenHeight - 1000,
                     }}>
-                    <ScrollView>
-                      <CustomFlexBox
-                        label="flexDirection"
-                        selectedValue={'column'}>
-                        {postResource.map((item, index) => (
-                          <View style={{width: '100%'}} key={index}>
-                            <TouchableNativeFeedback
-                              onLongPress={() => handleRemoveItem(item, index)}
-                              underlayColor="white">
-                              <CardView
-                                style={styles.avatar}
-                                radius={1}
-                                backgroundColor={'#ffffff'}>
-                                <View
-                                  style={{
-                                    flexDirection: 'row',
-                                    width: '100%',
-                                    height: screenHeight - 500,
-                                    alignItems: 'center',
-                                  }}>
-                                  <ImageBackground
-                                    source={{
-                                      uri: item.uri,
-                                    }}
-                                    style={styles.avatar}></ImageBackground>
-                                </View>
-                              </CardView>
-                            </TouchableNativeFeedback>
-                          </View>
-                        ))}
-                      </CustomFlexBox>
+                    <ScrollView horizontal={true}>
+                      {postResource.map((item, index) => (
+                        <View style={{width: '100%'}} key={index}>
+                          <TouchableNativeFeedback
+                            onLongPress={() => handleRemoveItem(item, index)}
+                            underlayColor="white">
+                            <CardView
+                              style={styles.avatar}
+                              radius={1}
+                              backgroundColor={'#ffffff'}>
+                              <View
+                                style={{
+                                  flexDirection: 'row',
+                                  width: '100%',
+                                  height: screenHeight - 500,
+                                  alignItems: 'center',
+                                }}>
+                                <ImageBackground
+                                  source={{
+                                    uri: item.uri,
+                                  }}
+                                  style={styles.avatar}></ImageBackground>
+                              </View>
+                            </CardView>
+                          </TouchableNativeFeedback>
+                        </View>
+                      ))}
                     </ScrollView>
                   </View>
                 </View>

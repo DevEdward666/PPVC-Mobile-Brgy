@@ -67,7 +67,7 @@ const PostsInfo = () => {
       setRefreshing(false);
       dispatch(action_get_posts_info(posts_pk));
     });
-  }, [dispatch]);
+  }, [dispatch, posts_pk]);
   useEffect(() => {
     let mounted = true;
     const getpostsinfo = () => {
@@ -79,7 +79,7 @@ const PostsInfo = () => {
   }, [dispatch, posts_pk]);
 
   const updateIndex = useCallback(
-    async (index) => {
+    async (item, index) => {
       await dispatch(action_get_posts_comments(posts_pk));
       if (index !== 0) {
         setisVisible(true);
@@ -98,7 +98,7 @@ const PostsInfo = () => {
       await setcomment('');
     }
   }, [dispatch, comment, posts_pk]);
-  console.log(posts_info);
+  console.log(posts_info[0]?.totalcomments);
   const component1 = () => {
     return (
       <>
@@ -106,6 +106,23 @@ const PostsInfo = () => {
           <Icons name="thumbs-up" size={15} color="grey" /> Like
         </Text>
       </>
+    );
+  };
+  const liked = () => {
+    return (
+      <View
+        style={{
+          backgroundColor: '#0099ff',
+
+          width: '100%',
+          overflow: 'hidden',
+          height: '100%',
+          borderColor: '',
+        }}>
+        <Text style={{textAlign: 'center', color: 'white', marginTop: 5}}>
+          <Icons name="thumbs-up" size={15} color="white" /> Like
+        </Text>
+      </View>
     );
   };
   const component2 = () => {
@@ -116,6 +133,7 @@ const PostsInfo = () => {
     );
   };
   const buttons = [{element: component1}, {element: component2}];
+  const buttonliked = [{element: liked}, {element: component2}];
   const [gestureName, setgestureName] = useState('');
   const onSwipe = useCallback((gestureName, gestureState) => {
     const {SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT} = swipeDirections;
@@ -207,24 +225,58 @@ const PostsInfo = () => {
             height: 30,
             alignItems: 'center',
           }}>
-          <View style={{width: 20, marginStart: 20}}>
-            <Icons name="thumbs-up" size={15} color="grey" />
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'flex-start',
+            }}>
+            <View
+              style={{
+                width: 30,
+                marginBottom: -20,
+                marginStart: 20,
+              }}>
+              <Icons name="thumbs-up" size={15} color="grey" />
+            </View>
+            <View style={{width: 80}}>
+              {posts_info[0]?.reactions.map((likes, index) => {
+                return (
+                  <Badge status="primary" key={index} value={likes?.likes} />
+                );
+              })}
+            </View>
           </View>
-
-          <View style={{width: 1}}>
-            {posts_info[0]?.reactions.map((likes, index) => {
-              return (
-                <Badge status="primary" key={index} value={likes?.likes} />
-              );
-            })}
+          <View
+            style={{
+              alignItems: 'stretch',
+              width: screenWidth - 270,
+            }}>
+            <View style={{width: '100%'}}>
+              {posts_info[0]?.totalcomments.map((comments, index) => {
+                return (
+                  <Text key={index}>
+                    <Text> {comments.comments} </Text>
+                    Comments
+                  </Text>
+                );
+              })}
+            </View>
           </View>
         </View>
 
-        <ButtonGroup
-          onPress={(index) => updateIndex(index)}
-          buttons={buttons}
-          containerStyle={{height: 35, marginBottom: 15}}
-        />
+        {posts_info[0]?.liked[0]?.reaction ? (
+          <ButtonGroup
+            onPress={(index) => updateIndex(index)}
+            buttons={buttonliked}
+            containerStyle={{height: 35, marginBottom: 15}}
+          />
+        ) : (
+          <ButtonGroup
+            onPress={(index) => updateIndex(index)}
+            buttons={buttons}
+            containerStyle={{height: 35, marginBottom: 15}}
+          />
+        )}
       </CardView>
 
       {posts_info[0]?.upload_files.map((img, index) => {
@@ -291,7 +343,7 @@ const PostsInfo = () => {
                             <View style={{width: 30 + '%', height: 100}}>
                               <Image
                                 source={{
-                                  uri: `data:image/png;base64,${Notification?.user?.pic}`,
+                                  uri: `${base_url}/${Notification?.pic}`,
                                 }}
                                 style={{
                                   marginTop: 10,

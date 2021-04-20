@@ -30,7 +30,7 @@ export const action_get_userinfo = () => async (dispatch) => {
       });
     } else {
       console.log(parseData);
-      alert('1 Wrong Username/Password');
+      alert('Wrong Username/Password');
     }
   } else {
     alert('Wrong Username/Password');

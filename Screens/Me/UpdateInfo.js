@@ -19,7 +19,7 @@ import {
 import DocumentPicker from 'react-native-document-picker';
 import {Icon, Input} from 'react-native-elements';
 import * as ImagePicker from 'react-native-image-picker';
-import CustomBottomSheet from '../Plugins/CustomBottomSheet';
+import CustomBottomSheet from '../../Plugins/CustomBottomSheet';
 import Icons from 'react-native-vector-icons/FontAwesome';
 import {
   Table,
@@ -32,9 +32,9 @@ import {
 } from 'react-native-table-component';
 import {FlatList} from 'react-native-gesture-handler';
 import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
-import {action_SignUp_user} from '../Services/Actions/SignUpActions';
+import {action_update_user} from '../../Services/Actions/SignUpActions';
 import {useDispatch, useSelector} from 'react-redux';
-import CustomAlert from '../Plugins/CustomAlert';
+import CustomAlert from '../../Plugins/CustomAlert';
 import {Actions} from 'react-native-router-flux';
 const SignUpScreen = () => {
   const dispatch = useDispatch();
@@ -111,8 +111,65 @@ const SignUpScreen = () => {
   const [PhotoSingleFile, setPhotoSingleFile] = useState('');
   const [PhotoResource, setPhotoResource] = useState('');
   const [HouseIncome, setHouseIncome] = useState('');
+  const [user_pk, setuser_pk] = useState('');
+  const [resident_pk, setresident_pk] = useState('');
   const tableHead = ['Head', 'Head2', 'Head3', 'Head4'];
+  const users_reducers = useSelector((state) => state.UserInfoReducers.data);
+  useEffect(() => {
+    let mounted = true;
+    const info = () => {
+      console.log(users_reducers);
+      var getdate = new Date(users_reducers?.birth_date);
+      const day = getdate.getDate();
+      const month = getdate.getMonth() + 1;
+      const year = getdate.getFullYear();
+      setuser_pk(users_reducers?.user_pk);
+      setresident_pk(users_reducers?.resident_pk);
+      setfirstname(users_reducers?.first_name);
+      setmiddlename(users_reducers?.middle_name);
+      setlastname(users_reducers?.last_name);
+      setSuffix(users_reducers?.suffix);
+      setresourcePathProfile('data:image/png;base64,' + users_reducers?.pic);
+      setPhotoSingleFile(users_reducers?.pic);
+      if (month <= 9 && day <= 9) {
+        setbirthdate(year + '-0' + month + '-0' + day);
+      } else if (month <= 9) {
+        setbirthdate(year + '-0' + month + '-' + day);
+      } else if (day <= 9) {
+        setbirthdate(year + '-' + month + '-0' + day);
+      } else {
+        setbirthdate(year + '-' + month + '-' + day);
+      }
+      setgender(users_reducers?.gender);
 
+      //SECOND PART
+      setnationality(users_reducers?.nationality);
+      setreligion(users_reducers?.religion);
+      setcivilstatus(users_reducers?.civil_status);
+      setdialect(users_reducers?.dialect);
+      setribe(users_reducers?.tribe);
+      setdisablity(users_reducers?.with_disability);
+      setpurok(users_reducers?.purok);
+      setjobspecs(users_reducers?.employment);
+      if (users_reducers?.employment.lenght > 4) {
+        setisemployed('y');
+      } else {
+        setisemployed('n');
+      }
+
+      setHouseIncome('' + users_reducers?.house_income);
+      setHouseStatus(users_reducers?.house_status);
+      setVotingPrecint(users_reducers?.voting_precinct);
+      sethouseownedby(users_reducers?.house_ownership);
+
+      //THIRD PART
+
+      setemail(users_reducers?.email);
+      setmobile(users_reducers?.phone);
+    };
+    mounted && info();
+    return () => (mounted = false);
+  }, []);
   const onChange = useCallback((event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShow(Platform.OS === 'ios');
@@ -558,7 +615,9 @@ const SignUpScreen = () => {
   const handleSubmitCredentials = useCallback(async () => {
     if (stepError == false) {
       dispatch(
-        action_SignUp_user(
+        action_update_user(
+          resident_pk,
+          user_pk,
           PhotoSingleFile,
           firstname,
           middlename,
@@ -581,18 +640,16 @@ const SignUpScreen = () => {
           HouseStatus,
           VotingPrecint,
           houseownedby,
-          username,
-          password,
         ),
       );
-      await setalertshow(true);
-      await setalertmessage('Registered Successfully');
-      await setalerttitle('User Registration');
-      await Actions.home();
+      alert('User info Update Successfully');
+      await Actions.index();
     } else {
       alert('Please Provide Valid Data');
     }
   }, [
+    resident_pk,
+    user_pk,
     PhotoSingleFile,
     firstname,
     middlename,
@@ -615,8 +672,6 @@ const SignUpScreen = () => {
     HouseStatus,
     VotingPrecint,
     houseownedby,
-    username,
-    password,
   ]);
   const [isVisibles, setIsVisibles] = useState(false);
   const [gestureName, setgestureName] = useState('');
@@ -841,7 +896,7 @@ const SignUpScreen = () => {
                           resizeMode: 'center',
                           alignContent: 'flex-start',
                         }}
-                        source={require('../assets/icons/ic_calendar_prem-playstore.png')}
+                        source={require('../../assets/icons/ic_calendar_prem-playstore.png')}
                       />
                     </TouchableHighlight>
                     {/* <Button

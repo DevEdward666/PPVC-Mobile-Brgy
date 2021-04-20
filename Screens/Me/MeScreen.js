@@ -24,10 +24,11 @@ const MORE_ICON = Platform.OS === 'ios' ? 'dots-horizontal' : 'dots-vertical';
 const MeScreen = () => {
   const users_reducers = useSelector((state) => state.UserInfoReducers.data);
   const netinformation = useSelector((state) => state.Default_Reducer.netinfo);
+  const new_user = useSelector((state) => state.Default_Reducer.new_user);
   const [username, setUsername] = useState('');
   const [premid, setpremid] = useState('');
   const [fullname, setFullname] = useState('');
-  const [loading, setLoading] = useState(1);
+  const [tick, settick] = useState(0);
   const [value, setValue] = useState(false);
   const mountedRef = useRef();
   const [refreshing, setRefreshing] = useState(false);
@@ -84,8 +85,8 @@ const MeScreen = () => {
   }, [dispatch, users_reducers?.user_pk]);
   useEffect(() => {
     let mounted = true;
-    const getuserinfo = () => {
-      if (users_reducers?.new_user === 'true') {
+    const checknew_user = async () => {
+      if (new_user) {
         Alert.alert(
           'Famaily Assesment Data',
           'Are you the head of the family?',
@@ -100,10 +101,9 @@ const MeScreen = () => {
         );
       }
     };
-
-    mounted && getuserinfo();
+    mounted && checknew_user();
     return () => (mounted = false);
-  }, [dispatch, users_reducers?.new_user, users_reducers?.pic, netinformation]);
+  }, [new_user]);
 
   const gotocomplaints = useCallback(() => {
     Actions.complaints();
@@ -178,7 +178,9 @@ const MeScreen = () => {
                       justifyContent: 'center',
                     }}>
                     <Text style={{textAlign: 'justify', fontSize: 22}}>
-                      {users_reducers.full_name}
+                      {users_reducers.last_name}
+                      {','}
+                      {users_reducers.first_name}
                     </Text>
                     <Text
                       style={{

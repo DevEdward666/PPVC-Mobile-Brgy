@@ -11,7 +11,10 @@ import MeScreen from '../Me/MeScreen';
 import {useDispatch, useSelector} from 'react-redux';
 import {action_get_userinfo} from '../../Services/Actions/UserInfoActions';
 import {action_notify} from '../../Services/Actions/ComplaintsActions';
-import {action_netinfo} from '../../Services/Actions/DefaultActions';
+import {
+  action_netinfo,
+  aciton_check_new_user,
+} from '../../Services/Actions/DefaultActions';
 import {action_get_complaints} from '../../Services/Actions/ComplaintsActions';
 import {View} from 'react-native';
 import io from 'socket.io-client';
@@ -95,6 +98,7 @@ function BottomNavigation() {
   const base_url = useSelector((state) => state.NewsReducers.base_url);
   const complaintslist = useSelector((state) => state.ComplaintsReducers.data);
   const netinformation = useSelector((state) => state.Default_Reducer.netinfo);
+  const users_reducers = useSelector((state) => state.UserInfoReducers.data);
   AsyncStorage.getItem('tokenizer').then((item) => {
     if (item === null) {
       Actions.home();
@@ -106,7 +110,6 @@ function BottomNavigation() {
       Actions.home();
     } else {
       setreported_by(item);
-      dispatch(action_get_userinfo());
     }
   });
   AsyncStorage.getItem('complaint_pk').then(async (item) => {
@@ -176,12 +179,19 @@ function BottomNavigation() {
 
   useEffect(() => {
     let mounted = true;
-    const netinfo = () => {
-      dispatch(action_netinfo());
+    const netinfo = async () => {
+      await dispatch(action_get_userinfo());
+      await dispatch(action_netinfo());
+      console.log(users_reducers.new_user);
+      if ((await users_reducers.new_user) === 'true') {
+        await dispatch(aciton_check_new_user(true));
+      } else {
+        await dispatch(aciton_check_new_user(false));
+      }
     };
     mounted && netinfo();
     return () => (mounted = false);
-  }, [dispatch, isConnected]);
+  }, [dispatch, isConnected, users_reducers.new_user]);
   return (
     <View>
       <CustomNotification
