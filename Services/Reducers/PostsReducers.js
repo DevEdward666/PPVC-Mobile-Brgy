@@ -5,6 +5,8 @@ import {
   GET_USER_POSTS,
   GET_POSTS_REACTION,
   GET_LIMITED_COMMENTS,
+  GET_POSTS_REACTIONS,
+  GET_POSTS_PK,
 } from '../Types/PostsTypes';
 import {BASE_URL} from '../Types/Default_Types';
 const posts = {
@@ -14,6 +16,8 @@ const posts = {
   posts_info: [],
   posts_comments: [],
   posts_reaction: [],
+  posts_reactions: [],
+  posts_pk: '',
   base_url: BASE_URL,
 };
 const PostsReducers = (data_state = posts, actions) => {
@@ -30,6 +34,10 @@ const PostsReducers = (data_state = posts, actions) => {
       return {...data_state, posts_reaction: actions.payload};
     case GET_LIMITED_COMMENTS:
       return {...data_state, posts_comments_limit: actions.payload};
+    case GET_POSTS_REACTIONS:
+      return {...data_state, posts_reactions: actions.payload};
+    case GET_POSTS_PK:
+      return {...data_state, posts_pk: actions.payload};
     case BASE_URL:
       return {...data_state, base_url: actions.payload};
     default:

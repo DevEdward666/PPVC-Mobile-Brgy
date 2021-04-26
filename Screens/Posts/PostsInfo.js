@@ -147,6 +147,7 @@ const PostsInfo = () => {
 
         break;
       case SWIPE_LEFT:
+        setisVisible(false);
         // setgestureName({backgroundColor: 'blue'});
         break;
       case SWIPE_RIGHT:

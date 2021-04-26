@@ -45,6 +45,7 @@ import {ScrollView, TextInput} from 'react-native-gesture-handler';
 import CustomFlexBox from '../../Plugins/CustomFlexBox';
 import {HelperText} from 'react-native-paper';
 import CustomBottomSheetV2 from '../../Plugins/CustomBottomSheetV2';
+import UILiked from './Liked';
 const UINews = () => {
   const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
   var IMAGES_PER_ROW = 3;
@@ -104,19 +105,7 @@ const UINews = () => {
     mounted && getposts();
     return () => (mounted = false);
   }, [dispatch, posts_reducers.loading, spinner]);
-  const updateIndex = useCallback(
-    async (item, index) => {
-      if (index !== 0) {
-        await setposts_id(item?.posts_pk);
-        await dispatch(action_get_posts_comments(item?.posts_pk));
-        await setisVisible(true);
-      } else {
-        await dispatch(action_set_posts_reactions(item?.posts_pk, 'Like'));
-        await dispatch(action_get_posts());
-      }
-    },
-    [dispatch],
-  );
+
   const handleAddPostPress = useCallback(() => {
     setaddpostVisible(true);
   }, []);
@@ -148,39 +137,7 @@ const UINews = () => {
     },
     [dispatch, post],
   );
-  const component1 = () => {
-    return (
-      <>
-        <Text>
-          <Icons name="thumbs-up" size={15} color="grey" /> Like
-        </Text>
-      </>
-    );
-  };
-  const liked = () => {
-    return (
-      <View
-        style={{
-          backgroundColor: '#0099ff',
 
-          width: '100%',
-          overflow: 'hidden',
-          height: '100%',
-          borderColor: '',
-        }}>
-        <Text style={{textAlign: 'center', color: 'white', marginTop: 5}}>
-          <Icons name="thumbs-up" size={15} color="white" /> Like
-        </Text>
-      </View>
-    );
-  };
-  const component2 = () => {
-    return (
-      <Text>
-        <Icons name="comment" size={15} color="grey" /> Comment
-      </Text>
-    );
-  };
   const backAction = () => {
     setisVisible(false);
     setaddpostVisible(false);
@@ -194,8 +151,8 @@ const UINews = () => {
     return () =>
       BackHandler.removeEventListener('hardwareBackPress', backAction);
   }, []);
-  const buttons = [{element: component1}, {element: component2}];
-  const buttonliked = [{element: liked}, {element: component2}];
+  // const buttons = [{element: component1}, {element: component2}];
+  // const buttonliked = [{element: liked}, {element: component2}];
   const [gestureName, setgestureName] = useState('');
   const onSwipePostComment = useCallback((gestureName, gestureState) => {
     const {SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT} = swipeDirections;
@@ -209,6 +166,7 @@ const UINews = () => {
 
         break;
       case SWIPE_LEFT:
+        setisVisible(false);
         // setgestureName({backgroundColor: 'blue'});
         break;
       case SWIPE_RIGHT:
@@ -228,6 +186,7 @@ const UINews = () => {
 
         break;
       case SWIPE_LEFT:
+        setaddpostVisible(false);
         // setgestureName({backgroundColor: 'blue'});
         break;
       case SWIPE_RIGHT:
@@ -641,7 +600,8 @@ const UINews = () => {
                     </View>
                   </View>
                 </View>
-                {item?.liked[0]?.reaction ? (
+                <UILiked item={item} />
+                {/* {item?.liked[0]?.reaction ? (
                   <ButtonGroup
                     onPress={(index) => updateIndex(item, index)}
                     buttons={buttonliked}
@@ -653,7 +613,7 @@ const UINews = () => {
                     buttons={buttons}
                     containerStyle={{height: 35, marginBottom: 15}}
                   />
-                )}
+                )} */}
                 <ScrollView>
                   {item.comments.map((comments) => {
                     return (
@@ -705,118 +665,6 @@ const UINews = () => {
           </TouchableHighlight>
         )}
       />
-      <GestureRecognizer
-        onSwipe={(direction, state) => onSwipePostComment(direction, state)}
-        config={config}>
-        <CustomBottomSheet
-          isVisible={isVisible}
-          color="white"
-          UI={
-            <View>
-              <CardView>
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    marginBottom: 50,
-                    height: 10,
-                  }}>
-                  <View style={styles.containerNOTIFICATION}>
-                    <Text>Comments</Text>
-                  </View>
-                  <View style={styles.containerclose}>
-                    <TouchableHighlight
-                      onPress={() => setisVisible(false)}
-                      underlayColor={'white'}>
-                      <Icons size={25} name={'close'} />
-                    </TouchableHighlight>
-                  </View>
-                </View>
-              </CardView>
-              <ScrollView>
-                {posts_comments.map((Notification) => {
-                  return (
-                    <CardView key={Notification.posts_comment_pk}>
-                      <View style={styles.containercomment}>
-                        <View style={styles.contentNOTIFICATION}>
-                          <View
-                            style={{
-                              flex: 1,
-                              flexDirection: 'row',
-                              justifyContent: 'space-around',
-                              marginBottom: 50,
-                              height: 100,
-                            }}>
-                            <View style={{width: 30 + '%', height: 100}}>
-                              <Image
-                                source={{
-                                  uri: `${base_url}/${Notification?.pic}`,
-                                }}
-                                style={{
-                                  marginTop: 10,
-                                  marginStart: 10,
-                                  width: 40,
-                                  height: 40,
-                                  borderRadius: 120 / 2,
-                                  overflow: 'hidden',
-                                  borderWidth: 3,
-                                }}
-                              />
-                            </View>
-                            <View style={{width: 95 + '%', height: 100}}>
-                              <CardView key={Notification.posts_comment_pk}>
-                                <Text style={styles.containerNOTIFICATION}>
-                                  {Notification?.fullname}
-                                  {'\n'}
-                                  {Notification?.body}
-                                </Text>
-                              </CardView>
-                            </View>
-                          </View>
-                        </View>
-                      </View>
-                    </CardView>
-                  );
-                })}
-              </ScrollView>
-
-              <CardView>
-                <View style={styles.containerNOTIFICATION}>
-                  <View style={styles.contentNOTIFICATION}>
-                    <Text style={styles.nameNOTIFICATION}>Comment</Text>
-                    <View
-                      style={{
-                        flex: 1,
-                        flexDirection: 'row',
-                        justifyContent: 'space-around',
-                        marginBottom: 50,
-                      }}>
-                      <View style={{width: 320, height: 40}}>
-                        <TextInput
-                          style={{borderWidth: 2, borderColor: '#f7f5f5'}}
-                          multiline
-                          numberOfLines={4}
-                          onChangeText={(text) => onChangeText(text)}
-                          value={comment}
-                        />
-                      </View>
-                      <View style={{width: 50, height: 50}}>
-                        <Button
-                          icon={
-                            <Icons name="arrow-right" size={20} color="white" />
-                          }
-                          onPress={() => handleCommentSend()}
-                        />
-                      </View>
-                    </View>
-                  </View>
-                </View>
-              </CardView>
-            </View>
-          }
-        />
-      </GestureRecognizer>
     </SafeAreaView>
   );
 };

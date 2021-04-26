@@ -187,6 +187,7 @@ const MeInfo = () => {
 
         break;
       case SWIPE_LEFT:
+        setPostIsVisible(false);
         // setgestureName({backgroundColor: 'blue'});
         break;
       case SWIPE_RIGHT:
@@ -210,6 +211,7 @@ const MeInfo = () => {
 
         break;
       case SWIPE_LEFT:
+        setisVisible(false);
         // setgestureName({backgroundColor: 'blue'});
         break;
       case SWIPE_RIGHT:
@@ -268,7 +270,7 @@ const MeInfo = () => {
             <View
               style={{
                 width: '100%',
-                height: screenHeight,
+                height: screenHeight - 450,
                 textAlign: 'center',
               }}>
               <Image
@@ -276,22 +278,22 @@ const MeInfo = () => {
                   marginTop: 10,
                   marginStart: 10,
                   alignSelf: 'center',
-                  width: 150,
-                  height: 150,
-                  borderRadius: 200 / 2,
+                  width: 100,
+                  height: 100,
+                  borderRadius: 180 / 2,
                   overflow: 'hidden',
                   borderWidth: 3,
                 }}
                 source={{uri: imageUri, scale: 1}}
               />
               <Text
-                style={{textAlign: 'center', fontSize: 22, fontWeight: 'bold'}}>
+                style={{textAlign: 'center', fontSize: 16, fontWeight: 'bold'}}>
                 {users_reducers?.full_name}
               </Text>
-              <Text style={{textAlign: 'center', fontSize: 14}}>
+              <Text style={{textAlign: 'center', fontSize: 12}}>
                 Age :{age}
               </Text>
-              <Text style={{textAlign: 'center', fontSize: 14}}>
+              <Text style={{textAlign: 'center', fontSize: 12}}>
                 Birthday : {Dateconverter(users_reducers?.birth_date)}
               </Text>
               <Text
@@ -371,7 +373,7 @@ const MeInfo = () => {
                   <Text rkType="primary3 mediumLine"></Text>
                 </View>
               </View>
-              {item.upload_files[0]?.file_path ? (
+              {item?.upload_files[0]?.file_path ? (
                 <View
                   style={{
                     flexDirection: 'column',

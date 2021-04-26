@@ -22,8 +22,12 @@ const LoginScreen = () => {
 
   const dispatch = useDispatch();
   const handleSubmit = useCallback(() => {
-    dispatch(action_Login_user(username.trim(), password));
-  });
+    if (username.trim() === '' || password.trim() === '') {
+      alert('username/password is empty');
+    } else {
+      dispatch(action_Login_user(username.trim(), password));
+    }
+  }, [dispatch, username, password]);
   const goToSignup = useCallback(() => {
     Actions.signup();
   });

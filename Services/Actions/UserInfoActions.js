@@ -28,9 +28,6 @@ export const action_get_userinfo = () => async (dispatch) => {
         type: GET_INFO,
         payload: parseData.data,
       });
-    } else {
-      console.log(parseData);
-      alert('Wrong Username/Password');
     }
   } else {
     alert('Wrong Username/Password');
