@@ -56,7 +56,7 @@ const BarangayOfficials = () => {
                   marginBottom: 50,
                   height: screenHeight - 800,
                 }}>
-                <View style={{width: 50}}>
+                <View style={{width: screenWidth - 350}}>
                   <Image
                     source={{
                       uri: `data:image/png;base64,${items?.pic}`,
@@ -72,7 +72,7 @@ const BarangayOfficials = () => {
                     }}
                   />
                 </View>
-                <View style={{width: 300}}>
+                <View style={{width: screenWidth - 100}}>
                   <Text style={styles.containerNOTIFICATION}>
                     {items?.first_name} {items?.middle_name} {items?.last_name}{' '}
                     {items?.suffix}

@@ -1,7 +1,9 @@
 import React, {useState} from 'react';
 import {List} from 'react-native-paper';
 import {useSelector} from 'react-redux';
+import {Dimensions} from 'react-native';
 import Icons from 'react-native-vector-icons/FontAwesome';
+const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const Lists = () => {
   const [expanded, setExpanded] = useState(true);
 
@@ -25,11 +27,12 @@ const Lists = () => {
               onPress={handlePress}>
               {item?.members?.map((item2, index2) => (
                 <List.Item
+                  style={{maxHeight: screenHeight}}
                   key={index2}
                   //   left={(props) => (
                   //     <Icons {...props} name="users" size={25} color="#0099ff" />
                   //   )}
-                  title={item2.fullname}
+                  title={item2.fullname + ' - ' + item2.rel}
                 />
               ))}
             </List.Accordion>

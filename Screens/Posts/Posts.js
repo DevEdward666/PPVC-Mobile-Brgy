@@ -111,6 +111,7 @@ const UINews = () => {
   }, []);
   const handleRemoveItem = useCallback((e, i) => {
     setpostResource(postResource.filter((item, index) => index !== i));
+    setmultipleFile(multipleFile.filter((item, index) => index !== i));
   });
   const handleSubmitPostPress = useCallback(async () => {
     if (post.length > 0) {

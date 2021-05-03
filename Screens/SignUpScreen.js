@@ -36,6 +36,10 @@ import {action_SignUp_user} from '../Services/Actions/SignUpActions';
 import {useDispatch, useSelector} from 'react-redux';
 import CustomAlert from '../Plugins/CustomAlert';
 import {Actions} from 'react-native-router-flux';
+import {
+  action_getnationality,
+  action_getreligion,
+} from '../Services/Actions/ResidentsActions';
 const SignUpScreen = () => {
   const dispatch = useDispatch();
   const [firstname, setfirstname] = useState('');
@@ -49,14 +53,14 @@ const SignUpScreen = () => {
   const [city, setcity] = useState('');
   const [isVisible, setIsVisible] = useState(false);
 
-  const [nationality, setnationality] = useState('');
+  const [nationality, setnationality] = useState('Filipino');
   const [civilstatus, setcivilstatus] = useState('');
   const [dialect, setdialect] = useState('');
   const [disability, setdisablity] = useState('');
   const [jobspecs, setjobspecs] = useState('');
   const [isemployed, setisemployed] = useState('');
   const [purok, setpurok] = useState('');
-  const [religion, setreligion] = useState('');
+  const [religion, setreligion] = useState('CATHOLIC');
   const [tribe, setribe] = useState('');
 
   const [PeopleAge, setPeopleAge] = useState('');
@@ -111,8 +115,16 @@ const SignUpScreen = () => {
   const [PhotoSingleFile, setPhotoSingleFile] = useState('');
   const [PhotoResource, setPhotoResource] = useState('');
   const [HouseIncome, setHouseIncome] = useState('');
+  const [enablesEduc, setenablesEduc] = useState(false);
+  const [educ, seteduc] = useState('');
+  const [grado, setgrado] = useState('');
   const tableHead = ['Head', 'Head2', 'Head3', 'Head4'];
-
+  const nationality_list = useSelector(
+    (state) => state.ResidentReducers.nationality_list,
+  );
+  const religion_list = useSelector(
+    (state) => state.ResidentReducers.religion_list,
+  );
   const onChange = useCallback((event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShow(Platform.OS === 'ios');
@@ -204,6 +216,15 @@ const SignUpScreen = () => {
     //   }
     // }
   };
+  useEffect(() => {
+    let mounted = true;
+    const index = () => {
+      dispatch(action_getnationality());
+      dispatch(action_getreligion());
+    };
+    mounted && index();
+    return () => (mounted = false);
+  }, [dispatch]);
   const showMode = useCallback((currentMode) => {
     setShow(true);
     setMode(currentMode);
@@ -267,13 +288,7 @@ const SignUpScreen = () => {
     showMode('date');
   }, []);
   const handleNextInfo = useCallback(async () => {
-    if (
-      firstname == '' ||
-      middlename == '' ||
-      lastname == '' ||
-      gender == '' ||
-      birthdate == ''
-    ) {
+    if (firstname == '' || lastname == '' || gender == '' || birthdate == '') {
       await setInfoError(true);
       alert('Please Fill All Fields');
     } else if (PhotoSingleFile == '') {
@@ -508,7 +523,12 @@ const SignUpScreen = () => {
       PeopleHealthStatus,
     ],
   );
-
+  const handleseteduc = useCallback((value) => {
+    seteduc(value);
+    if (value === 'y') setenablesEduc(true);
+    else setenablesEduc(false);
+    setgrado('wala');
+  }, []);
   const tomarFoto = useCallback(() => {
     ImagePicker.launchCamera({maxWidth: 1280, maxHeight: 720}, (response) => {
       console.log('Request =', response);
@@ -578,9 +598,8 @@ const SignUpScreen = () => {
           isemployed,
           jobspecs,
           HouseIncome,
-          HouseStatus,
-          VotingPrecint,
           houseownedby,
+          educ,
           username,
           password,
         ),
@@ -612,9 +631,8 @@ const SignUpScreen = () => {
     isemployed,
     jobspecs,
     HouseIncome,
-    HouseStatus,
-    VotingPrecint,
     houseownedby,
+    educ,
     username,
     password,
   ]);
@@ -805,7 +823,7 @@ const SignUpScreen = () => {
                       mode="outlined"
                       inputContainerStyle={styles.inputContainer}
                       inputStyle={styles.inputText}
-                      onChangeText={(text) => setSuffix(text)}
+                      onChangeText={(text) => setbirthdate(text)}
                       label="Birthdate"
                       value={birthdate}
                     />
@@ -873,6 +891,34 @@ const SignUpScreen = () => {
                     <Picker.Item label="Female" value="f" />
                   </Picker>
                 </View>
+                <View>
+                  <Picker
+                    selectedValue={educ}
+                    style={styles.PickerContainer}
+                    onValueChange={(itemValue, itemIndex) =>
+                      handleseteduc(itemValue)
+                    }>
+                    <Picker.Item label="Nag Skwela or wala?" />
+                    <Picker.Item label="Nag skwela" value="y" />
+                    <Picker.Item label="Wala nag skwela" value="n" />
+                  </Picker>
+                </View>
+
+                {enablesEduc ? (
+                  <View>
+                    <Picker
+                      selectedValue={grado}
+                      style={styles.PickerContainer}
+                      onValueChange={(itemValue, itemIndex) =>
+                        setgrado(itemValue)
+                      }>
+                      <Picker.Item label="Grado na nakab-ot" />
+                      <Picker.Item label="Elementary" value="elementary" />
+                      <Picker.Item label="High School" value="high school" />
+                      <Picker.Item label="College" value="college" />
+                    </Picker>
+                  </View>
+                ) : null}
               </View>
             </ProgressStep>
             <ProgressStep
@@ -880,19 +926,25 @@ const SignUpScreen = () => {
               onNext={handleNextAddress}
               errors={AddressError}>
               <View style={styles.Inputcontainer}>
-                <TextInput
-                  theme={{
-                    colors: {
-                      primary: '#3eb2fa',
-                      background: 'white',
-                      underlineColor: 'transparent',
-                    },
-                  }}
-                  mode="outlined"
-                  onChangeText={(text) => handleNationality(text)}
-                  label="Nationality"
-                  value={nationality}
-                />
+                <Picker
+                  selectedValue={nationality}
+                  style={styles.PickerContainer}
+                  onValueChange={(itemValue, itemIndex) => {
+                    if (!itemValue) {
+                      setnationality('Filipino');
+                    } else {
+                      setnationality(itemValue);
+                    }
+                  }}>
+                  <Picker.Item key={0} label="Filipino" value="Filipino" />
+                  {nationality_list.map((item, index) => (
+                    <Picker.Item
+                      key={index}
+                      label={item?.name}
+                      value={item?.name}
+                    />
+                  ))}
+                </Picker>
                 {/* <Input
                   style={styles.textInput}
                   placeholder="Nationality"
@@ -901,19 +953,25 @@ const SignUpScreen = () => {
                   onChangeText={(text) => handleNationality(text)}
                   defaultValue={nationality}
                 /> */}
-                <TextInput
-                  theme={{
-                    colors: {
-                      primary: '#3eb2fa',
-                      background: 'white',
-                      underlineColor: 'transparent',
-                    },
-                  }}
-                  mode="outlined"
-                  onChangeText={(text) => handleRegligion(text)}
-                  label="Religion"
-                  value={religion}
-                />
+                <Picker
+                  selectedValue={religion}
+                  style={styles.PickerContainer}
+                  onValueChange={(itemValue, itemIndex) => {
+                    if (!itemValue) {
+                      setreligion('CATHOLIC');
+                    } else {
+                      setreligion(itemValue);
+                    }
+                  }}>
+                  <Picker.Item key={0} label="CATHOLIC" value="CATHOLIC" />
+                  {religion_list.map((item, index) => (
+                    <Picker.Item
+                      key={index}
+                      label={item?.religion}
+                      value={item?.religion}
+                    />
+                  ))}
+                </Picker>
                 {/* <Input
                   style={styles.textInput}
                   placeholder="Religion"
@@ -1008,19 +1066,16 @@ const SignUpScreen = () => {
                   onChangeText={(text) => handlePurok(text)}
                   defaultValue={purok}
                 /> */}
-                <TextInput
-                  theme={{
-                    colors: {
-                      primary: '#3eb2fa',
-                      background: 'white',
-                      underlineColor: 'transparent',
-                    },
-                  }}
-                  mode="outlined"
-                  onChangeText={(text) => handleJobSpecs(text)}
-                  label="Job Specification"
-                  value={jobspecs}
-                />
+                <Picker
+                  selectedValue={jobspecs}
+                  style={styles.PickerContainer}
+                  onValueChange={(itemValue, itemIndex) =>
+                    handleJobSpecs(itemValue)
+                  }>
+                  <Picker.Item label="Matang sa trabaho" />
+                  <Picker.Item label="Kanunay" value="Kanunay" />
+                  <Picker.Item label="Panagsa" value="Panagsa" />
+                </Picker>
                 {/* <Input
                   style={styles.textInput}
                   placeholder="Job Specification"
@@ -1051,19 +1106,7 @@ const SignUpScreen = () => {
                   onChangeText={(text) => handleHouseIncome(text)}
                   defaultValue={HouseIncome}
                 /> */}
-                <TextInput
-                  theme={{
-                    colors: {
-                      primary: '#3eb2fa',
-                      background: 'white',
-                      underlineColor: 'transparent',
-                    },
-                  }}
-                  mode="outlined"
-                  onChangeText={(text) => handleHouseStatus(text)}
-                  label="House Status"
-                  value={HouseStatus}
-                />
+
                 {/* <Input
                   style={styles.textInput}
                   placeholder="House Status"
@@ -1072,27 +1115,7 @@ const SignUpScreen = () => {
                   onChangeText={(text) => handleHouseStatus(text)}
                   defaultValue={HouseStatus}
                 /> */}
-                <TextInput
-                  theme={{
-                    colors: {
-                      primary: '#3eb2fa',
-                      background: 'white',
-                      underlineColor: 'transparent',
-                    },
-                  }}
-                  mode="outlined"
-                  onChangeText={(text) => handleVotingPrecint(text)}
-                  label="Voting Precint"
-                  value={VotingPrecint}
-                />
-                {/* <Input
-                  style={styles.textInput}
-                  placeholder="Voting Precint"
-                  inputContainerStyle={styles.inputContainer}
-                  inputStyle={styles.inputText}
-                  onChangeText={(text) => handleVotingPrecint(text)}
-                  defaultValue={VotingPrecint}
-                /> */}
+
                 <Picker
                   selectedValue={houseownedby}
                   style={styles.PickerContainer}

@@ -106,11 +106,11 @@ const UINews = () => {
     setoffset((prev) => prev + 10);
     // await dispatch(action_get_news());
   };
-  const gotonewsinfo = async (item) => {
-    await AsyncStorage.setItem('news_id', item.news_pk.toString());
+  const gotonewsinfo = useCallback(async (item) => {
+    await AsyncStorage.setItem('news_id', item?.news_pk.toString());
 
-    Actions.newsinfo();
-  };
+    await Actions.newsinfo();
+  }, []);
 
   const updateIndex = useCallback(
     (item, index) => {

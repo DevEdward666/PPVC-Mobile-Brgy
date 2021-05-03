@@ -5,15 +5,19 @@ import {
   GET_SINGLE_MEDICAL_RECORDS,
   GET_FORGOT_PASSWORD_PROMISE,
   GET_MEMBERS,
+  GET_NATIONALTIY_LIST,
+  GET_RELIGION_LIST,
 } from '../Types/ResidentsTypes';
 
 const residentslist = {
   residents_list: [],
   single_medical_records: [],
-  residents_exist_data: [],
+  residents_exist_data: {data: [], loading: false},
   issuccess: false,
   forgotpassissuccess: {},
   members: {data: [], loading: false},
+  religion_list: [],
+  nationality_list: [],
 };
 const ResidentReducers = (data_state = residentslist, actions) => {
   switch (actions.type) {
@@ -29,6 +33,11 @@ const ResidentReducers = (data_state = residentslist, actions) => {
       return {...data_state, forgotpassissuccess: actions.payload};
     case GET_MEMBERS:
       return {...data_state, members: actions.payload};
+    case GET_NATIONALTIY_LIST:
+      return {...data_state, nationality_list: actions.payload};
+
+    case GET_RELIGION_LIST:
+      return {...data_state, religion_list: actions.payload};
 
     default:
       return data_state;

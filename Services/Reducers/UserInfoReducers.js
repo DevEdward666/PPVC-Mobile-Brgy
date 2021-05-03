@@ -1,4 +1,4 @@
-import {GET_INFO} from '../Types/UserInfoTypes';
+import {GET_USER_INFO} from '../Types/UserInfoTypes';
 
 const userinfo = {
   data: [],
@@ -6,7 +6,7 @@ const userinfo = {
 };
 const UserInfoReducers = (data_state = userinfo, actions) => {
   switch (actions.type) {
-    case GET_INFO:
+    case GET_USER_INFO:
       return {...data_state, data: actions.payload};
 
     default:

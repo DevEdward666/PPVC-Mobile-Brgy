@@ -17,7 +17,7 @@ const Dateconverter = (dates) => {
     'December',
   ];
   const date = new Date(dates);
-  const month = date.getMonth() + 1;
+  const month = date.getMonth();
   const day = date.getDate();
   const year = date.getFullYear();
   const fullday = `${monthNames[month]}/${day}/${year}`;

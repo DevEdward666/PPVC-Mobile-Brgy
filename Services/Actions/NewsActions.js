@@ -4,8 +4,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Actions} from 'react-native-router-flux';
 import {
   GET_COMMENTS,
-  GET_DATA,
-  GET_INFO,
+  GET_NEWS_DATA,
+  GET_NEWS_INFO,
   GET_NEWS_REACTION,
   SELECTED_FILTER,
   SELECTED_FILTER_MONTH,
@@ -33,7 +33,7 @@ export const action_get_news_lastweek = () => async (dispatch) => {
   if (parseData.status != 400) {
     if (parseData.success != false) {
       dispatch({
-        type: GET_DATA,
+        type: GET_NEWS_DATA,
         payload: parseData.data,
       });
     }
@@ -57,7 +57,7 @@ export const action_get_news = () => async (dispatch) => {
   if (parseData.status != 400) {
     if (parseData.success != false) {
       dispatch({
-        type: GET_DATA,
+        type: GET_NEWS_DATA,
         payload: parseData.data,
       });
     }
@@ -83,8 +83,8 @@ export const action_get_news_info = (news_pk) => async (dispatch) => {
   if (parseData.status != 400) {
     if (parseData.success != false) {
       dispatch({
-        type: GET_INFO,
-        payload: parseData.data,
+        type: GET_NEWS_INFO,
+        payload: {data: parseData.data, loading: parseData.success},
       });
     }
   }
@@ -194,7 +194,7 @@ export const action_filter_news = (value, index, text) => async (dispatch) => {
   if (parseData.status != 400) {
     if (parseData.success != false) {
       dispatch({
-        type: GET_DATA,
+        type: GET_NEWS_DATA,
         payload: parseData.data,
       });
     }

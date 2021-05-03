@@ -53,34 +53,28 @@ const UINews = () => {
   const [comment, setcomment] = useState('');
   const [title, settitle] = useState('');
   const [body, setbody] = useState('');
+  const [count, setcount] = useState(0);
 
   const [isVisible, setisVisible] = useState(false);
-  const ENTRIES1 = news_reducers_info[0]?.upload_files;
-  AsyncStorage.getItem('news_id').then((item) => {
-    if (item == null) {
-      Actions.home();
-    } else {
-      setnews_id(item);
-    }
+  const ENTRIES1 = news_reducers_info?.data[0]?.upload_files;
+  AsyncStorage.getItem('news_id').then(async (item) => {
+    await setnews_id(item);
   });
+  console.log(news_id);
   useEffect(() => {
     let mounted = true;
-
-    const getcommentsandinfo = () => {
-      setSpinner(true);
-
-      dispatch(action_get_news_info(news_id));
-      setSpinner(false);
-      setEntries(ENTRIES1);
-
-      settitle(news_reducers_info[0]?.title);
-      setbody(news_reducers_info[0]?.body);
+    const getnewinfo = async () => {
+      await dispatch(action_get_news_info(news_id));
+      await setSpinner(true);
+      if (news_reducers_info?.loading) {
+        await setSpinner(false);
+        await setEntries(ENTRIES1);
+      }
+      await setSpinner(false);
     };
-
-    mounted && getcommentsandinfo();
+    mounted && getnewinfo();
     return () => (mounted = false);
   }, [dispatch, news_id]);
-
   const carouselRef = useRef(null);
 
   const goForward = () => {
@@ -125,15 +119,16 @@ const UINews = () => {
   }, []);
 
   const onRefresh = useCallback(async () => {
-    await setRefreshing(true);
-
+    setSpinner(true);
+    console.log(news_id);
     dispatch(action_get_news_info(news_id));
-    await setEntries(ENTRIES1);
-    await setRefreshing(false);
-    settitle(news_reducers_info[0]?.title);
-    setbody(news_reducers_info[0]?.body);
-  }, [dispatch, ENTRIES1, news_id]);
-  console.log(news_reducers_info[0]?.title);
+    if (news_reducers_info?.loading) {
+      setSpinner(false);
+      setEntries(ENTRIES1);
+      settitle(news_reducers_info?.data[0]?.title);
+      setbody(news_reducers_info?.data[0]?.body);
+    }
+  }, [dispatch, ENTRIES1, news_id, news_reducers_info]);
   const [gestureName, setgestureName] = useState('');
   const onSwipe = useCallback((gestureName, gestureState) => {
     const {SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT} = swipeDirections;
@@ -199,10 +194,12 @@ const UINews = () => {
             alignItems: 'center',
           }}>
           <Text style={styles.baseText}>
-            <Text style={styles.textTitle}>{title}</Text>
+            <Text style={styles.textTitle}>
+              {news_reducers_info.data[0]?.title}
+            </Text>
             {'\n'}
             {'\n'}
-            <Text style={styles.text}>{body}</Text>
+            <Text style={styles.text}>{news_reducers_info.data[0]?.body}</Text>
           </Text>
         </View>
       </ScrollView>

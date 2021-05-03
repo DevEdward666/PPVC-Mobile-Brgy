@@ -1,6 +1,6 @@
 import {
-  GET_DATA,
-  GET_INFO,
+  GET_NEWS_DATA,
+  GET_NEWS_INFO,
   GET_COMMENTS,
   GET_NEWS_REACTION,
   SELECTED_FILTER,
@@ -9,7 +9,7 @@ import {
 import {BASE_URL} from '../Types/Default_Types';
 const news = {
   data: [],
-  info: [],
+  info: {data: [], loading: false},
   comments: [],
   reactions: [],
   // base_url: 'http://192.168.254.104:4050',
@@ -19,9 +19,9 @@ const news = {
 };
 const NewsReducers = (data_state = news, actions) => {
   switch (actions.type) {
-    case GET_DATA:
+    case GET_NEWS_DATA:
       return {...data_state, data: actions.payload};
-    case GET_INFO:
+    case GET_NEWS_INFO:
       return {...data_state, info: actions.payload};
     case GET_COMMENTS:
       return {...data_state, comments: actions.payload};

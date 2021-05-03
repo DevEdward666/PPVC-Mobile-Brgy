@@ -179,9 +179,11 @@ const complaints = () => {
 
         break;
       case SWIPE_LEFT:
+        setIsVisible(false);
         // setgestureName({backgroundColor: 'blue'});
         break;
       case SWIPE_RIGHT:
+        setIsVisible(false);
         // setgestureName({backgroundColor: 'yellow'});
         break;
     }

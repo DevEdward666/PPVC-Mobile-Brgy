@@ -98,9 +98,8 @@ export const action_update_user = (
   isemployed,
   jobspecs,
   HouseIncome,
-  HouseStatus,
-  VotingPrecint,
   houseownedby,
+  grado,
 ) => async () => {
   var url = `${BASE_URL}/api/residentmobile/updateMobileResident`;
 
@@ -128,9 +127,8 @@ export const action_update_user = (
   formdata.append('is_employed', isemployed);
   formdata.append('employment', jobspecs);
   formdata.append('house_income', HouseIncome);
-  formdata.append('house_status', HouseStatus);
 
-  formdata.append('voting_precinct', VotingPrecint);
+  formdata.append('educ', grado);
   formdata.append('house_ownership', houseownedby);
   formdata.append('encoder_pk', '0');
   const token = await AsyncStorage.getItem('tokenizer');

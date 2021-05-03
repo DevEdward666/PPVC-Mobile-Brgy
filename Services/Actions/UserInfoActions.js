@@ -2,7 +2,7 @@ import {SET_DATA} from '../Types/LoginTypes';
 import {BASE_URL} from '../Types/Default_Types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Actions} from 'react-native-router-flux';
-import {GET_INFO} from '../Types/UserInfoTypes';
+import {GET_USER_INFO} from '../Types/UserInfoTypes';
 
 export const action_get_userinfo = () => async (dispatch) => {
   //   var url = `${BASE_URL}/api/user/currentUser`;
@@ -25,7 +25,7 @@ export const action_get_userinfo = () => async (dispatch) => {
   if (parseData.status != 400) {
     if (parseData.success != false) {
       dispatch({
-        type: GET_INFO,
+        type: GET_USER_INFO,
         payload: parseData.data,
       });
     }

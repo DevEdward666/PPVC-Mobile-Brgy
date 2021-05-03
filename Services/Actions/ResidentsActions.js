@@ -7,6 +7,8 @@ import {
   GET_RESIDENTS_FAD_DATA,
   GET_FORGOT_PASSWORD_PROMISE,
   GET_MEMBERS,
+  GET_RELIGION_LIST,
+  GET_NATIONALTIY_LIST,
 } from '../Types/ResidentsTypes';
 
 export const action_get_residents_list = (searchname) => async (dispatch) => {
@@ -57,7 +59,7 @@ export const action_get_FAD_exist = (resident_pk) => async (dispatch) => {
     if (parseData.success != false) {
       dispatch({
         type: GET_RESIDENTS_FAD_DATA,
-        payload: parseData.data,
+        payload: {data: parseData.data, loading: parseData.success},
       });
     }
   }
@@ -151,6 +153,22 @@ export const action_addfamily = (
   kadugayon_pagpuyo,
   okasyon_yuta,
   kaligon_balay,
+  waterconnection,
+  hasComfortRoom,
+  hasLightConnection,
+  wastemanagement,
+  kahimtang_komunidad,
+  victimofabuse,
+  skilltraining,
+  daycareservice,
+  Employment,
+  medicalngatabang,
+  lingap,
+  houseing,
+  financial,
+  fourps,
+  livelihood,
+  scholarship,
   fam_member,
 ) => async (dispatch) => {
   console.log(parseInt(kadugayon_pagpuyo));
@@ -175,6 +193,22 @@ export const action_addfamily = (
       kadugayon_pagpuyo: kadugayon_pagpuyo,
       okasyon_yuta: okasyon_yuta,
       kaligon_balay: kaligon_balay,
+      waterconnection: waterconnection,
+      hasComfortRoom: hasComfortRoom,
+      hasLightConnection: hasLightConnection,
+      wastemanagement: wastemanagement,
+      kahimtang_komunidad: kahimtang_komunidad,
+      victimofabuse: victimofabuse,
+      skilltraining: skilltraining,
+      daycareservice: daycareservice,
+      Employment: Employment,
+      medicalngatabang: medicalngatabang,
+      lingap: lingap,
+      houseing: houseing,
+      financial: financial,
+      fourps: fourps,
+      livelihood: livelihood,
+      scholarship: scholarship,
       fam_members: fam_member,
     }),
   });
@@ -233,6 +267,40 @@ export const action_getmembers = (resident_pk) => async (dispatch) => {
       dispatch({
         type: GET_MEMBERS,
         payload: {data: parseData.data, loading: parseData.success},
+      });
+    }
+  }
+};
+
+export const action_getreligion = () => async (dispatch) => {
+  var url = `${BASE_URL}/api/residentmobile/getreligion`;
+
+  const fetchdata = await fetch(url, {
+    method: 'POST',
+  });
+  const parseData = await fetchdata.json();
+  if (parseData.status != 400) {
+    if (parseData.success != false) {
+      dispatch({
+        type: GET_RELIGION_LIST,
+        payload: parseData.data,
+      });
+    }
+  }
+};
+
+export const action_getnationality = () => async (dispatch) => {
+  var url = `${BASE_URL}/api/residentmobile/getnationality`;
+
+  const fetchdata = await fetch(url, {
+    method: 'POST',
+  });
+  const parseData = await fetchdata.json();
+  if (parseData.status != 400) {
+    if (parseData.success != false) {
+      dispatch({
+        type: GET_NATIONALTIY_LIST,
+        payload: parseData.data,
       });
     }
   }
