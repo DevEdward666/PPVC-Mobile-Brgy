@@ -221,6 +221,7 @@ export const action_addfamily = (
       });
     }
   }
+  console.log(parseData);
 };
 export const action_upadatenewuser = (user_pk) => async (dispatch) => {
   var url = `${BASE_URL}/api/residentmobile/upadatenewuser`;

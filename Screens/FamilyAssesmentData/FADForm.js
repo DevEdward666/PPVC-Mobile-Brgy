@@ -14,6 +14,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
+import {HelperText} from 'react-native-paper';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {TextInput, Searchbar, Card} from 'react-native-paper';
@@ -449,6 +450,7 @@ const FADForm = () => {
       await dispatch(action_get_residents_list(searchvalue));
 
       if (residents_data_exist?.data[0]?.kadugayon_pagpuyo === undefined) {
+        setspinner(false);
         setisDisabled(false);
       } else {
         await setisDisabled(true);
@@ -854,6 +856,13 @@ const FADForm = () => {
               label="Ikaupat bahin"
               onNext={handleFourthInfo}
               errors={InfoError}>
+              <HelperText
+                type="info"
+                visible={true}
+                padding="none"
+                style={{overflow: 'visible'}}>
+                Isulat ang mga ahensya nga nagtabang sa imo.
+              </HelperText>
               <TextInput
                 theme={{
                   colors: {
@@ -903,7 +912,7 @@ const FADForm = () => {
                 }}
                 onChangeText={(text) => handleHousing(text)}
                 mode="outlined"
-                label="Houseing"
+                label="Housing"
                 value={houseing}
               />
               <TextInput
