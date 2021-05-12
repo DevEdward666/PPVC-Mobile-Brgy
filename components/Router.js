@@ -23,19 +23,21 @@ const Routes = () => (
         key="home"
         component={Login}
         title="Login"
+        hideNavBar={true}
         renderBackButton={() => <View />}
       />
-      <Scene key="signup" component={SignUp} title="Signup" />
-      <Scene key="newsfeed" component={NewsFeed} title="News" />
-      <Scene key="newsinfo" component={NewsInfo} title="News Info" />
-      <Scene key="postsinfo" component={PostsInfo} title="Posts" />
-      <Scene key="posts" component={Posts} title="Posts" />
-      <Scene key="officials" component={BarangayOfficials} title="Officials" />
-      <Scene key="profile" component={MeInfo} title="My Profile" />
+      <Scene key="signup" component={SignUp} title="Signup" hideNavBar={true}/>
+      <Scene key="newsfeed" component={NewsFeed} title="News"  navTransparent={true} navBarButtonColor="white"  titleStyle={{ color: "#ffffff" }} />
+      <Scene key="newsinfo" component={NewsInfo} title="News Info" navTransparent={true} titleStyle={{ color: "#ffffff" }} navBarButtonColor="white" />
+      <Scene key="postsinfo" component={PostsInfo} title="Posts" navTransparent={true} titleStyle={{ color: "#ffffff" }} navBarButtonColor="white"/>
+      <Scene key="posts" component={Posts} title="Posts" navTransparent={true} titleStyle={{ color: "#ffffff" }} navBarButtonColor="white"/>
+      <Scene key="officials" component={BarangayOfficials} title="Officials" navTransparent={true} titleStyle={{ color: "#ffffff" }} navBarButtonColor="white"/>
+      <Scene key="profile" component={MeInfo} title="My Profile" navTransparent={true} titleStyle={{ color: "#ffffff" }} navBarButtonColor="white" />
       <Scene
         key="resetpassword"
         component={ResetPassword}
         title="Reset Password"
+        navTransparent={true} titleStyle={{ color: "#ffffff" }} navBarButtonColor="white"
       />
       <Scene
         key="updateinfo"
@@ -47,20 +49,22 @@ const Routes = () => (
         component={Family_Members}
         title="My Family Members"
       />
-      <Scene key="settings" component={Settings} title="Settings" />
-      <Scene key="fad" component={FADForm} title="Family Assesment Data Form" />
+      <Scene key="settings" component={Settings} title="Settings" navTransparent={true} titleStyle={{ color: "#ffffff" }} navBarButtonColor="white"/>
+      <Scene key="fad" component={FADForm} title="Family Assesment Data Form" navTransparent={true} titleStyle={{ color: "#ffffff" }} navBarButtonColor="white"/>
 
       <Scene
         key="complaintsinfo"
         component={ComplaintsInfo}
         title="Complaint Info"
+        navTransparent={true} titleStyle={{ color: "#ffffff" }} navBarButtonColor="white"
       />
       <Scene
         key="complaints"
         component={Complaints}
         title="List of Complaints"
+        navTransparent={true} titleStyle={{ color: "#ffffff" }} navBarButtonColor="white"
       />
-      <Scene key="index" component={Index} title="Home" initial="true" />
+      <Scene key="index" component={Index} title="Home" initial="true" hideNavBar={true} />
     </Scene>
   </Router>
 );

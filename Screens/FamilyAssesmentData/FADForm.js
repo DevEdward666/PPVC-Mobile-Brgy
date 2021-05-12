@@ -12,12 +12,16 @@ import {
   Text,
   SafeAreaView,
   RefreshControl,
+  ImageBackground
 } from 'react-native';
+import SelectMultiple from 'react-native-select-multiple'
 import Spinner from 'react-native-loading-spinner-overlay';
-import {HelperText} from 'react-native-paper';
+import { CheckBox } from 'react-native-elements'
+import { HelperText} from 'react-native-paper';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import DropDownPicker from 'react-native-dropdown-picker';
-import {TextInput, Searchbar, Card} from 'react-native-paper';
+import {TextInput, Searchbar} from 'react-native-paper';
+import { Card } from 'react-native-elements';
 import {Picker} from '@react-native-community/picker';
 import {Icon, Input} from 'react-native-elements';
 import Icons from 'react-native-vector-icons/FontAwesome';
@@ -30,6 +34,9 @@ import {
   action_get_residents_list,
   action_addfamily,
   action_get_FAD_exist,
+  action_updatefamily,
+  action_get_FAD_form
+
 } from '../../Services/Actions/ResidentsActions';
 import CustomAlert from '../../Plugins/CustomAlert';
 import CustomSnackBar from '../../Plugins/CustomSnackBar';
@@ -45,6 +52,9 @@ const FADForm = () => {
   );
   const residents_data_exist = useSelector(
     (state) => state.ResidentReducers.residents_exist_data,
+  );
+  const resident_form = useSelector(
+    (state) => state.ResidentReducers.resident_form,
   );
   const dispatch = useDispatch();
   const [qualityness, setQualityness] = useState('');
@@ -75,68 +85,146 @@ const FADForm = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
-  const [waterconnection, setwaterconnection] = useState('');
-  const [hasComfortRoom, sethasComfortRoom] = useState('');
-  const [hasLightConnection, sethasLightConnection] = useState('');
-  const [wastemanagement, setwastemanagement] = useState('');
-  const [victimofabuse, setvictimofabuse] = useState('');
+  const [waterconnection, setwaterconnection] = useState([]);
+  const [waterconnectionsaver, setwaterconnectionsaver] = useState([]);
+
+  const [hasComfortRoom, sethasComfortRoom] = useState([]);
+  const [hasComfortRoomsaver, sethasComfortRoomsaver] = useState([]);
+
+  const [hasLightConnection, sethasLightConnection] = useState([]);
+  const [hasLightConnectionsaver, sethasLightConnectionsaver] = useState([]);
+
+  const [wastemanagement, setwastemanagement] = useState([]);
+  const [wastemanagementsaver, setwastemanagementsaver] = useState([]);
+
+  const [victimofabuse, setvictimofabuse] = useState([]);
+  const [victimofabusesaver, setvictimofabusesaver] = useState([]);
+
+  const [serbisyo, setserbisyo] = useState([]);
+  const [serbisyosaver, setserbisyosaver] = useState([]);
 
   const [skilltraining, setskilltraining] = useState('');
   const [daycareservice, setdaycareservice] = useState('');
   const [Employment, setEmployment] = useState('');
   const [medicalngatabang, setmedicalngatabang] = useState('');
   const [lingap, setlingap] = useState('');
-
   const [houseing, sethouseing] = useState('');
   const [fourps, setfourps] = useState('');
   const [livelihood, setlivelihood] = useState('');
   const [financial, setfinancial] = useState('');
   const [scholarship, setscholarship] = useState('');
-  const [kahimtangsakomunidad, setkahimtangsakomunidad] = useState('');
 
+  const [kahimtangsakomunidad, setkahimtangsakomunidad] = useState([]);
+  const [kahimtangsakomunidadsaver, setkahimtangsakomunidadsaver] = useState([]);
+
+  const [checked, setChecked] = useState({});
+
+  const [checkedwaterconnection,setCheckedWaterConnection]=useState({})
+const [checkedkasilyas,setCheckedKasilyas]=useState({})
+const [checkedkuryente,setCheckedKuryente]=useState({})
+const [checkedbasura,setCheckedBasura]=useState({})
+const [checkedpangabuso,setCheckedPangabuso]=useState({})
+const [checkedserbisyo,setCheckSerbisyo]=useState({})
+  const kahimtangsakomunidadcheck=[{label: "kawad-on/kulang sa panginabuhian", value: "kawad-on/kulang sa panginabuhian"}, 
+  {label: "Walay Igong o layo sa eskewlahan", value: "Walay Igong o layo sa eskewlahan"},
+  {label: "Presensya sa mga nagkalin-laing krimen/bisyo o pang-abuso", value: "Presensya sa mga nagkalin-laing krimen/bisyo o pang-abuso"},
+  {label: "Walay maayong agianan/kanal sa tubig", value: "Walay maayong agianan/kanal sa tubig"},
+  {label: "Demolisyon", value: "Demolisyon"},
+  {label: "Kulang sa Pasilidad sa Kuryente", value: "Kulang sa Pasilidad sa Kuryente"},
+  {label: "Kulang sa Pasilidad sa Tubig", value: "Kulang sa Pasilidad sa Tubig"},
+  {label: "Kulang sa Pasilidad sa Balay Tamabalanan", value: "Kulang sa Pasilidad sa Balay Tamabalanan"},
+  {label: "Dulaana sa mga bata", value: "Dulaana sa mga bata"}]
+  
+  const waterconnectionchecked=[{ label: "Walay connection sa tubig",value:"Walay connection sa tubig"}, { label: "bomba",value: "bomba"},
+  { label: "Ulan",value: "Ulan"},{label: "Barangay Water Work",value: "Barangay Water Work"},{ label: "Tubod",value: "Tubod"},
+  { label: "balon",value: "balon"},{ label: "DCWD",value: "DCWD"}]
+
+
+
+
+  const Kasilyaschecked=[{label: "Walay Kasilyas", value: "Walay Kasilyas"}, {label: "Antipolo", value: "Antipolo"},
+  {label: "Buhos", value: "Buhos"},{label: "Water-Seated", value: "Water-Seated"}]
+
+  const kuryentechecked=[{label: "Walay Koneksyon", value: "Walay Koneksyon"}, {label: "Lamapara (gas)", value: "Lamapara (gas)"},
+  {label: "Kandila", value: "Kandila"},{label: "Petromaks", value: "Petromaks"},{label: "Davao Light", value: "Davao Light"}]
+
+  const basuracheckedf=[{label: "Ginalain ang Mabulok ug dili mabulok", value: "Ginalain ang Mabulok ug dili mabulok"}, {label: "Gikolekta sa CENRO or Barangay", value: "Gikolekta sa CENRO or Barangay"},
+  {label: "Ginalubong", value: "Ginalubong"},{label: "Ginalabay", value: "Ginalabay"}]
+
+
+  const pangabusocheked=[{label: "Gibeya-an", value: "Gibeya-an"}, {label: "Pangulata", value: "Pangulata"},
+  {label: "Ginabaligya/Illegal Rekroter", value: "Ginabaligya/Illegal Rekroter"},{label: "Krime", value: "Krime"},{label: "Droga", value: "Droga"}]
+
+  const serbisyochecked=[{label: "Scholarship", value: "Scholarship"}, {label: "Livelihood", value: "Livelihood"},
+  {label: "Housing", value: "Housing"},{label: "Financial", value: "Financial"},{label: "Lingap", value: "Lingap"},{label: "Medical nga tabang", value: "Medical nga tabang"},
+  {label: "Day Care Service", value: "Day Care Service"},{label: "Skill Training", value: "Skill Training"},{label: "Employment", value: "Employment"}]
   const handleSubmit = useCallback(async () => {
     setspinner(true);
-
-    await dispatch(
-      action_addfamily(
-        residents_data_exist?.data[0]?.fam_pk,
-        users_reducers.resident_pk,
-        Occationofthehouse,
-        structure,
-        yearsstayed,
-        Occationfortheland,
-        qualityness,
-        waterconnection,
-        hasComfortRoom,
-        hasLightConnection,
-        wastemanagement,
-        kahimtangsakomunidad,
-        victimofabuse,
-        skilltraining,
-        daycareservice,
-        Employment,
-        medicalngatabang,
-        lingap,
-        houseing,
-        financial,
-        fourps,
-        livelihood,
-        scholarship,
-        fam_member,
-      ),
+if(residents_data_exist?.data[0].fam_pk!==""){
+  dispatch(
+    action_updatefamily(
+      residents_data_exist?.data[0].fam_pk,
+      users_reducers.resident_pk,
+      Occationofthehouse,
+      structure,
+      yearsstayed,
+      Occationfortheland,
+      qualityness,
+      waterconnectionsaver,
+      hasComfortRoomsaver,
+      hasLightConnectionsaver,
+      wastemanagementsaver,
+      kahimtangsakomunidadsaver,
+      victimofabusesaver,
+      serbisyosaver,
+      fam_member,
+    ),
+  );
+  setspinner(false);
+  if (await residents_issuccess) {
+    alert(
+      'Your Application for Family Assesment Data has been submitted successfully',
     );
-    setspinner(false);
-    if (residents_issuccess) {
-      alert(
-        'Your Application for Family Assesment Data has been submitted successfully',
-      );
 
-      wait(1000).then(() => {
-        Actions.index();
-        setAlertshow(false);
-      });
-    }
-  }, [dispatch, fam_member, residents_issuccess]);
+    setspinner(false);
+    wait(1000).then(() => {
+      Actions.index();
+      setAlertshow(false);
+    });
+  }
+}else{
+  dispatch(
+    action_addfamily(
+      users_reducers.resident_pk,
+      Occationofthehouse,
+      structure,
+      yearsstayed,
+      Occationfortheland,
+      qualityness,
+      waterconnectionsaver,
+      hasComfortRoomsaver,
+      hasLightConnectionsaver,
+      wastemanagementsaver,
+      kahimtangsakomunidadsaver,
+      victimofabusesaver,
+      serbisyosaver,
+      fam_member,
+    ),
+  );
+  if (residents_issuccess) {
+    alert(
+      'Your Application for Family Assesment Data has been submitted successfully',
+    );
+
+    setspinner(false);
+    wait(1000).then(() => {
+      Actions.index();
+      setAlertshow(false);
+    });
+  }
+}
+    
+  }, [dispatch, fam_member, residents_issuccess,serbisyosaver,victimofabusesaver,kahimtangsakomunidadsaver,wastemanagementsaver,hasLightConnectionsaver,hasComfortRoomsaver,waterconnectionsaver]);
 
   const handleSecondInfo = useCallback(async () => {}, []);
   const handleThirdInfo = useCallback(async () => {
@@ -152,6 +240,7 @@ const FADForm = () => {
       setfam_member([]);
       setRefreshing(false);
       dispatch(action_get_FAD_exist(users_reducers?.resident_pk));
+      dispatch(action_get_FAD_form(users_reducers?.resident_pk,users_reducers?.fam_pk));
       residents_data_exist[0]?.fam_members?.map((item) => {
         setPeopleInsidetheHouse((prev) => [
           ...prev,
@@ -189,7 +278,7 @@ const FADForm = () => {
       yearsstayed,
       structure,
     ],
-    [fam_member, PeopleInsidetheHouse, users_reducers?.resident_pk],
+    [fam_member, PeopleInsidetheHouse, users_reducers?.resident_pk,users_reducers?.fam_pk],
   );
 
   const onChangeSearch = useCallback(
@@ -203,62 +292,232 @@ const FADForm = () => {
     },
     [dispatch, searchvalue],
   );
+
+const handleCheckBoxKahitang = useCallback(async(selection,item) => {
+let mounted=true
+let found=false
+if(mounted){
+
+{kahimtangsakomunidad.map((items)=>{
+if(items.label===item.label){
+   setkahimtangsakomunidad(
+    kahimtangsakomunidad.filter((item) => item.label !== items.label),
+  );
+  setkahimtangsakomunidadsaver(
+    kahimtangsakomunidadsaver.filter((item) => item !== items.label),
+  );
+  found=true
+}
+})}
+   if(!found){
+    await setkahimtangsakomunidad((prev)=>[...prev,{label:item.label,value:item.label}])
+      await setkahimtangsakomunidadsaver((prev)=>[...prev,item.label])
+
+   }
+
+ 
+}
+return()=>{mounted=false}
+},[kahimtangsakomunidad]);
+
+const handleCheckBoxwaterConntection = useCallback(async(selections, item) => {
+let mounted=true
+let found=false
+if(mounted){
+
+{waterconnection.map((items)=>{
+if(items.label===item.label){
+   setwaterconnection(
+    waterconnection.filter((item) => item.label !== items.label),
+  );
+  setwaterconnectionsaver(
+    waterconnectionsaver.filter((item) => item !== items.label),
+  );
+  found=true
+}
+})}
+   if(!found){
+    await setwaterconnection((prev)=>[...prev,{label:item.label,value:item.label}])
+      await setwaterconnectionsaver((prev)=>[...prev,item.label])
+
+   }
+
+ 
+  
+  
+}
+return()=>{mounted=false}
+},[waterconnection]);
+console.log(hasComfortRoom)
+const handleCheckBoxKasilyas = useCallback(async(selection,item) => {
+let mounted=true
+let found=false
+if(mounted){
+ 
+{hasComfortRoom.map((items)=>{
+  if(items.label===item.label){
+     sethasComfortRoom(
+      hasComfortRoom.filter((item) => item.label !== items.label),
+    );
+    sethasComfortRoomsaver(
+      hasComfortRoomsaver.filter((item) => item !== items.label),
+    );
+    found=true
+  }
+  })}
+     if(!found){
+      await sethasComfortRoom((prev)=>[...prev,{label:item.label,value:item.label}])
+        await sethasComfortRoomsaver((prev)=>[...prev,item.label])
+  
+     }
+  
+}
+return()=>{mounted=false}
+},[hasComfortRoom]);
+
+const handleCheckBoxKuryente = useCallback(async(selection,item) => {
+let mounted=true
+let found=false
+if(mounted){
+ 
+{hasLightConnection.map((items)=>{
+  if(items.label===item.label){
+     sethasLightConnection(
+      hasLightConnection.filter((item) => item.label !== items.label),
+    );
+    sethasLightConnectionsaver(
+      hasLightConnectionsaver.filter((item) => item !== items.label),
+    );
+    found=true
+  }
+  })}
+     if(!found){
+      await sethasLightConnection((prev)=>[...prev,{label:item.label,value:item.label}])
+        await sethasLightConnectionsaver((prev)=>[...prev,item.label])
+  
+     }
+  
+}
+return()=>{mounted=false}
+},[hasLightConnection]);
+
+const handleCheckBoxBasura = useCallback(async(selection,item) => {
+let mounted=true
+let found=false
+if(mounted){
+ 
+{wastemanagement.map((items)=>{
+  if(items.label===item.label){
+     setwastemanagement(
+      wastemanagement.filter((item) => item.label !== items.label),
+    );
+    setwastemanagementsaver(
+      wastemanagementsaver.filter((item) => item !== items.label),
+    );
+    found=true
+  }
+  })}
+     if(!found){
+      await setwastemanagement((prev)=>[...prev,{label:item.label,value:item.label}])
+        await setwastemanagementsaver((prev)=>[...prev,item.label])
+  
+     }
+}
+return()=>{mounted=false}
+},[wastemanagement]);
+
+const handleCheckBoxPangabuso = useCallback(async(selection,item) => {
+let mounted=true
+let found=false
+if(mounted){
+ 
+{victimofabuse.map((items)=>{
+  if(items.label===item.label){
+     setvictimofabuse(
+      victimofabuse.filter((item) => item.label !== items.label),
+    );
+    setvictimofabusesaver(
+      victimofabusesaver.filter((item) => item !== items.label),
+    );
+    found=true
+  }
+  })}
+     if(!found){
+      await setvictimofabuse((prev)=>[...prev,{label:item.label,value:item.label}])
+        await setvictimofabusesaver((prev)=>[...prev,item.label])
+  
+     }
+}
+return()=>{mounted=false}
+},[victimofabuse]);
+
+const handleCheckBoxSerbisyo = useCallback(async(selection,item) => {
+let mounted=true
+let found=false
+let agency="TBD"
+if(mounted){
+ 
+{serbisyo.map((items)=>{
+  if(items.label===item.label){
+     setserbisyo(
+      serbisyo.filter((item) => item.label !== items.label),
+    );
+    setserbisyosaver(
+      serbisyosaver.filter((item) => item.programa !== items.label),
+    );
+    found=true
+  }
+  })}
+     if(!found){
+       if(item.label==="Scholarship"){
+          agency=scholarship;
+       }else if(item.label==="Livelihood"){
+          agency=livelihood;
+       }else if(item.label==="Housing"){
+         agency=houseing
+       }else if (item.label==="Financial"){
+         agency=financial
+       }else if (item.label==="Lingap"){
+         agency=lingap
+       }else if (item.label==="Medical nga Tabang"){
+         agency=medicalngatabang
+       }else if(item.label==="Day Care Service"){
+         agency=daycareservice
+       }else if (item.label==="Skill Training"){
+         agency=skilltraining
+       }else if (item.label==="Employment"){
+         agency=Employment
+       }else{
+         agency="TBD"
+       }
+      await setserbisyo((prev)=>[...prev,{label:item.label,value:item.label}])
+        await setserbisyosaver((prev)=>[...prev,{programa:item.label,ahensya:agency}])
+  
+     }
+}
+return()=>{mounted=false}
+},[serbisyo]);
+console.log(serbisyosaver)
   const handleOccationfortheland = useCallback((value) => {
     setOccationfortheland(value);
   });
 
-  const handlehasComfortRoom = useCallback((value) => {
-    sethasComfortRoom(value);
-  }, []);
+  // const handlehasComfortRoom = useCallback((value) => {
+  //   sethasComfortRoom(value);
+  // }, []);
 
-  const handlekahimtangsakomunidad = useCallback((value) => {
-    setkahimtangsakomunidad(value);
-  }, []);
+  // const handlekahimtangsakomunidad = useCallback((value) => {
+  //   setkahimtangsakomunidad(value);
+  // }, []);
 
-  const handlewastemanagement = useCallback((value) => {
-    setwastemanagement(value);
-  }, []);
+  // const handlewastemanagement = useCallback((value) => {
+  //   setwastemanagement(value);
+  // }, []);
 
-  const handlevictimofabuse = useCallback((value) => {
-    setvictimofabuse(value);
-  }, []);
-  const handleFinancial = useCallback((value) => {
-    setfinancial(value);
-  }, []);
-
-  const handleEmployment = useCallback((value) => {
-    setEmployment(value);
-  }, []);
-  const handleWaterConnection = useCallback((value) => {
-    setwaterconnection(value);
-  }, []);
-  const handlehasLightConnection = useCallback((value) => {
-    sethasLightConnection(value);
-  }, []);
-  const handleskilltraining = useCallback((value) => {
-    setskilltraining(value);
-  }, []);
-  const handledaycareservice = useCallback((value) => {
-    setdaycareservice(value);
-  }, []);
-  const handlemedicalngatabang = useCallback((value) => {
-    setmedicalngatabang(value);
-  }, []);
-  const handleLingap = useCallback((value) => {
-    setlingap(value);
-  }, []);
-  const handleHousing = useCallback((value) => {
-    sethouseing(value);
-  }, []);
-  const handle4ps = useCallback((value) => {
-    setfourps(value);
-  }, []);
-  const handleLivelihood = useCallback((value) => {
-    setlivelihood(value);
-  }, []);
-  const handleScholarship = useCallback((value) => {
-    setscholarship(value);
-  }, []);
+  // const handlevictimofabuse = useCallback((value) => {
+  //   setvictimofabuse(value);
+  // }, []);
+ 
 
   const handleOccationofthehouse = useCallback((value) => {
     setOccationofthehouse(value);
@@ -405,7 +664,6 @@ const FADForm = () => {
     },
     [(fam_member, PeopleInsidetheHouse)],
   );
-  console.log(fam_member);
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     setPeopleInsidetheHouse([]);
@@ -436,13 +694,36 @@ const FADForm = () => {
       dispatch(action_get_FAD_exist(users_reducers?.resident_pk));
     };
     mounted && index();
-    return () => (mounted = false);
-  }, [dispatch]);
+    return () => {mounted = false};
+  }, [dispatch,users_reducers?.resident_pk]);
 
   useEffect(() => {
     let mounted = true;
     setspinner(true);
     const listofresident = async () => {
+      await setwaterconnection([])
+      await setwaterconnectionsaver([])
+
+      await sethasLightConnection([])
+      await sethasLightConnectionsaver([])
+
+      await sethasComfortRoom([])
+      await sethasComfortRoomsaver([])
+
+      await setwastemanagement([])
+      await setwastemanagementsaver([])
+
+      await setvictimofabuse([])
+      await setvictimofabusesaver([])
+
+      await setkahimtangsakomunidad([])
+      await setkahimtangsakomunidadsaver([])
+
+      await setserbisyo([])
+      await setserbisyosaver([])
+
+      await setCheckedWaterConnection({})
+
       if (searchvalue === '') {
         await setsearchvalue(null);
       }
@@ -457,48 +738,99 @@ const FADForm = () => {
         setspinner(true);
         if (residents_data_exist?.loading) {
           await setOccationofthehouse(
-            residents_data_exist?.data[0]?.okasyon_balay,
+            residents_data_exist?.data[0].okasyon_balay,
           );
           await setOccationfortheland(
-            residents_data_exist?.data[0]?.okasyon_yuta,
+            residents_data_exist?.data[0].okasyon_yuta,
           );
-          await setStructure(residents_data_exist?.data[0]?.straktura);
-          await setQualityness(residents_data_exist?.data[0]?.kaligon_balay);
+          await setStructure(residents_data_exist?.data[0].straktura);
+          await setQualityness(residents_data_exist?.data[0].kaligon_balay);
           await setyearsstayed(
-            '' + residents_data_exist?.data[0]?.kadugayon_pagpuyo,
+            '' + residents_data_exist?.data[0].kadugayon_pagpuyo,
           );
-          await setwaterconnection(
-            residents_data_exist?.data[0]?.tinubdan_tubig,
-          );
-          await sethasLightConnection(
-            residents_data_exist?.data[0]?.pasilidad_kuryente,
-          );
-          await sethasComfortRoom(
-            residents_data_exist?.data[0]?.matang_kasilyas,
-          );
-          await setwastemanagement(
-            residents_data_exist?.data[0]?.matang_basura,
-          );
-          await setvictimofabuse(
-            residents_data_exist?.data[0]?.biktima_pangabuso,
-          );
-          await setkahimtangsakomunidad(
-            residents_data_exist?.data[0]?.kahimtang_komunidad,
-          );
-          await setscholarship(residents_data_exist?.data[0]?.scholarship);
-          await setlivelihood(residents_data_exist?.data[0]?.livelihood);
-          await setfourps(residents_data_exist?.data[0]?.fourps);
-          await sethouseing(residents_data_exist?.data[0]?.housing);
-          await setlingap(residents_data_exist?.data[0]?.lingap);
-          await setmedicalngatabang(
-            residents_data_exist?.data[0]?.medical_tabang,
-          );
-          await setdaycareservice(
-            residents_data_exist?.data[0]?.daycare_service,
-          );
-          await setskilltraining(residents_data_exist?.data[0]?.Skill_training);
-          await setEmployment(residents_data_exist?.data[0]?.Employment);
-          await setfinancial(residents_data_exist?.data[0]?.financial);
+        
+        await  resident_form?.data?.tinubdan_tubig?.map((item)=>{
+            // const isChecked = checkedwaterconnection[item];
+            // setCheckedWaterConnection({...checkedwaterconnection,[item] :!isChecked})
+             setwaterconnection((prev)=>[...prev,{label:item,value:item}])
+             setwaterconnectionsaver((prev)=>[...prev,item])
+     
+          })
+          resident_form?.data?.pasilidad_kuryente?.map((item)=>{
+            sethasLightConnection((prev)=>[...prev,{label:item,value:item}])
+             sethasLightConnectionsaver((prev)=>[...prev,item])
+       
+          })
+          resident_form?.data?.matang_kasilyas?.map((item)=>{
+            sethasComfortRoom((prev)=>[...prev,{label:item,value:item}])
+            sethasComfortRoomsaver((prev)=>[...prev,item])
+       
+          })
+          resident_form?.data?.matang_basura?.map((item)=>{
+            setwastemanagement((prev)=>[...prev,{label:item,value:item}])
+             setwastemanagementsaver((prev)=>[...prev,item])
+       
+          })
+          resident_form?.data?.biktima_pangabuso?.map((item)=>{
+            setvictimofabuse((prev)=>[...prev,{label:item,value:item}])
+            setvictimofabusesaver((prev)=>[...prev,item])
+       
+          })
+       
+          resident_form?.data?.kahimtanang_komunidad?.map((item)=>{
+            setkahimtangsakomunidad((prev)=>[...prev,{label:item,value:item}])
+            setkahimtangsakomunidadsaver((prev)=>[...prev,item])
+         
+          })
+       
+          resident_form?.data?.serbisyo_nadawat?.map((item)=>{
+            let agency=""
+            if(item.programa==="Scholarship"){
+            
+              setscholarship(item.ahensya)
+           }else if(item.programa==="Livelihood"){
+             setlivelihood(item.ahensya)
+           }else if(item.programa==="Housing"){
+          sethouseing(item.ahensya)
+           }else if (item.programa==="Financial"){
+            setfinancial(item.ahensya)
+           }else if (item.programa==="Lingap"){
+            setlingap(item.ahensya)
+           }else if (item.programa==="Medical nga Tabang"){
+            setmedicalngatabang(item.ahensya)
+           }else if(item.programa==="Day Care Service"){
+            setdaycareservice(item.ahensya)
+           }else if (item.programa==="Skill Training"){
+            setskilltraining(item.ahensya)
+           }else if (item.programa==="Employment"){
+            setEmployment(item.ahensya)
+           }
+            setserbisyo((prev)=>[...prev,{label:item.programa,value:item.programa}])
+            setserbisyosaver((prev)=>[...prev,{programa:item.programa,ahensya:item.ahensya}])
+            
+          })
+       
+       
+         
+          
+          // await sethasLightConnection(
+          //   residents_data_exist?.data[0]?.pasilidad_kuryente,
+          // );
+          // await sethasComfortRoom(
+          //   residents_data_exist?.data[0]?.matang_kasilyas,
+          // );
+          // await setwastemanagement(
+          //   residents_data_exist?.data[0]?.matang_basura,
+          // );
+          // await setvictimofabuse(
+          //   residents_data_exist?.data[0]?.biktima_pangabuso,
+          // );
+          // await setkahimtangsakomunidad(
+          //   residents_data_exist?.data[0]?.kahimtang_komunidad,
+          // );
+
+     
+
           await setspinner(false);
           await residents_data_exist?.data[0]?.fam_members?.map((item) => {
             setPeopleInsidetheHouse((prev) => [
@@ -522,8 +854,9 @@ const FADForm = () => {
       }
     };
     mounted && listofresident();
-    return () => (mounted = false);
-  }, [dispatch, residents_data_exist.loading]);
+    return () => {mounted = false};
+  }, [dispatch, residents_data_exist.loading,resident_form]);
+
   const onSwipe = useCallback((gestureName, gestureState) => {
     const {SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT} = swipeDirections;
     setgestureName({gestureName: gestureName});
@@ -548,12 +881,19 @@ const FADForm = () => {
     directionalOffsetThreshold: 80,
   };
   return (
-    <ScrollView style={{height: screenHeight}}>
+    <ImageBackground
+    style={{flex: 1}}
+    source={require('../../assets/background/bgImage.jpg')}
+    resizeMode="cover"
+    blurRadius={20}>
+      <Card containerStyle={styles.plate}>
+    <ScrollView style={{height: screenHeight,    marginTop:30}} nestedScrollEnabled={true}>
       <Spinner
         visible={spinner}
         textContent={'Loading...'}
         textStyle={styles.spinnerTextStyle}
-      />
+      /> 
+    
       <View style={styles.container}>
         <CustomAlert
           title={Alerttitle}
@@ -561,9 +901,13 @@ const FADForm = () => {
           show={Alertshow}
         />
         <View style={{flex: 1, height: screenHeight - 90}}>
-          <ProgressSteps>
+          <ProgressSteps activeLabelColor="#ff5959" activeStepNumColor="#ff5959" 
+          activeStepIconBorderColor="#ff5959" completedProgressBarColor="#ff5959" completedLabelColor="#ff5959" completedStepNumColor="#ff5959" completedStepIconColor="#ff5959">  
             <ProgressStep
+   
+            nextBtnTextStyle={styles.buttonStyle} previousBtnTextStyle={styles.buttonStyle}
               label="Information"
+              nExt
               onNext={handleNextInfo}
               errors={InfoError}>
               <View style={styles.Inputcontainer}>
@@ -576,7 +920,7 @@ const FADForm = () => {
                       underlineColor: 'transparent',
                     },
                   }}
-                  mode="outlined"
+                  mode="flat"
                   label="First Name"
                   value={users_reducers.first_name}
                 />
@@ -589,7 +933,7 @@ const FADForm = () => {
                       underlineColor: 'transparent',
                     },
                   }}
-                  mode="outlined"
+                  mode="flat"
                   label="Middle Name"
                   value={users_reducers.middle_name}
                 />
@@ -602,7 +946,7 @@ const FADForm = () => {
                       underlineColor: 'transparent',
                     },
                   }}
-                  mode="outlined"
+                  mode="flat"
                   label="Last Name"
                   value={users_reducers.last_name}
                 />
@@ -680,7 +1024,7 @@ const FADForm = () => {
                     }}
                     keyboardType={'number-pad'}
                     onChangeText={(text) => handleYearsStayedChange(text)}
-                    mode="outlined"
+                    mode="flat"
                     label="Kadugayon sa pagpuyo diha sa Barangay"
                     value={yearsstayed}
                   />
@@ -729,261 +1073,208 @@ const FADForm = () => {
             </ProgressStep>
             <ProgressStep
               label="Ikaduhang bahin"
+              nextBtnTextStyle={styles.buttonStyle} previousBtnTextStyle={styles.buttonStyle}
               onNext={handleSecondInfo}
               errors={InfoError}>
-              <Picker
-                selectedValue={waterconnection}
-                style={styles.PickerContainer}
-                onValueChange={(itemValue, itemIndex) =>
-                  handleWaterConnection(itemValue)
-                }>
-                <Picker.Item key={0} label="Tinubdan sa tubig" />
-                <Picker.Item
-                  key={1}
-                  label="Walay Koneksyon sa tubig"
-                  value="Walay Koneksyon sa tubig"
-                />
-                <Picker.Item key={2} label="Bomba" value="Bomba" />
-                <Picker.Item key={3} label="Ulan" value="Ulan" />
-                <Picker.Item
-                  key={4}
-                  label="Barangay Water Work"
-                  value="Barangay Water Work"
-                />
-                <Picker.Item key={5} label="Tubod" value="Tubod" />
-                <Picker.Item key={6} label="Balon" value="Balon" />
-                <Picker.Item key={7} label="DCWD" value="DCWD" />
-              </Picker>
-              <Picker
-                selectedValue={hasComfortRoom}
-                style={styles.PickerContainer}
-                onValueChange={(itemValue, itemIndex) =>
-                  handlehasComfortRoom(itemValue)
-                }>
-                <Picker.Item key={0} label="Matang sa Kasilyas" />
-                <Picker.Item
-                  key={1}
-                  label="Walay Kasilyas"
-                  value="Walay Kasilyas"
-                />
-                <Picker.Item key={2} label="Antipolo" value="Antipolo" />
-                <Picker.Item key={3} label="Buhos" value="Buhos" />
-                <Picker.Item
-                  key={4}
-                  label="Water-Seated"
-                  value="Water-Seated"
-                />
-              </Picker>
-              <Picker
-                selectedValue={hasLightConnection}
-                style={styles.PickerContainer}
-                onValueChange={(itemValue, itemIndex) =>
-                  handlehasLightConnection(itemValue)
-                }>
-                <Picker.Item key={0} label="Pasilidad sa Kuryente" />
-                <Picker.Item
-                  key={1}
-                  label="Walay Koneksyon"
-                  value="Walay Koneksyon"
-                />
-                <Picker.Item
-                  key={2}
-                  label="Lampara (gas)"
-                  value="Lampara (gas)"
-                />
-                <Picker.Item key={3} label="Kandila" value="Kandila" />
-                <Picker.Item key={4} label="Petromaks" value="Petromaks" />
-                <Picker.Item key={5} label="Davao Light" value="Davao Light" />
-              </Picker>
-              <Picker
-                selectedValue={wastemanagement}
-                style={styles.PickerContainer}
-                onValueChange={(itemValue, itemIndex) =>
-                  handlewastemanagement(itemValue)
-                }>
-                <Picker.Item key={0} label="Matang sa Paghipos sa basura" />
-                <Picker.Item
-                  key={1}
-                  label="Ginalain ang Mabulok ug dili mabulok"
-                  value="Ginalain ang Mabulok ug dili mabulok"
-                />
-                <Picker.Item
-                  key={2}
-                  label="Ginakolekta sa CENRO sa Barangay"
-                  value="Ginakolekta sa CENRO sa Barangay"
-                />
-                <Picker.Item key={3} label="Ginalubong" value="Ginalubong" />
-                <Picker.Item key={4} label="Ginalabay" value="Ginalabay" />
-              </Picker>
-              <Picker
-                selectedValue={victimofabuse}
-                style={styles.PickerContainer}
-                onValueChange={(itemValue, itemIndex) =>
-                  handlevictimofabuse(itemValue)
-                }>
-                <Picker.Item key={0} label="Biktima sa pang-abuso" />
-                <Picker.Item key={1} label="Gibeya-an" value="Gibeya-an" />
-                <Picker.Item key={2} label="Pangulata" value="Pangulata" />
-                <Picker.Item
-                  key={3}
-                  label="Ginabaligya/illegal Rekroter"
-                  value="Ginabaligya/illegal Rekroter"
-                />
-                <Picker.Item key={4} label="Droga" value="Droga" />
-                <Picker.Item key={5} label="Krime" value="Krime" />
-              </Picker>
+                <Text style={{color:"white",fontWeight:"700" ,fontSize:16, textAlign:"center"}}>Tinubdan sa Tubig</Text>
+                <SelectMultiple
+          items={waterconnectionchecked}
+          selectedItems={waterconnection} 
+          onSelectionsChange={(selections, item)=>handleCheckBoxwaterConntection(selections, item)} 
+       />
+    
+          <Text style={{color:"white",fontWeight:"700" ,fontSize:16, textAlign:"center"}}>Matang sa Kasilyas</Text>
+          <SelectMultiple
+          items={Kasilyaschecked}
+          selectedItems={hasComfortRoom} 
+          onSelectionsChange={(selections, item)=>handleCheckBoxKasilyas(selections, item)} 
+       />
+                 
+          <Text style={{color:"white",fontWeight:"700" ,fontSize:16, textAlign:"center"}}>Pasilidad sa Kuryente</Text>
+          <SelectMultiple
+          items={kuryentechecked}
+          selectedItems={hasLightConnection} 
+          onSelectionsChange={(selections, item)=>handleCheckBoxKuryente(selections, item)} 
+       />
+         
+          <Text style={{color:"white",fontWeight:"700" ,fontSize:16, textAlign:"center"}}>Matang sa Panghipos sa Basura</Text>
+          <SelectMultiple
+          items={basuracheckedf}
+          selectedItems={wastemanagement} 
+          onSelectionsChange={(selections, item)=>handleCheckBoxBasura(selections, item)} 
+       />
+       
+          <Text style={{color:"white",fontWeight:"700" ,fontSize:16, textAlign:"center"}}>Biktima sa Pang Abuso</Text>
+          <SelectMultiple
+          items={pangabusocheked}
+          selectedItems={victimofabuse} 
+          onSelectionsChange={(selections, item)=>handleCheckBoxPangabuso(selections, item)} 
+       />
+    
             </ProgressStep>
             <ProgressStep
               label="Ikatulong bahin"
+              nextBtnTextStyle={styles.buttonStyle} previousBtnTextStyle={styles.buttonStyle}
               onNext={handleThirdInfo}
               errors={InfoError}>
-              <TextInput
-                theme={{
-                  colors: {
-                    primary: '#3eb2fa',
-                    background: 'white',
-                    underlineColor: 'transparent',
-                  },
-                }}
-                multiline={true}
-                onChangeText={(text) => handlekahimtangsakomunidad(text)}
-                mode="outlined"
-                label="Kahimtang sa Komunidad"
-                value={kahimtangsakomunidad}
-              />
+                      <SelectMultiple
+          items={kahimtangsakomunidadcheck}
+          selectedItems={kahimtangsakomunidad} 
+          onSelectionsChange={(selections, item)=>handleCheckBoxKahitang(selections, item)} 
+       />
+           
             </ProgressStep>
             <ProgressStep
               label="Ikaupat bahin"
+              nextBtnTextStyle={styles.buttonStyle} previousBtnTextStyle={styles.buttonStyle}
               onNext={handleFourthInfo}
               errors={InfoError}>
-              <HelperText
-                type="info"
-                visible={true}
-                padding="none"
-                style={{overflow: 'visible'}}>
-                Isulat ang mga ahensya nga nagtabang sa imo.
-              </HelperText>
-              <TextInput
-                theme={{
-                  colors: {
-                    primary: '#3eb2fa',
-                    background: 'white',
-                    underlineColor: 'transparent',
-                  },
-                }}
-                onChangeText={(text) => handleScholarship(text)}
-                mode="outlined"
-                label="Scholarship"
-                value={scholarship}
-              />
-              <TextInput
-                theme={{
-                  colors: {
-                    primary: '#3eb2fa',
-                    background: 'white',
-                    underlineColor: 'transparent',
-                  },
-                }}
-                onChangeText={(text) => handleLivelihood(text)}
-                mode="outlined"
-                label="Livelihood"
-                value={livelihood}
-              />
-              <TextInput
-                theme={{
-                  colors: {
-                    primary: '#3eb2fa',
-                    background: 'white',
-                    underlineColor: 'transparent',
-                  },
-                }}
-                onChangeText={(text) => handle4ps(text)}
-                mode="outlined"
-                label="4p's"
-                value={fourps}
-              />
-              <TextInput
-                theme={{
-                  colors: {
-                    primary: '#3eb2fa',
-                    background: 'white',
-                    underlineColor: 'transparent',
-                  },
-                }}
-                onChangeText={(text) => handleHousing(text)}
-                mode="outlined"
-                label="Housing"
-                value={houseing}
-              />
-              <TextInput
-                theme={{
-                  colors: {
-                    primary: '#3eb2fa',
-                    background: 'white',
-                    underlineColor: 'transparent',
-                  },
-                }}
-                onChangeText={(text) => handleLingap(text)}
-                mode="outlined"
-                label="Lingap (Burial or Medical"
-                value={lingap}
-              />
-              <TextInput
-                theme={{
-                  colors: {
-                    primary: '#3eb2fa',
-                    background: 'white',
-                    underlineColor: 'transparent',
-                  },
-                }}
-                onChangeText={(text) => handlemedicalngatabang(text)}
-                mode="outlined"
-                label="Medical nga tabang"
-                value={medicalngatabang}
-              />
-              <TextInput
-                theme={{
-                  colors: {
-                    primary: '#3eb2fa',
-                    background: 'white',
-                    underlineColor: 'transparent',
-                  },
-                }}
-                onChangeText={(text) => handledaycareservice(text)}
-                mode="outlined"
-                label="Day Care Service"
-                value={daycareservice}
-              />
-              <TextInput
-                theme={{
-                  colors: {
-                    primary: '#3eb2fa',
-                    background: 'white',
-                    underlineColor: 'transparent',
-                  },
-                }}
-                onChangeText={(text) => handleskilltraining(text)}
-                mode="outlined"
-                label="Skill Training"
-                value={skilltraining}
-              />
-              <TextInput
-                theme={{
-                  colors: {
-                    primary: '#3eb2fa',
-                    background: 'white',
-                    underlineColor: 'transparent',
-                  },
-                }}
-                onChangeText={(text) => handleEmployment(text)}
-                mode="outlined"
-                label="Employment"
-                value={Employment}
-              />
+                  <Text style={{color:"white",fontWeight:"700" ,fontSize:14, textAlign:"left"}}>Note: Palihug ug sulat daan sa ahensya bag.o i tuplok ang serbisyo</Text>
+                <View style={{flexDirection:"row"}}>
+                <View style={{width:"50%"}}>
+                <Text style={{color:"white",fontWeight:"700" ,fontSize:14, textAlign:"center"}}>Serbisyo</Text>
+                          <SelectMultiple
+          items={serbisyochecked}
+          selectedItems={serbisyo} 
+          onSelectionsChange={(selections, item)=>handleCheckBoxSerbisyo(selections, item)} 
+       />
+       </View>
+        <View style={{width:"50%"}}>
+        <Text style={{color:"white",fontWeight:"700" ,fontSize:14, textAlign:"center"}}>Ahensya</Text>
+           <TextInput
+           style={{height:55}}
+            theme={{
+              
+              colors: {
+                primary: '#3eb2fa',
+                background: 'white',
+                underlineColor: 'transparent',
+              },
+            }}
+            mode="flat"
+            onChangeText={(text) => setscholarship(text)}
+            label="Scholarship"
+            value={scholarship}
+          />
+           <TextInput
+             style={{height:55}}
+            theme={{
+              colors: {
+                primary: '#3eb2fa',
+                background: 'white',
+                underlineColor: 'transparent',
+              },
+            }}
+            mode="flat"
+            onChangeText={(text) => setlivelihood(text)}
+            label="Livelihood"
+            value={livelihood}
+          />
+           <TextInput
+             style={{height:55}}
+            theme={{
+              colors: {
+                primary: '#3eb2fa',
+                background: 'white',
+                underlineColor: 'transparent',
+              },
+            }}
+            mode="flat"
+            onChangeText={(text) => sethouseing(text)}
+            label="Housing"
+            value={houseing}
+          />
+           <TextInput
+             style={{height:55}}
+            theme={{
+              colors: {
+                primary: '#3eb2fa',
+                background: 'white',
+                underlineColor: 'transparent',
+              },
+            }}
+            mode="flat"
+            onChangeText={(text) => setfinancial(text)}
+            label="Financial"
+            value={financial}
+          />
+           <TextInput
+             style={{height:55}}
+            theme={{
+              colors: {
+                primary: '#3eb2fa',
+                background: 'white',
+                underlineColor: 'transparent',
+              },
+            }}
+            mode="flat"
+            onChangeText={(text) => setlingap(text)}
+            label="Lingap"
+            value={lingap}
+          />
+           <TextInput
+             style={{height:55}}
+            theme={{
+              colors: {
+                primary: '#3eb2fa',
+                background: 'white',
+                underlineColor: 'transparent',
+              },
+            }}
+            mode="flat"
+            onChangeText={(text) => setmedicalngatabang(text)}
+            label="Medical nga Tabang"
+            value={medicalngatabang}
+          />
+          <TextInput
+          style={{height:55}}
+            theme={{
+              colors: {
+                primary: '#3eb2fa',
+                background: 'white',
+                underlineColor: 'transparent',
+              },
+            }}
+            mode="flat"
+            onChangeText={(text) => setdaycareservice(text)}
+            label="Day Care Service"
+            value={daycareservice}
+          />
+          <TextInput
+            style={{height:55}}
+            theme={{
+              colors: {
+                primary: '#3eb2fa',
+                background: 'white',
+                underlineColor: 'transparent',
+              },
+            }}
+            mode="flat"
+            onChangeText={(text) => setskilltraining(text)}
+            label="Skill Training"
+            value={skilltraining}
+          />
+          <TextInput
+            style={{height:55}}
+            theme={{
+              colors: {
+                primary: '#3eb2fa',
+                background: 'white',
+                underlineColor: 'transparent',
+              },
+            }}
+            mode="flat"
+            onChangeText={(text) => setEmployment(text)}
+            label="Employment"
+            value={Employment}
+          />
+          </View>
+              </View>
             </ProgressStep>
-            <ProgressStep label="Sakop sa Panimalay" onSubmit={handleSubmit}>
+            <ProgressStep   nextBtnTextStyle={styles.buttonStyle} previousBtnTextStyle={styles.buttonStyle} label="Sakop sa Panimalay" onSubmit={handleSubmit}>
               <View style={styles.Inputcontainer}>
                 <ScrollView
+                nestedScrollEnabled={true}
                   refreshControl={
                     <RefreshControl
                       refreshing={refreshing}
@@ -1068,6 +1359,7 @@ const FADForm = () => {
                             value={searchvalue}
                           />
                           <ScrollView
+                          nestedScrollEnabled={true}
                             style={{
                               marginBottom: 10,
                               padding: 5,
@@ -1205,14 +1497,27 @@ const FADForm = () => {
           </ProgressSteps>
         </View>
       </View>
+    
       <>
         <CustomSnackBar show={showsnackbar} message={submitmessage} />
       </>
     </ScrollView>
+    </Card>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  buttonStyle:{
+    color:"#ff5959"
+  },
+  plate:{
+    flex:1,
+    backgroundColor:"rgba(255,255,355,0.5)",
+    borderColor:"rgba(255,255,355,0.5)",
+    borderWidth:0.1,
+    borderRadius:5
+},
   CardContainer: {
     flex: 1,
     width: '100%',
@@ -1221,6 +1526,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: '100%',
+
   },
   touchablecontainer: {
     flex: 6,
@@ -1259,6 +1565,7 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 30,
     height: 70,
+    color:"white"
   },
   Inputcontainer: {
     flex: 1,

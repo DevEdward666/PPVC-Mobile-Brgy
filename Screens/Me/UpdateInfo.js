@@ -37,6 +37,7 @@ import {
   action_getnationality,
   action_getreligion,
 } from '../../Services/Actions/ResidentsActions';
+import {Card} from 'react-native-elements'
 import {useDispatch, useSelector} from 'react-redux';
 import CustomAlert from '../../Plugins/CustomAlert';
 import {Actions} from 'react-native-router-flux';
@@ -169,7 +170,7 @@ const SignUpScreen = () => {
 
       //SECOND PART
       setnationality(users_reducers?.nationality);
-      console.log(users_reducers?.nationality);
+
       setreligion(users_reducers?.religion);
       setcivilstatus(users_reducers?.civil_status);
       setdialect(users_reducers?.dialect);
@@ -215,7 +216,7 @@ const SignUpScreen = () => {
     const year = currentDate.getFullYear();
 
     var age_now = today.getFullYear() - currentDate.getFullYear();
-    console.log(age_now);
+  
     if (age_now < '-1') {
       alert('Age is invalid');
     } else {
@@ -734,6 +735,12 @@ const SignUpScreen = () => {
     directionalOffsetThreshold: 80,
   };
   return (
+    <ImageBackground
+    style={{flex: 1}}
+    source={require('../../assets/background/bgImage.jpg')}
+    resizeMode="cover"
+    blurRadius={20}>
+      <Card containerStyle={styles.plate}>
     <ScrollView style={{backgroundScrollViewColor: 'white'}}>
       <View style={styles.container}>
         <CustomAlert
@@ -742,9 +749,11 @@ const SignUpScreen = () => {
           show={alertshow}
         />
         <View style={{flex: 1}}>
-          <ProgressSteps>
+          <ProgressSteps activeLabelColor="#ff5959" activeStepNumColor="#ff5959" 
+          activeStepIconBorderColor="#ff5959" completedProgressBarColor="#ff5959" completedLabelColor="#ff5959" completedStepNumColor="#ff5959" completedStepIconColor="#ff5959">
             <ProgressStep
               label="Information"
+              nextBtnTextStyle={styles.buttonStyle} previousBtnTextStyle={styles.buttonStyle}
               onNext={handleNextInfo}
               errors={InfoError}>
               {resourcePathProfile ? (
@@ -794,7 +803,7 @@ const SignUpScreen = () => {
                       underlineColor: 'transparent',
                     },
                   }}
-                  mode="outlined"
+                  mode="flat"
                   onChangeText={(text) => setfirstname(text)}
                   label="First Name"
                   value={firstname}
@@ -815,7 +824,7 @@ const SignUpScreen = () => {
                       underlineColor: 'transparent',
                     },
                   }}
-                  mode="outlined"
+                  mode="flat"
                   onChangeText={(text) => setmiddlename(text)}
                   label="Middle Name"
                   value={middlename}
@@ -836,7 +845,7 @@ const SignUpScreen = () => {
                       underlineColor: 'transparent',
                     },
                   }}
-                  mode="outlined"
+                  mode="flat"
                   onChangeText={(text) => setlastname(text)}
                   label="Last Name"
                   value={lastname}
@@ -857,7 +866,7 @@ const SignUpScreen = () => {
                       underlineColor: 'transparent',
                     },
                   }}
-                  mode="outlined"
+                  mode="flat"
                   onChangeText={(text) => setSuffix(text)}
                   label="Suffix"
                   value={suffix}
@@ -873,9 +882,18 @@ const SignUpScreen = () => {
                 <View style={{flex: 1, flexDirection: 'row'}}>
                   <View
                     style={{
-                      width: '85%',
+                      width: '100%',
                       height: '100%',
                     }}>
+                     <TouchableHighlight
+                      underlayColor="white"
+                      style={{
+                      
+                        width: "100%",
+                        height: 65,
+                      }}
+                      onPress={showDatepicker}>
+                      
                     <TextInput
                       theme={{
                         colors: {
@@ -885,54 +903,16 @@ const SignUpScreen = () => {
                         },
                       }}
                       disabled={true}
-                      mode="outlined"
+                      mode="flat"
                       inputContainerStyle={styles.inputContainer}
                       inputStyle={styles.inputText}
                       onChangeText={(text) => setSuffix(text)}
                       label="Birthdate"
                       value={birthdate}
                     />
-                    {/* <Input
-                      style={styles.textInput}
-                      placeholder="Birthdate"
-                    
-                      defaultValue={birthdate}
-                    /> */}
+                </TouchableHighlight>
                   </View>
-                  <View
-                    style={{
-                      width: '15%',
-                      height: '100%',
-                    }}>
-                    <TouchableHighlight
-                      underlayColor="white"
-                      style={{
-                        borderWidth: 1,
-                        borderColor: 'rgba(0,0,0,0)',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: 55,
-                        height: 65,
-                        backgroundColor: '#fff',
-                        borderRadius: 50,
-                      }}
-                      onPress={showDatepicker}>
-                      <Image
-                        style={{
-                          height: 60,
-                          width: '100%',
-                          resizeMode: 'center',
-                          alignContent: 'flex-start',
-                        }}
-                        source={require('../../assets/icons/ic_calendar_prem-playstore.png')}
-                      />
-                    </TouchableHighlight>
-                    {/* <Button
-                      onPress={showDatepicker}
-                      title="Birthdate"
-                      style={{borderRadius: 30}}
-                    /> */}
-                  </View>
+                  
                 </View>
                 {show && (
                   <DateTimePicker
@@ -988,6 +968,7 @@ const SignUpScreen = () => {
             </ProgressStep>
             <ProgressStep
               label="Part 2"
+              nextBtnTextStyle={styles.buttonStyle} previousBtnTextStyle={styles.buttonStyle}
               onNext={handleNextAddress}
               errors={AddressError}>
               <View style={styles.Inputcontainer}>
@@ -1065,7 +1046,7 @@ const SignUpScreen = () => {
                       underlineColor: 'transparent',
                     },
                   }}
-                  mode="outlined"
+                  mode="flat"
                   onChangeText={(text) => handleDialect(text)}
                   label="Dialect"
                   value={dialect}
@@ -1086,7 +1067,7 @@ const SignUpScreen = () => {
                       underlineColor: 'transparent',
                     },
                   }}
-                  mode="outlined"
+                  mode="flat"
                   onChangeText={(text) => handleTribe(text)}
                   label="Tribe"
                   value={tribe}
@@ -1118,7 +1099,7 @@ const SignUpScreen = () => {
                       underlineColor: 'transparent',
                     },
                   }}
-                  mode="outlined"
+                  mode="flat"
                   onChangeText={(text) => handlePurok(text)}
                   label="Purok"
                   value={purok}
@@ -1158,7 +1139,7 @@ const SignUpScreen = () => {
                       underlineColor: 'transparent',
                     },
                   }}
-                  mode="outlined"
+                  mode="flat"
                   keyboardType="number-pad"
                   onChangeText={(text) => handleHouseIncome(text)}
                   label="Binulan na kita"
@@ -1173,7 +1154,7 @@ const SignUpScreen = () => {
                   defaultValue={HouseIncome}
                 /> */}
 
-                <Picker
+                {/* <Picker
                   selectedValue={houseownedby}
                   style={styles.PickerContainer}
                   onValueChange={(itemValue, itemIndex) =>
@@ -1184,11 +1165,12 @@ const SignUpScreen = () => {
                   <Picker.Item label="Renta" value="Renta" />
                   <Picker.Item label="Boarder" value="Boarder" />
                   <Picker.Item label="Live In" value="Nangipon ug puyo" />
-                </Picker>
+                </Picker> */}
               </View>
             </ProgressStep>
             <ProgressStep
               label="Credentials"
+              nextBtnTextStyle={styles.buttonStyle} previousBtnTextStyle={styles.buttonStyle}
               onSubmit={handleSubmitCredentials}>
               <View style={styles.Inputcontainer}>
                 <TextInput
@@ -1199,7 +1181,7 @@ const SignUpScreen = () => {
                       underlineColor: 'transparent',
                     },
                   }}
-                  mode="outlined"
+                  mode="flat"
                   error={emailErrorMessage}
                   onChangeText={(text) => validate(text)}
                   label="Email"
@@ -1222,7 +1204,7 @@ const SignUpScreen = () => {
                       underlineColor: 'transparent',
                     },
                   }}
-                  mode="outlined"
+                  mode="flat"
                   onChangeText={(text) => setmobile(text)}
                   label="Mobile No."
                   value={mobile}
@@ -1251,7 +1233,7 @@ const SignUpScreen = () => {
                           underlineColor: 'transparent',
                         },
                       }}
-                      mode="outlined"
+                      mode="flat"
                       onChangeText={(text) => handlePassword(text)}
                       label="Password"
                       secureTextEntry={showpass}
@@ -1298,7 +1280,7 @@ const SignUpScreen = () => {
                           underlineColor: 'transparent',
                         },
                       }}
-                      mode="outlined"
+                      mode="flat"
                       onChangeText={(text) => handleConfirmPassword(text)}
                       label="Confirm Password"
                       secureTextEntry={showconfirmpass}
@@ -1648,14 +1630,26 @@ const SignUpScreen = () => {
         </View>
       </View>
     </ScrollView>
+       </Card>
+       </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  buttonStyle:{
+    color:"#ff5959"
+  },
   container: {
     flex: 1,
     width: '100%',
   },
+  plate:{
+    flex:1,
+    backgroundColor:"rgba(255,255,355,0.5)",
+    borderColor:"rgba(255,255,355,0.5)",
+    borderWidth:0.1,
+    borderRadius:5
+},
   touchablecontainer: {
     flex: 6,
     flexDirection: 'row',

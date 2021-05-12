@@ -30,6 +30,7 @@ import {
 } from '../../Services/Actions/ComplaintsActions';
 import CustomFlexBox from '../../Plugins/CustomFlexBox';
 import {ImageBackground} from 'react-native';
+import { Card } from 'react-native-elements';
 
 export async function requestStoragePermission() {
   if (Platform.OS !== 'android') return true;
@@ -193,10 +194,16 @@ const complaints = () => {
     directionalOffsetThreshold: 80,
   };
   return (
+    <ImageBackground
+    style={{flex: 1}}
+    source={require('../../assets/background/bgImage.jpg')}
+    resizeMode="stretch"
+    blurRadius={20}>
+ 
     <SafeAreaView style={styles.flatlistcontainer}>
       {/* <CustomOverLay overlayvisible={overlayopen} message={overlaymessage} /> */}
       <Spinner visible={spinner} textContent={'Fetching Data...'} />
-
+      <Card containerStyle={styles.plate}>
       <Text style={styles.HeaderText}>Complaints</Text>
       <FlatList
         refreshControl={
@@ -419,12 +426,15 @@ const complaints = () => {
           }
         />
       </GestureRecognizer>
+      </Card>
       <FAB
         style={styles.fab}
         icon="plus"
         onPress={() => handleFloatingIcon()}
       />
     </SafeAreaView>
+
+    </ImageBackground>
   );
 };
 
@@ -457,7 +467,7 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   HeaderText: {
-    color: 'black',
+    color: 'white',
     fontSize: 24,
     padding: 5,
     textAlign: 'justify',
@@ -470,11 +480,18 @@ const styles = StyleSheet.create({
     textAlign: 'justify',
   },
   flatlistcontainer: {
-    backgroundColor: '#fafafa',
     flex: 1,
     height: 500,
     paddingTop: 10,
+    marginTop:50
   },
+  plate:{
+    flex:1,
+    backgroundColor:"rgba(255,255,355,0.5)",
+    borderColor:"rgba(255,255,355,0.5)",
+    borderWidth:0.1,
+    borderRadius:5
+},
   flatlistitem: {
     marginStart: 30,
     fontSize: 14,

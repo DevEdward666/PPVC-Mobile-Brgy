@@ -17,7 +17,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import CardView from 'react-native-rn-cardview';
-import {Divider, Button} from 'react-native-elements';
+import {Divider, Button, Card} from 'react-native-elements';
 import {
   action_get_complaints_info,
   action_get_complaints_messages,
@@ -30,6 +30,7 @@ import CustomBottomSheet from '../../Plugins/CustomBottomSheet';
 import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
 import {ImageBackground} from 'react-native';
 import io from 'socket.io-client';
+import moment from 'moment'
 const ComplaintsInfo = () => {
   const users_reducers = useSelector((state) => state.UserInfoReducers.data);
 
@@ -189,7 +190,14 @@ const ComplaintsInfo = () => {
     directionalOffsetThreshold: 80,
   };
   return (
+    <ImageBackground
+    style={{flex: 1}}
+    source={require('../../assets/background/bgImage.jpg')}
+    resizeMode="stretch"
+    blurRadius={20}>
+
     <SafeAreaView style={styles.safeareaviewcontainer}>
+    <Card containerStyle={styles.plate}>    
       <ScrollView>
         <View
           style={{
@@ -217,20 +225,19 @@ const ComplaintsInfo = () => {
           </View>
           <View
             style={{
-              width: '50%',
+              width: '60%',
               height: 50,
-              marginLeft: -20,
+              marginLeft: -30,
             }}>
             <Text style={styles.Titletext}>{users_reducers.full_name}</Text>
           </View>
           <View
             style={{
-              width: '50%',
+              width: '30%',
               height: 50,
-              marginLeft: -40,
             }}>
             <Text style={styles.texttime}>
-              Date: {complaint_info?.reported_at}
+              Date: {moment(complaint_info?.reported_at).format("MMMM D, YYYY")}
             </Text>
           </View>
         </View>
@@ -417,8 +424,12 @@ const ComplaintsInfo = () => {
           }
         />
       </GestureRecognizer>
+      </Card>
       <FAB style={styles.fab} icon="comment" onPress={() => onFABPress()} />
     </SafeAreaView>
+    
+
+    </ImageBackground>
   );
 };
 
@@ -433,6 +444,7 @@ const styles = StyleSheet.create({
   safeareaviewcontainer: {
     flex: 1,
     paddingTop: 10,
+    marginTop:50
   },
   fab: {
     position: 'absolute',
@@ -440,7 +452,13 @@ const styles = StyleSheet.create({
     right: 16,
     backgroundColor: '#a0c2fa',
   },
-
+  plate:{
+    flex:1,
+    backgroundColor:"rgba(255,255,355,0.5)",
+    borderColor:"rgba(255,255,355,0.5)",
+    borderWidth:0.1,
+    borderRadius:5
+},
   messagesCard: {
     borderRadius: 20,
   },
@@ -467,7 +485,7 @@ const styles = StyleSheet.create({
   },
   texttime: {
     color: 'black',
-    fontSize: 12,
+    fontSize: 10,
     marginTop: 50,
   },
   HeaderText: {
@@ -478,7 +496,7 @@ const styles = StyleSheet.create({
   },
   Titletext: {
     color: 'black',
-    fontSize: 18,
+    fontSize: 16,
     padding: 15,
     textAlign: 'justify',
   },

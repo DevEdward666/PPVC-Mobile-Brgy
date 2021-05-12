@@ -18,7 +18,7 @@ import {
 } from 'react-native';
 
 import Icons from 'react-native-vector-icons/FontAwesome';
-import {Button, Badge, ButtonGroup} from 'react-native-elements';
+import {Button, Badge, ButtonGroup, Card} from 'react-native-elements';
 import Spinner from 'react-native-loading-spinner-overlay';
 import CardView from 'react-native-rn-cardview';
 import {Actions} from 'react-native-router-flux';
@@ -79,7 +79,7 @@ const PostsInfo = () => {
   }, [dispatch, posts_pk]);
 
   const updateIndex = useCallback(
-    async (item, index) => {
+    async ( index) => {
       await dispatch(action_get_posts_comments(posts_pk));
       if (index !== 0) {
         setisVisible(true);
@@ -159,12 +159,21 @@ const PostsInfo = () => {
     velocityThreshold: 0.3,
     directionalOffsetThreshold: 1000,
   };
+  console.log(posts_info[0])
   return (
+    <ImageBackground
+    style={{flex: 1}}
+    source={require('../../assets/background/bgImage.jpg')}
+    resizeMode="cover"
+    blurRadius={20}>
+      
     <ScrollView
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }>
-      <CardView style={{marginTop: 10}} radius={1}>
+        
+   
+      <Card containerStyle={{marginTop: 50,}} radius={1}>
         <View
           style={{
             flexDirection: 'row',
@@ -278,15 +287,15 @@ const PostsInfo = () => {
             containerStyle={{height: 35, marginBottom: 15}}
           />
         )}
-      </CardView>
+      </Card>
 
       {posts_info[0]?.upload_files.map((img, index) => {
         return (
           <View
-            style={{width: 100 + '%', height: screenHeight - 1000}}
+            style={{width: '100%', height: screenHeight}}
             key={index}>
             <TouchableNativeFeedback key={index} underlayColor="white">
-              <CardView radius={1} backgroundColor={'#ffffff'}>
+              <Card radius={1}  containerStyle={{ backgroundColor:"rgba(255,255,355,0.5)",}}>
                 <View
                   style={{
                     flexDirection: 'row',
@@ -300,7 +309,7 @@ const PostsInfo = () => {
                     style={styles.avatar}
                   />
                 </View>
-              </CardView>
+              </Card>
             </TouchableNativeFeedback>
           </View>
         );
@@ -410,10 +419,18 @@ const PostsInfo = () => {
         />
       </GestureRecognizer>
     </ScrollView>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  plate:{
+    flex:1,
+    backgroundColor:"rgba(255,255,355,0.5)",
+    borderColor:"rgba(255,255,355,0.5)",
+    borderWidth:0.1,
+    borderRadius:5
+},
   avatar: {
     flex: 1,
     width: '100%',

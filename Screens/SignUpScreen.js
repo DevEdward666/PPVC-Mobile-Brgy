@@ -17,7 +17,7 @@ import {
   View,
 } from 'react-native';
 import DocumentPicker from 'react-native-document-picker';
-import {Icon, Input} from 'react-native-elements';
+import {Card, Icon, Input} from 'react-native-elements';
 import * as ImagePicker from 'react-native-image-picker';
 import CustomBottomSheet from '../Plugins/CustomBottomSheet';
 import Icons from 'react-native-vector-icons/FontAwesome';
@@ -668,7 +668,13 @@ const SignUpScreen = () => {
     directionalOffsetThreshold: 80,
   };
   return (
-    <ScrollView style={{backgroundScrollViewColor: 'white'}}>
+    <ImageBackground
+    style={{flex: 1}}
+    source={require('../assets/background/bgImage.jpg')}
+    resizeMode="stretch"
+    blurRadius={20}>
+ <Card containerStyle={styles.plate}>
+    <ScrollView >
       <View style={styles.container}>
         <CustomAlert
           title={alerttitle}
@@ -676,9 +682,11 @@ const SignUpScreen = () => {
           show={alertshow}
         />
         <View style={{flex: 1}}>
-          <ProgressSteps>
+          <ProgressSteps activeLabelColor="white" activeStepNumColor="white" 
+          activeStepIconBorderColor="#ff5959" completedProgressBarColor="#ff5959" completedLabelColor="#ff5959" completedStepNumColor="#ff5959" completedStepIconColor="#ff5959">
             <ProgressStep
               label="Information"
+              nextBtnTextStyle={styles.buttonStyle} previousBtnTextStyle={styles.buttonStyle}
               onNext={handleNextInfo}
               errors={InfoError}>
               {resourcePathProfile ? (
@@ -728,7 +736,7 @@ const SignUpScreen = () => {
                       underlineColor: 'transparent',
                     },
                   }}
-                  mode="outlined"
+                  mode="flat"
                   onChangeText={(text) => setfirstname(text)}
                   label="First Name"
                   value={firstname}
@@ -749,7 +757,7 @@ const SignUpScreen = () => {
                       underlineColor: 'transparent',
                     },
                   }}
-                  mode="outlined"
+                  mode="flat"
                   onChangeText={(text) => setmiddlename(text)}
                   label="Middle Name"
                   value={middlename}
@@ -770,7 +778,7 @@ const SignUpScreen = () => {
                       underlineColor: 'transparent',
                     },
                   }}
-                  mode="outlined"
+                  mode="flat"
                   onChangeText={(text) => setlastname(text)}
                   label="Last Name"
                   value={lastname}
@@ -791,7 +799,7 @@ const SignUpScreen = () => {
                       underlineColor: 'transparent',
                     },
                   }}
-                  mode="outlined"
+                  mode="flat"
                   onChangeText={(text) => setSuffix(text)}
                   label="Suffix"
                   value={suffix}
@@ -808,9 +816,22 @@ const SignUpScreen = () => {
                 <View style={{flex: 1, flexDirection: 'row'}}>
                   <View
                     style={{
-                      width: '85%',
+                      width: '100%',
                       height: '100%',
                     }}>
+                        <TouchableHighlight
+                      underlayColor="white"
+                      style={{
+                      
+                        justifyContent: 'center',
+                        width: "100%",
+                        height: 65,
+                  
+                      }}
+                      onPress={showDatepicker}>
+                     
+                
+                   
                     <TextInput
                       theme={{
                         colors: {
@@ -820,54 +841,17 @@ const SignUpScreen = () => {
                         },
                       }}
                       disabled={true}
-                      mode="outlined"
+                      mode="flat"
                       inputContainerStyle={styles.inputContainer}
                       inputStyle={styles.inputText}
                       onChangeText={(text) => setbirthdate(text)}
                       label="Birthdate"
                       value={birthdate}
                     />
-                    {/* <Input
-                      style={styles.textInput}
-                      placeholder="Birthdate"
-                    
-                      defaultValue={birthdate}
-                    /> */}
+                   </TouchableHighlight>
                   </View>
-                  <View
-                    style={{
-                      width: '15%',
-                      height: '100%',
-                    }}>
-                    <TouchableHighlight
-                      underlayColor="white"
-                      style={{
-                        borderWidth: 1,
-                        borderColor: 'rgba(0,0,0,0)',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: 55,
-                        height: 65,
-                        backgroundColor: '#fff',
-                        borderRadius: 50,
-                      }}
-                      onPress={showDatepicker}>
-                      <Image
-                        style={{
-                          height: 60,
-                          width: '100%',
-                          resizeMode: 'center',
-                          alignContent: 'flex-start',
-                        }}
-                        source={require('../assets/icons/ic_calendar_prem-playstore.png')}
-                      />
-                    </TouchableHighlight>
-                    {/* <Button
-                      onPress={showDatepicker}
-                      title="Birthdate"
-                      style={{borderRadius: 30}}
-                    /> */}
-                  </View>
+                 
+                
                 </View>
                 {show && (
                   <DateTimePicker
@@ -923,6 +907,7 @@ const SignUpScreen = () => {
             </ProgressStep>
             <ProgressStep
               label="Part 2"
+              nextBtnTextStyle={styles.buttonStyle} previousBtnTextStyle={styles.buttonStyle}
               onNext={handleNextAddress}
               errors={AddressError}>
               <View style={styles.Inputcontainer}>
@@ -1000,7 +985,7 @@ const SignUpScreen = () => {
                       underlineColor: 'transparent',
                     },
                   }}
-                  mode="outlined"
+                  mode="flat"
                   onChangeText={(text) => handleDialect(text)}
                   label="Dialect"
                   value={dialect}
@@ -1021,7 +1006,7 @@ const SignUpScreen = () => {
                       underlineColor: 'transparent',
                     },
                   }}
-                  mode="outlined"
+                  mode="flat"
                   onChangeText={(text) => handleTribe(text)}
                   label="Tribe"
                   value={tribe}
@@ -1053,7 +1038,7 @@ const SignUpScreen = () => {
                       underlineColor: 'transparent',
                     },
                   }}
-                  mode="outlined"
+                  mode="flat"
                   onChangeText={(text) => handlePurok(text)}
                   label="Purok"
                   value={purok}
@@ -1092,7 +1077,7 @@ const SignUpScreen = () => {
                       underlineColor: 'transparent',
                     },
                   }}
-                  mode="outlined"
+                  mode="flat"
                   keyboardType="number-pad"
                   onChangeText={(text) => handleHouseIncome(text)}
                   label="House Income"
@@ -1132,6 +1117,7 @@ const SignUpScreen = () => {
             </ProgressStep>
             <ProgressStep
               label="Credentials"
+              nextBtnTextStyle={styles.buttonStyle} previousBtnTextStyle={styles.buttonStyle}
               onSubmit={handleSubmitCredentials}>
               <View style={styles.Inputcontainer}>
                 <TextInput
@@ -1142,7 +1128,7 @@ const SignUpScreen = () => {
                       underlineColor: 'transparent',
                     },
                   }}
-                  mode="outlined"
+                  mode="flat"
                   error={emailErrorMessage}
                   onChangeText={(text) => validate(text)}
                   label="Email"
@@ -1165,7 +1151,7 @@ const SignUpScreen = () => {
                       underlineColor: 'transparent',
                     },
                   }}
-                  mode="outlined"
+                  mode="flat"
                   onChangeText={(text) => setmobile(text)}
                   label="Mobile No."
                   value={mobile}
@@ -1194,7 +1180,7 @@ const SignUpScreen = () => {
                           underlineColor: 'transparent',
                         },
                       }}
-                      mode="outlined"
+                      mode="flat"
                       onChangeText={(text) => handlePassword(text)}
                       label="Password"
                       secureTextEntry={showpass}
@@ -1241,7 +1227,7 @@ const SignUpScreen = () => {
                           underlineColor: 'transparent',
                         },
                       }}
-                      mode="outlined"
+                      mode="flat"
                       onChangeText={(text) => handleConfirmPassword(text)}
                       label="Confirm Password"
                       secureTextEntry={showconfirmpass}
@@ -1591,10 +1577,22 @@ const SignUpScreen = () => {
         </View>
       </View>
     </ScrollView>
+    </Card>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  buttonStyle:{
+    color:"#ff5959"
+  },
+  plate:{
+    flex:1,
+    backgroundColor:"rgba(255,255,355,0.5)",
+    borderColor:"rgba(255,255,355,0.5)",
+    borderWidth:0.1,
+    borderRadius:5
+},
   container: {
     flex: 1,
     width: '100%',
@@ -1636,6 +1634,7 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 30,
     height: 70,
+    color:"white"
   },
   Inputcontainer: {
     flex: 1,

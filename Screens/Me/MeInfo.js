@@ -26,6 +26,7 @@ import {
   Badge,
   Icon,
   withBadge,
+  Card,
 } from 'react-native-elements';
 import CustomBottomSheet from '../../Plugins/CustomBottomSheet';
 import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
@@ -260,8 +261,16 @@ const MeInfo = () => {
   const buttons = [{element: component1}, {element: component2}];
   const buttonliked = [{element: liked}, {element: component2}];
   return (
+    <ImageBackground
+    style={{flex: 1}}
+    source={require('../../assets/background/bgImage.jpg')}
+    resizeMode="cover"
+    blurRadius={20}>
     <SafeAreaView style={styles.flatlistcontainer}>
+    
+    
       <ScrollView>
+      <Card containerStyle={styles.plate}>
         <View
           radius={1}
           backgroundColor={'#ffffff'}
@@ -315,7 +324,9 @@ const MeInfo = () => {
             onPress={() => handleAddPostPress()}
           />
         </CardView>
+        </Card>
       </ScrollView>
+     
       <FlatList
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -325,6 +336,7 @@ const MeInfo = () => {
         keyExtractor={(item, index) => index.toString()}
         onEndReachedThreshold={0.1}
         renderItem={({item, index}) => (
+          <Card containerStyle={styles.plate}>
           <TouchableHighlight
             onPress={() => gotopostsinfo(item)}
             underlayColor="white">
@@ -475,6 +487,7 @@ const MeInfo = () => {
               </CardView>
             </CardView>
           </TouchableHighlight>
+          </Card>
         )}
       />
       {/* <FlatList
@@ -858,11 +871,20 @@ const MeInfo = () => {
           }
         />
       </GestureRecognizer>
+
     </SafeAreaView>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  plate:{
+    flex:1,
+    backgroundColor:"rgba(255,255,355,0.5)",
+    borderColor:"rgba(255,255,355,0.5)",
+    borderWidth:0.1,
+    borderRadius:5
+},
   containerclose: {
     paddingRight: 16,
     marginBottom: 10,
@@ -922,7 +944,9 @@ const styles = StyleSheet.create({
   },
   flatlistcontainer: {
     flex: 1,
-    height: 300,
+    height: "100%",
+    marginTop:50
+
   },
   flatlistitem: {
     marginStart: 30,

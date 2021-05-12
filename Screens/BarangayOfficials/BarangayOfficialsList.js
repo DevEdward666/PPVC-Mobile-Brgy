@@ -13,6 +13,8 @@ const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 import CardView from 'react-native-rn-cardview';
 import {action_get_barangay_officials_list} from '../../Services/Actions/BarangayOfficialsActions';
 import {useDispatch, useSelector} from 'react-redux';
+import { ImageBackground } from 'react-native';
+import { Card } from 'react-native-elements';
 const BarangayOfficials = () => {
   const dispatch = useDispatch();
 
@@ -31,23 +33,19 @@ const BarangayOfficials = () => {
   }, [dispatch]);
 
   return (
+    <ImageBackground
+    style={{flex: 1}}
+    source={require('../../assets/background/bgImage.jpg')}
+    resizeMode="cover"
+    blurRadius={20}>
+
     <SafeAreaView>
-      <CardView
-        style={{
-          height: screenHeight - 780,
-        }}>
-        <Text
-          style={{
-            textAlign: 'center',
-            fontSize: 22,
-          }}>
-          Barangay Officials
-        </Text>
-      </CardView>
-      <ScrollView style={{height: screenHeight}}>
+   
+    
+      <ScrollView style={{height: screenHeight, marginTop:50}}>
         {brgyofficiallist.map((items, index) => {
           return (
-            <CardView key={index}>
+            <Card containerStyle={styles.plate} key={index}>
               <View
                 style={{
                   flex: 1,
@@ -72,7 +70,7 @@ const BarangayOfficials = () => {
                     }}
                   />
                 </View>
-                <View style={{width: screenWidth - 100}}>
+                <View style={{width: screenWidth -120}}>
                   <Text style={styles.containerNOTIFICATION}>
                     {items?.first_name} {items?.middle_name} {items?.last_name}{' '}
                     {items?.suffix}
@@ -81,11 +79,14 @@ const BarangayOfficials = () => {
                   </Text>
                 </View>
               </View>
-            </CardView>
+            </Card>
           );
         })}
       </ScrollView>
+
     </SafeAreaView>
+    
+    </ImageBackground>
   );
 };
 const styles = StyleSheet.create({
@@ -97,6 +98,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
   },
+  plate:{
+    flex:1,
+    backgroundColor:"rgba(255,255,355,0.5)",
+    borderColor:"rgba(255,255,355,0.5)",
+    borderWidth:0.1,
+    borderRadius:5
+},
 });
 BarangayOfficials.propTypes = {};
 

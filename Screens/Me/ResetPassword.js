@@ -12,6 +12,8 @@ import {
 import CustomSnackBar from '../../Plugins/CustomSnackBar';
 import wait from '../../Plugins/waitinterval';
 import {Actions} from 'react-native-router-flux';
+import { ImageBackground } from 'react-native';
+import { Card } from 'react-native-elements';
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const ResetPassword = () => {
   const [password, setpassword] = useState('');
@@ -126,7 +128,13 @@ const ResetPassword = () => {
     isVisible,
   ]);
   return (
-    <SafeAreaView style={{padding: 20}}>
+    <ImageBackground
+    style={{flex: 1}}
+    source={require('../../assets/background/bgImage.jpg')}
+    resizeMode="cover"
+    blurRadius={20}>
+      <Card containerStyle={styles.plate}>
+    <SafeAreaView style={{padding: 20,marginTop:50}}>
       <ScrollView>
         {forgotpassword ? (
           <TextInput
@@ -205,18 +213,27 @@ const ResetPassword = () => {
         <CustomSnackBar show={isVisible} message={message} />
       </View>
     </SafeAreaView>
+    </Card></ImageBackground>
   );
 };
 
 ResetPassword.propTypes = {};
 
 const styles = StyleSheet.create({
+  plate:{
+    flex:1,
+    backgroundColor:"rgba(255,255,355,0.5)",
+    borderColor:"rgba(255,255,355,0.5)",
+    borderWidth:0.1,
+    borderRadius:5
+},
   login: {
     marginTop: 10,
     paddingTop: 10,
     width: '70%',
     alignSelf: 'center',
     paddingBottom: 20,
+   
     height: 50,
     backgroundColor: 'rgba(252, 87, 81, 0.2)',
     borderRadius: 20,
@@ -224,7 +241,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(252, 87, 81, 0.5)',
   },
   submitText: {
-    color: 'black',
+    color: 'white',
     textAlign: 'center',
   },
 });

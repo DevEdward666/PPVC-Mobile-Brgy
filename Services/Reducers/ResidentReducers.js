@@ -7,6 +7,7 @@ import {
   GET_MEMBERS,
   GET_NATIONALTIY_LIST,
   GET_RELIGION_LIST,
+  GET_FORMS
 } from '../Types/ResidentsTypes';
 
 const residentslist = {
@@ -18,6 +19,7 @@ const residentslist = {
   members: {data: [], loading: false},
   religion_list: [],
   nationality_list: [],
+  resident_form:{data:[],loading:false}
 };
 const ResidentReducers = (data_state = residentslist, actions) => {
   switch (actions.type) {
@@ -35,6 +37,8 @@ const ResidentReducers = (data_state = residentslist, actions) => {
       return {...data_state, members: actions.payload};
     case GET_NATIONALTIY_LIST:
       return {...data_state, nationality_list: actions.payload};
+    case GET_FORMS:
+      return {...data_state, resident_form: actions.payload};
 
     case GET_RELIGION_LIST:
       return {...data_state, religion_list: actions.payload};

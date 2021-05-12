@@ -3,14 +3,16 @@ import React, {useEffect, useRef, useState, useCallback} from 'react';
 import {
   Image,
   RefreshControl,
-  ScrollView,
-  Dimensions,
   StyleSheet,
   Alert,
   Text,
   TouchableHighlight,
   View,
+  Dimensions,
+  ImageBackground
 } from 'react-native';
+import {ScrollView} from 'react-native-gesture-handler';
+import {Card} from 'react-native-elements'
 import CardView from 'react-native-rn-cardview';
 import {Actions} from 'react-native-router-flux';
 import {useDispatch, useSelector} from 'react-redux';
@@ -49,8 +51,16 @@ const MeScreen = () => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      margin: 10,
+      width: '100%',
+      height: '100%',
     },
+    plate:{
+      flex:1,
+      backgroundColor:"rgba(255,255,355,0.5)",
+      borderColor:"rgba(255,255,355,0.5)",
+      borderWidth:0.1,
+      borderRadius:5
+  },
   });
   const removeValue = async () => {
     try {
@@ -140,18 +150,22 @@ const MeScreen = () => {
   const gotoinfo = useCallback(() => {
     Actions.profile();
   }, []);
+  const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
   return (
+   
     <ScrollView
-      style={{backgroundScrollViewColor: 'white'}}
+   style={{height:screenHeight}}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }>
+     <ImageBackground
+    style={{flex: 1}}
+    source={require('../../assets/background/bgImage.jpg')}
+    resizeMode="stretch"
+    blurRadius={20}>
+     <Card containerStyle={styles.plate}>
       <View style={styles.container}>
-        {/* <Appbar.Header style={{backgroundColor: '#00a15b'}}>
-        <Appbar.Content title="Premiere" />
-      </Appbar.Header> */}
-        <View>
-          <View style={{flexDirection: 'column'}}>
+          <View style={{flexDirection: 'column',height:screenHeight}}>
             <TouchableHighlight
               underlayColor="#1C00ff00"
               onPress={() => gotoinfo()}>
@@ -545,27 +559,15 @@ const MeScreen = () => {
               </View>
             </View>
 
-            <View style={{flexDirection: 'row', height: 50}}>
-              <View
-                style={{width: '100%', height: 50, justifyContent: 'center'}}>
-                <Text
-                  style={{
-                    textAlign: 'center',
-                    marginStart: 10,
-                    fontSize: 14,
-                    justifyContent: 'center',
-                    fontWeight: 'bold',
-                  }}>
-                  {/* Powered by TUO @ 2020 */}
-                </Text>
-              </View>
-            </View>
           </View>
         </View>
-      </View>
+      </Card>
+      </ImageBackground>
     </ScrollView>
+
   );
 };
+
 
 MeScreen.propTypes = {};
 
