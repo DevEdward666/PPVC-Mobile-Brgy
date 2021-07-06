@@ -64,7 +64,7 @@ const UINews = () => {
   );
   const users_reducers = useSelector((state) => state.UserInfoReducers.data);
   const base_url = useSelector((state) => state.PostsReducers.base_url);
-  const [offset, setoffset] = useState(10);
+  const [offset, setoffset] = useState(5);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedIndex, setseletedIndex] = useState(0);
   const [isVisible, setisVisible] = useState(false);
@@ -72,7 +72,6 @@ const UINews = () => {
   const [comment, setcomment] = useState('');
   const [posts_id, setposts_id] = useState('');
   const [post, setpost] = useState('');
-  const [commentstate, setcommentstate] = useState(0);
   const [postResource, setpostResource] = useState([]);
   const [multipleFile, setmultipleFile] = useState([]);
   const [spinner, setSpinner] = useState(false);
@@ -81,11 +80,12 @@ const UINews = () => {
     setcomment(text);
   });
   // const news_reducers_url = useSelector((state) => state.News_Reducers.url);
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
+  const onRefresh = useCallback(async() => {
+    await setRefreshing(true);
+    await setoffset((prev)=>prev+2)
     wait(1000).then(() => {
-      setRefreshing(false);
-      dispatch(action_get_posts());
+        setRefreshing(false);
+      dispatch(action_get_posts(offset));
     });
   }, [dispatch]);
   const gotopostsinfo = useCallback(async (item) => {
@@ -94,18 +94,20 @@ const UINews = () => {
   }, []);
   useEffect(() => {
     let mounted = true;
-    const getposts = () => {
-      setSpinner(true);
-
-      if (posts_reducers.loading) {
-        setSpinner(false);
-        dispatch(action_get_posts());
+    const getposts = async() => {
+      if(mounted){
+        await setRefreshing(true);
+        if (posts_reducers.loading) {
+          await setRefreshing(false);
+          dispatch(action_get_posts(offset));
+        }
+        dispatch(action_get_posts(offset));
       }
-      dispatch(action_get_posts());
+
     };
     mounted && getposts();
-    return () => (mounted = false);
-  }, [dispatch, posts_reducers.loading, spinner]);
+    return () => {mounted = false};
+  }, [dispatch, posts_reducers.loading, spinner,offset]);
 
   const handleAddPostPress = useCallback(() => {
     setaddpostVisible(true);
@@ -119,12 +121,12 @@ const UINews = () => {
       await dispatch(action_set_posts(post, post, multipleFile));
 
       await setaddpostVisible(false);
-      await dispatch(action_get_posts());
+      await dispatch(action_get_posts(offset));
       await setpost('');
       await setmultipleFile([]);
       await setpostResource([]);
     }
-  }, [dispatch, post, multipleFile]);
+  }, [dispatch, post, multipleFile,offset]);
   const handleCommentSend = useCallback(async () => {
     if (comment.length > 0) {
       await dispatch(action_posts_add_comment(posts_id, comment));
@@ -146,6 +148,15 @@ const UINews = () => {
     console.log('backing');
     return true;
   };
+  const loadmore=useCallback(async()=>{
+    let mounted=true
+    if(mounted){
+    
+      await setoffset((prev)=>prev+5)
+      await  setRefreshing(true);
+    }
+  return()=>{mounted=false}
+  },[offset])
 
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', backAction);
@@ -472,6 +483,7 @@ const UINews = () => {
         style={styles.container}
         data={posts_reducers.data}
         keyExtractor={(item, index) => index.toString()}
+        onEndReached={loadmore}
         onEndReachedThreshold={0.1}
         renderItem={({item, index}) => (
           <TouchableHighlight

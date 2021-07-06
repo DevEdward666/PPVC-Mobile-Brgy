@@ -191,15 +191,13 @@ const MeScreen = () => {
                       height: 100,
                       justifyContent: 'center',
                     }}>
-                    <Text style={{textAlign: 'justify', fontSize: 22}}>
-                      {users_reducers.last_name}
-                      {','}
-                      {users_reducers.first_name}
+                    <Text style={{textAlign: 'justify', fontSize: 16}}>
+                      {users_reducers.full_name}
                     </Text>
                     <Text
                       style={{
                         textAlign: 'justify',
-                        fontSize: 16,
+                        fontSize: 14,
                         textTransform: 'capitalize',
                       }}>
                       {users_reducers.user_type}

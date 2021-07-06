@@ -33,7 +33,7 @@ import io from 'socket.io-client';
 import moment from 'moment'
 const ComplaintsInfo = () => {
   const users_reducers = useSelector((state) => state.UserInfoReducers.data);
-
+  const {width, height} = Dimensions.get('window');
   const [complaint_pk, setcomplaint_pk] = useState('');
   const [sendmessage, setsendmessage] = useState('');
   const [messages, getmessages] = useState('');
@@ -41,7 +41,7 @@ const ComplaintsInfo = () => {
   const [sendClicked, setsendClicked] = useState(0);
   const [token, settoken] = useState('');
   const [uri, seturi] = useState('');
-
+  const MY_USER_ID = users_reducers?.user_pk;
   const [reload_messages, set_reload_messages] = useState(0);
   let imageUri = 'data:image/png;base64,' + users_reducers.pic;
   const base_url = useSelector((state) => state.NewsReducers.base_url);
@@ -309,34 +309,57 @@ const ComplaintsInfo = () => {
           color="white"
           UI={
             <ScrollView>
-              <CardView>
-                <View style={styles.containerNOTIFICATION}>
-                  <View style={styles.contentNOTIFICATION}>
-                    <View
-                      style={{
-                        flex: 1,
-                        flexDirection: 'row',
-                        justifyContent: 'flex-end',
-                        marginBottom: 10,
-                      }}></View>
-                  </View>
-                </View>
-              </CardView>
-              {complaint_messages.map((Notification) => {
+              
+              {complaint_messages.map((Notification,index) => {
                 console.log(Notification?.user?.pic);
 
-                return (
-                  <CardView key={Notification.complaint_msg_pk}>
-                    <View style={styles.containerNOTIFICATION}>
-                      <View style={styles.contentNOTIFICATION}>
-                        <View
-                          style={{
-                            flex: 1,
-                            flexDirection: 'row',
-                            justifyContent: 'space-around',
-                            marginBottom: 50,
-                          }}>
-                          <View style={{width: 20 + '%', height: 20}}>
+                if (Notification?.sent_by === MY_USER_ID) {
+          return (
+            <View
+              key={index}
+              style={{
+                alignSelf: 'flex-end',
+                maxWidth: width,
+                maxHeight: height,
+              }}>
+              <Card
+                containerStyle={{
+                  backgroundColor: '#0099ff',
+                }}
+                borderRadius={20}>
+                <Text style={{color: 'white'}}>
+                  Me
+                  {'\n'}
+                  {Notification?.body}
+                </Text>
+              </Card>
+            </View>
+            
+            
+          );
+        }  else {
+          return (
+            <View
+              key={index}
+              style={{
+                alignSelf: 'flex-start',
+                maxWidth: width,
+                maxHeight: height,
+              }}>
+              <Card
+                containerStyle={{backgroundColor: '#e4e6eb'}}
+                borderRadius={20}>
+                <Text>
+                  {Notification?.user?.full_name}
+                  {'\n'}
+                  {Notification?.body}
+                </Text>
+              </Card>
+            </View>
+          );
+        }
+                 
+                          {/* <View style={{width: 20 + '%', height: 20}}>
                             {Notification?.user?.pic ? (
                               <Image
                                 source={{
@@ -366,24 +389,11 @@ const ComplaintsInfo = () => {
                                 }}
                               />
                             )}
-                          </View>
-                          <View
-                            style={{
-                              width: screenWidth - 50,
-                              maxheight: screenHeight,
-                            }}>
-                            <Text style={{textAlign: 'justify'}}>
-                              {'\n'}
-                              {Notification?.body}
-                            </Text>
-                          </View>
-                        </View>
-
-                        <Text rkType="primary3 mediumLine"></Text>
-                      </View>
-                    </View>
-                  </CardView>
-                );
+                          </View> */}
+                          
+                   
+                   
+                
               })}
               <CardView>
                 <View style={styles.containerNOTIFICATION}>
