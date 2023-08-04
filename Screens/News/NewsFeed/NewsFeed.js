@@ -25,7 +25,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import CardView from 'react-native-rn-cardview';
 import {Actions} from 'react-native-router-flux';
 import {useDispatch, useSelector} from 'react-redux';
-import wait from '../../Plugins/waitinterval';
+import wait from '../../../Plugins/waitinterval';
 import {
   action_get_news,
   action_get_news_comments,
@@ -35,10 +35,11 @@ import {
   action_get_news_lastweek,
   // action_get_news_bymonth,
   action_filter,
-} from '../../Services/Actions/NewsActions';
+} from '../../../Services/Actions/NewsActions';
+import styles from './style';
 import {HelperText} from 'react-native-paper';
 import Carousel, {ParallaxImage} from 'react-native-snap-carousel';
-const UINews = () => {
+const NewsFeed = () => {
   const news_reducers = useSelector((state) => state.NewsReducers.data);
   const base_url = useSelector((state) => state.NewsReducers.base_url);
   const selected_filter = useSelector(
@@ -85,20 +86,7 @@ const UINews = () => {
       dispatch(action_get_news());
     });
   }, [dispatch]);
-  useEffect(() => {
-    let mounted = true;
 
-    const getnews = () => {
-      setSpinner(true);
-      setInterval(() => {
-        setSpinner(false);
-      }, 1000);
-      dispatch(action_get_news());
-    };
-
-    mounted && getnews();
-    return () => (mounted = false);
-  }, [dispatch]);
   const loadmore = async () => {
     setSpinner(true);
     setInterval(() => {
@@ -157,19 +145,9 @@ const UINews = () => {
     {month: 'November', number: 11},
     {month: 'December', number: 12},
   ];
+  console.log(news_reducers[0]?.upload_files);
   return (
-    // <ImageBackground
-    // style={{flex: 1}}
-    // source={require('../../assets/background/bgImage.jpg')}
-    // resizeMode="stretch"
-    // blurRadius={20}>
     <SafeAreaView style={styles.flatlistcontainer}>
-      <Spinner
-        visible={spinner}
-        textContent={'Loading...'}
-        textStyle={styles.spinnerTextStyle}
-      />
-
       <View style={{flexDirection: 'row', paddingLeft: 15}}>
         <View style={{width: '50%'}}>
           <HelperText type="info" visible={true} padding="none">
@@ -291,47 +269,5 @@ const UINews = () => {
     //  </ImageBackground>
   );
 };
-const styles = StyleSheet.create({
-  spinnerTextStyle: {
-    color: '#FFF',
-  },
-  container: {
-    flex: 1,
-    width: '100%',
-  },
 
-  text: {
-    color: 'white',
-    fontSize: 14,
-    padding: 15,
-    textAlign: 'justify',
-    backgroundColor: '#000000a0',
-  },
-  flatlistcontainer: {
-    backgroundColor: 'rgba(255,255,355,0.5)',
-    borderColor: 'rgba(255,255,355,0.5)',
-    flex: 1,
-    paddingTop: 10,
-  },
-  flatlistitem: {
-    marginStart: 30,
-    fontSize: 14,
-    fontFamily: 'Open-Sans',
-    height: 10,
-  },
-  plate: {
-    flex: 1,
-    backgroundColor: 'rgba(255,255,355,0.5)',
-    borderColor: 'rgba(255,255,355,0.5)',
-    borderWidth: 0.1,
-    borderRadius: 5,
-  },
-  flatlistitemappointmentno: {
-    marginStart: 30,
-    fontSize: 14,
-    fontWeight: 'bold',
-    fontFamily: 'Open-Sans',
-    height: 20,
-  },
-});
-export default UINews;
+export default NewsFeed;

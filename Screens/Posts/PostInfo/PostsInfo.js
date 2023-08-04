@@ -16,7 +16,7 @@ import {
   RefreshControl,
   TouchableHighlight,
 } from 'react-native';
-
+import ImageView from 'react-native-image-viewing';
 import Icons from 'react-native-vector-icons/FontAwesome';
 import {Button, Badge, ButtonGroup, Card} from 'react-native-elements';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -25,8 +25,8 @@ import {Actions} from 'react-native-router-flux';
 import Carousel, {ParallaxImage} from 'react-native-snap-carousel';
 import BottomSheet from 'reanimated-bottom-sheet';
 import {useDispatch, useSelector} from 'react-redux';
-import wait from '../../Plugins/waitinterval';
-import CustomBottomSheet from '../../Plugins/CustomBottomSheet';
+import wait from '../../../Plugins/waitinterval';
+import CustomBottomSheet from '../../../Plugins/CustomBottomSheet';
 import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 import {
@@ -34,10 +34,12 @@ import {
   action_get_posts_comments,
   action_set_posts_reactions,
   action_posts_add_comment,
-} from '../../Services/Actions/PostsActions';
+} from '../../../Services/Actions/PostsActions';
 import {Divider} from 'react-native-elements/dist/divider/Divider';
+import styles from './style';
 const PostsInfo = () => {
   const posts_info = useSelector((state) => state.PostsReducers.posts_info);
+
   const posts_reaction = useSelector(
     (state) => state.PostsReducers.posts_reaction,
   );
@@ -53,6 +55,8 @@ const PostsInfo = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [comment, setcomment] = useState('');
   const [isVisible, setisVisible] = useState(false);
+  const [visible, setvisible] = useState(false);
+  const [imgpath, setimgpath] = useState('');
   AsyncStorage.getItem('posts_id').then((item) => {
     if (item == null) {
       Actions.home();
@@ -68,18 +72,9 @@ const PostsInfo = () => {
       dispatch(action_get_posts_info(posts_pk));
     });
   }, [dispatch, posts_pk]);
-  useEffect(() => {
-    let mounted = true;
-    const getpostsinfo = () => {
-      dispatch(action_get_posts_info(posts_pk));
-    };
-
-    mounted && getpostsinfo();
-    return () => (mounted = false);
-  }, [dispatch, posts_pk]);
 
   const updateIndex = useCallback(
-    async ( index) => {
+    async (index) => {
       await dispatch(action_get_posts_comments(posts_pk));
       if (index !== 0) {
         setisVisible(true);
@@ -98,7 +93,6 @@ const PostsInfo = () => {
       await setcomment('');
     }
   }, [dispatch, comment, posts_pk]);
-  console.log(posts_info[0]?.totalcomments);
   const component1 = () => {
     return (
       <>
@@ -108,6 +102,15 @@ const PostsInfo = () => {
       </>
     );
   };
+  const hadnleClickPhoto = (img) => {
+    setvisible(true);
+    setimgpath(`${base_url}/${img?.file_path}`);
+  };
+  const images = [
+    {
+      uri: imgpath,
+    },
+  ];
   const liked = () => {
     return (
       <View
@@ -159,21 +162,19 @@ const PostsInfo = () => {
     velocityThreshold: 0.3,
     directionalOffsetThreshold: 1000,
   };
-  console.log(posts_info[0])
+  console.log(posts_comments);
   return (
-    <ImageBackground
-    style={{flex: 1}}
-    source={require('../../assets/background/bgImage.jpg')}
-    resizeMode="cover"
-    blurRadius={20}>
-      
+    // <ImageBackground
+    // style={{flex: 1}}
+    // source={require('../../assets/background/bgImage.jpg')}
+    // resizeMode="cover"
+    // blurRadius={20}>
+
     <ScrollView
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }>
-        
-   
-      <Card containerStyle={{marginTop: 50,}} radius={1}>
+      <Card radius={1}>
         <View
           style={{
             flexDirection: 'row',
@@ -273,7 +274,12 @@ const PostsInfo = () => {
             </View>
           </View>
         </View>
-
+        <ImageView
+          images={images}
+          imageIndex={0}
+          visible={visible}
+          onRequestClose={() => setvisible(false)}
+        />
         {posts_info[0]?.liked[0]?.reaction ? (
           <ButtonGroup
             onPress={(index) => updateIndex(index)}
@@ -291,11 +297,14 @@ const PostsInfo = () => {
 
       {posts_info[0]?.upload_files.map((img, index) => {
         return (
-          <View
-            style={{width: '100%', height: screenHeight}}
-            key={index}>
-            <TouchableNativeFeedback key={index} underlayColor="white">
-              <Card radius={1}  containerStyle={{ backgroundColor:"rgba(255,255,355,0.5)",}}>
+          <View style={{width: '100%', height: screenHeight}} key={index}>
+            <TouchableNativeFeedback
+              key={index}
+              underlayColor="white"
+              onPress={() => hadnleClickPhoto(img)}>
+              <Card
+                radius={1}
+                containerStyle={{backgroundColor: 'rgba(255,255,355,0.5)'}}>
                 <View
                   style={{
                     flexDirection: 'row',
@@ -366,14 +375,15 @@ const PostsInfo = () => {
                                 }}
                               />
                             </View>
-                            <View style={{width: 95 + '%', height: 100}}>
-                              <CardView key={Notification.posts_comment_pk}>
-                                <Text style={styles.containerNOTIFICATION}>
-                                  {Notification?.fullname}
-                                  {'\n'}
-                                  {Notification?.body}
-                                </Text>
-                              </CardView>
+                            <View style={{width: '95%', height: 100}}>
+                              <Text style={styles.containerNOTIFICATION}>
+                                {Notification?.fullname}
+                                {'\n'}
+                                {Notification?.body}
+                              </Text>
+                              <Text style={styles.timestamp}>
+                                {Notification?.TIMESTAMP}
+                              </Text>
                             </View>
                           </View>
                         </View>
@@ -419,86 +429,8 @@ const PostsInfo = () => {
         />
       </GestureRecognizer>
     </ScrollView>
-    </ImageBackground>
+    // </ImageBackground>
   );
 };
-
-const styles = StyleSheet.create({
-  plate:{
-    flex:1,
-    backgroundColor:"rgba(255,255,355,0.5)",
-    borderColor:"rgba(255,255,355,0.5)",
-    borderWidth:0.1,
-    borderRadius:5
-},
-  avatar: {
-    flex: 1,
-    width: '100%',
-    height: 300,
-    borderColor: 'white',
-    alignSelf: 'center',
-    resizeMode: 'contain',
-  },
-  spinnerTextStyle: {
-    color: '#FFF',
-  },
-  container: {
-    flex: 1,
-    width: '100%',
-  },
-  containerNOTIFICATION: {
-    paddingLeft: 19,
-    paddingRight: 16,
-    paddingVertical: 12,
-    flexDirection: 'row',
-    maxHeight: 1000,
-    alignItems: 'flex-start',
-  },
-  containercomment: {
-    paddingLeft: 19,
-    paddingRight: 16,
-    paddingVertical: 12,
-    flexDirection: 'row',
-    height: 100,
-    maxHeight: 1000,
-    alignItems: 'flex-start',
-  },
-  text: {
-    color: 'black',
-    fontSize: 14,
-    padding: 15,
-    textAlign: 'justify',
-  },
-  noimagetext: {
-    color: 'black',
-    fontSize: 14,
-    padding: 15,
-    textAlign: 'justify',
-  },
-  fullnametext: {
-    color: 'black',
-    fontSize: 23,
-    padding: 10,
-    textAlign: 'justify',
-  },
-  flatlistcontainer: {
-    backgroundColor: '#fafafa',
-    flex: 1,
-    paddingTop: 10,
-  },
-  flatlistitem: {
-    marginStart: 30,
-    fontSize: 14,
-    fontFamily: 'Open-Sans',
-    height: 10,
-  },
-  flatlistitemappointmentno: {
-    marginStart: 30,
-    fontSize: 14,
-    fontWeight: 'bold',
-    fontFamily: 'Open-Sans',
-    height: 20,
-  },
-});
 
 export default PostsInfo;

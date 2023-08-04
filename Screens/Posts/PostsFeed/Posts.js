@@ -25,6 +25,7 @@ import {
   withBadge,
   Card,
 } from 'react-native-elements';
+import styles from './style';
 import FBGrid from 'react-native-fb-image-grid';
 import FBCollage from 'react-native-fb-collage';
 import PhotoGrid from 'react-native-thumbnail-grid';
@@ -33,21 +34,23 @@ import CardView from 'react-native-rn-cardview';
 import {Actions} from 'react-native-router-flux';
 import {useDispatch, useSelector} from 'react-redux';
 import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
-import wait from '../../Plugins/waitinterval';
+import wait from '../../../Plugins/waitinterval';
 import {
   action_get_posts,
   action_get_posts_comments,
   action_set_posts_reactions,
   action_posts_add_comment,
   action_set_posts,
-} from '../../Services/Actions/PostsActions';
-import CustomBottomSheet from '../../Plugins/CustomBottomSheet';
+  action_set_posts_pk,
+} from '../../../Services/Actions/PostsActions';
+import CustomBottomSheet from '../../../Plugins/CustomBottomSheet';
 import {ScrollView, TextInput} from 'react-native-gesture-handler';
-import CustomFlexBox from '../../Plugins/CustomFlexBox';
+import CustomFlexBox from '../../../Plugins/CustomFlexBox';
 import {HelperText} from 'react-native-paper';
-import CustomBottomSheetV2 from '../../Plugins/CustomBottomSheetV2';
-import UILiked from './Liked';
-const UINews = () => {
+import CustomBottomSheetV2 from '../../../Plugins/CustomBottomSheetV2';
+import UILiked from '../Liked';
+import moment from 'moment';
+const Posts = () => {
   const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
   var IMAGES_PER_ROW = 3;
 
@@ -64,7 +67,7 @@ const UINews = () => {
   );
   const users_reducers = useSelector((state) => state.UserInfoReducers.data);
   const base_url = useSelector((state) => state.PostsReducers.base_url);
-  const [offset, setoffset] = useState(10);
+  const [offset, setoffset] = useState(5);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedIndex, setseletedIndex] = useState(0);
   const [isVisible, setisVisible] = useState(false);
@@ -72,7 +75,6 @@ const UINews = () => {
   const [comment, setcomment] = useState('');
   const [posts_id, setposts_id] = useState('');
   const [post, setpost] = useState('');
-  const [commentstate, setcommentstate] = useState(0);
   const [postResource, setpostResource] = useState([]);
   const [multipleFile, setmultipleFile] = useState([]);
   const [spinner, setSpinner] = useState(false);
@@ -81,31 +83,21 @@ const UINews = () => {
     setcomment(text);
   });
   // const news_reducers_url = useSelector((state) => state.News_Reducers.url);
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
+  const onRefresh = useCallback(async () => {
+    await setRefreshing(true);
+    await setoffset((prev) => prev + 2);
     wait(1000).then(() => {
       setRefreshing(false);
-      dispatch(action_get_posts());
+      dispatch(action_get_posts(offset));
     });
   }, [dispatch]);
-  const gotopostsinfo = useCallback(async (item) => {
-    await AsyncStorage.setItem('posts_id', item.posts_pk.toString());
-    Actions.postsinfo();
-  }, []);
-  useEffect(() => {
-    let mounted = true;
-    const getposts = () => {
-      setSpinner(true);
-
-      if (posts_reducers.loading) {
-        setSpinner(false);
-        dispatch(action_get_posts());
-      }
-      dispatch(action_get_posts());
-    };
-    mounted && getposts();
-    return () => (mounted = false);
-  }, [dispatch, posts_reducers.loading, spinner]);
+  const gotopostsinfo = useCallback(
+    async (item) => {
+      dispatch(action_set_posts_pk(item.posts_pk.toString()));
+      Actions.postsinfo();
+    },
+    [dispatch],
+  );
 
   const handleAddPostPress = useCallback(() => {
     setaddpostVisible(true);
@@ -119,12 +111,12 @@ const UINews = () => {
       await dispatch(action_set_posts(post, post, multipleFile));
 
       await setaddpostVisible(false);
-      await dispatch(action_get_posts());
+      await dispatch(action_get_posts(offset));
       await setpost('');
       await setmultipleFile([]);
       await setpostResource([]);
     }
-  }, [dispatch, post, multipleFile]);
+  }, [dispatch, post, multipleFile, offset]);
   const handleCommentSend = useCallback(async () => {
     if (comment.length > 0) {
       await dispatch(action_posts_add_comment(posts_id, comment));
@@ -146,6 +138,16 @@ const UINews = () => {
     console.log('backing');
     return true;
   };
+  const loadmore = useCallback(async () => {
+    let mounted = true;
+    if (mounted) {
+      await setoffset((prev) => prev + 5);
+      await setRefreshing(true);
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [offset]);
 
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', backAction);
@@ -229,19 +231,7 @@ const UINews = () => {
   const BadgedIcon = withBadge(1)(Icons);
   let imageUri = 'data:image/png;base64,' + users_reducers?.pic;
   return (
-    // <ImageBackground
-    // style={{flex: 1}}
-    // source={require('../../assets/background/bgImage.jpg')}
-    // resizeMode="cover"
-    // blurRadius={20}>
-
     <SafeAreaView style={styles.flatlistcontainer}>
-      <Spinner
-        visible={spinner}
-        textContent={'Loading...'}
-        textStyle={styles.spinnerTextStyle}
-      />
-
       <CardView
         style={{marginTop: -5, marginBottom: 30, height: 80}}
         radius={1}>
@@ -472,6 +462,7 @@ const UINews = () => {
         style={styles.container}
         data={posts_reducers.data}
         keyExtractor={(item, index) => index.toString()}
+        onEndReached={loadmore}
         onEndReachedThreshold={0.1}
         renderItem={({item, index}) => (
           <TouchableHighlight
@@ -653,13 +644,14 @@ const UINews = () => {
                                 />
                               </View>
                               <View style={{width: 95 + '%', height: 100}}>
-                                <CardView key={comments.posts_comment_pk}>
-                                  <Text style={styles.containerNOTIFICATION}>
-                                    {comments?.fullname}
-                                    {'\n'}
-                                    {comments?.body}
-                                  </Text>
-                                </CardView>
+                                <Text style={styles.containerNOTIFICATION}>
+                                  {comments?.fullname}
+                                  {'\n'}
+                                  {comments?.body}
+                                </Text>
+                                <Text style={styles.timestamp}>
+                                  {comments?.TIMESTAMP}
+                                </Text>
                               </View>
                             </View>
                           </View>
@@ -674,90 +666,7 @@ const UINews = () => {
         )}
       />
     </SafeAreaView>
-    //  </ImageBackground>
   );
 };
-const styles = StyleSheet.create({
-  avatar: {
-    width: '100%',
-    height: 500,
-    borderColor: 'white',
-    alignSelf: 'center',
-    resizeMode: 'contain',
-  },
-  plate: {
-    flex: 1,
-    backgroundColor: 'rgba(255,255,355,0.5)',
-    borderColor: 'rgba(255,255,355,0.5)',
-    borderWidth: 0.1,
-    borderRadius: 5,
-  },
-  spinnerTextStyle: {
-    color: '#FFF',
-  },
-  container: {
-    flex: 1,
-    width: '100%',
-  },
-  containerNOTIFICATION: {
-    paddingLeft: 19,
-    paddingRight: 16,
-    paddingVertical: 12,
-    flexDirection: 'row',
-    maxHeight: 1000,
-    alignItems: 'flex-start',
-  },
-  containerclose: {
-    paddingRight: 16,
-    marginBottom: 10,
-    maxHeight: 1000,
-    alignItems: 'flex-end',
-  },
-  containercomment: {
-    paddingLeft: 19,
-    paddingRight: 16,
-    paddingVertical: 12,
-    flexDirection: 'row',
-    height: 100,
-    maxHeight: 1000,
-    alignItems: 'flex-start',
-  },
-  text: {
-    color: 'black',
-    fontSize: 14,
-    padding: 15,
-    textAlign: 'justify',
-  },
-  noimagetext: {
-    color: 'black',
-    fontSize: 14,
-    padding: 15,
-    textAlign: 'justify',
-  },
-  fullnametext: {
-    color: 'black',
-    fontSize: 23,
-    padding: 10,
-    textAlign: 'justify',
-  },
-  flatlistcontainer: {
-    backgroundColor: 'rgba(255,255,355,0.5)',
-    borderColor: 'rgba(255,255,355,0.5)',
-    flex: 1,
-    paddingTop: 10,
-  },
-  flatlistitem: {
-    marginStart: 30,
-    fontSize: 14,
-    fontFamily: 'Open-Sans',
-    height: 10,
-  },
-  flatlistitemappointmentno: {
-    marginStart: 30,
-    fontSize: 14,
-    fontWeight: 'bold',
-    fontFamily: 'Open-Sans',
-    height: 20,
-  },
-});
-export default UINews;
+
+export default Posts;

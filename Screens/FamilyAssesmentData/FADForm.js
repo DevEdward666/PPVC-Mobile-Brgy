@@ -36,10 +36,12 @@ import {
   action_get_FAD_exist,
   action_updatefamily,
   action_get_FAD_form,
+  action_set_reset,
 } from '../../Services/Actions/ResidentsActions';
 import CustomAlert from '../../Plugins/CustomAlert';
 import CustomSnackBar from '../../Plugins/CustomSnackBar';
 import {Actions} from 'react-native-router-flux';
+import styles from './style';
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const FADForm = () => {
   const users_reducers = useSelector((state) => state.UserInfoReducers.data);
@@ -221,6 +223,7 @@ const FADForm = () => {
   ];
   const handleSubmit = useCallback(async () => {
     setspinner(true);
+
     if (residents_data_exist?.data.length > 0) {
       dispatch(
         action_updatefamily(
@@ -241,18 +244,18 @@ const FADForm = () => {
           fam_member,
         ),
       );
-      setspinner(false);
-      if (await residents_issuccess) {
-        alert(
-          'Your Application for Family Assesment Data has been submitted successfully',
-        );
+      // setspinner(false);
+      // if (await residents_issuccess) {
+      //   alert(
+      //     'Your Application for Family Assesment Data has been submitted successfully',
+      //   );
 
-        setspinner(false);
-        wait(1000).then(() => {
-          Actions.index();
-          setAlertshow(false);
-        });
-      }
+      //   setspinner(false);
+      //   wait(1000).then(() => {
+      //     Actions.index();
+      //     setAlertshow(false);
+      //   });
+      // }
     } else if (!residents_data_exist?.data.length > 0) {
       dispatch(
         action_addfamily(
@@ -272,17 +275,17 @@ const FADForm = () => {
           fam_member,
         ),
       );
-      if (residents_issuccess) {
-        alert(
-          'Your Application for Family Assesment Data has been submitted successfully',
-        );
+      // if (residents_issuccess) {
+      //   alert(
+      //     'Your Application for Family Assesment Data has been submitted successfully',
+      //   );
 
-        setspinner(false);
-        wait(1000).then(() => {
-          Actions.index();
-          setAlertshow(false);
-        });
-      }
+      //   setspinner(false);
+      //   wait(1000).then(() => {
+      //     Actions.index();
+      //     setAlertshow(false);
+      //   });
+      // }
     }
   }, [
     dispatch,
@@ -295,9 +298,32 @@ const FADForm = () => {
     hasLightConnectionsaver,
     hasComfortRoomsaver,
     waterconnectionsaver,
+    users_reducers.resident_pk,
     residents_data_exist?.data,
   ]);
+  useEffect(() => {
+    let mounted = true;
+    const getifsuccesssubmit = () => {
+      if (mounted) {
+        if (residents_issuccess) {
+          alert(
+            'Your Application for Family Assesment Data has been submitted successfully',
+          );
 
+          setspinner(false);
+          wait(1000).then(() => {
+            Actions.index();
+            setAlertshow(false);
+          });
+          dispatch(action_set_reset(false));
+        }
+      }
+    };
+    mounted && getifsuccesssubmit();
+    return () => {
+      mounted = false;
+    };
+  }, [dispatch, residents_issuccess]);
   const handleSecondInfo = useCallback(async () => {}, []);
   const handleThirdInfo = useCallback(async () => {
     await setInfoError(false);
@@ -305,63 +331,49 @@ const FADForm = () => {
   const handleFourthInfo = useCallback(async () => {
     await setInfoError(false);
   }, []);
-  const handleNextInfo = useCallback(
-    async () => {
-      setRefreshing(true);
-      setPeopleInsidetheHouse([]);
-      setfam_member([]);
-      setRefreshing(false);
-      dispatch(action_get_FAD_exist(users_reducers?.resident_pk));
-      dispatch(
-        action_get_FAD_form(
-          users_reducers?.resident_pk,
-          users_reducers?.fam_pk,
-        ),
-      );
-      residents_data_exist[0]?.fam_members?.map((item) => {
-        setPeopleInsidetheHouse((prev) => [
-          ...prev,
-          {
-            PeopleName: item?.first_name + ' ' + item?.last_name,
-            realationship: item?.rel,
-          },
-        ]);
-        setfam_member((prev) => [
-          ...prev,
-          {
-            PeopleName: item?.first_name + ' ' + item?.last_name,
-            resident_pk: parseInt(item?.resident_pk),
-            rel: item?.rel,
-          },
-        ]);
-      });
-      if (
-        qualityness == undefined ||
-        Occationfortheland == undefined ||
-        Occationofthehouse == undefined ||
-        yearsstayed == undefined ||
-        structure == undefined
-      ) {
-        await setInfoError(true);
-        alert('Please Fill All Fields');
-      } else {
-        await setInfoError(false);
-      }
-    },
-    [
-      qualityness,
-      Occationfortheland,
-      Occationofthehouse,
-      yearsstayed,
-      structure,
-    ],
-    [
-      fam_member,
-      PeopleInsidetheHouse,
-      users_reducers?.resident_pk,
-      users_reducers?.fam_pk,
-    ],
-  );
+  const handleNextInfo = useCallback(async () => {
+    // setRefreshing(true);
+    setPeopleInsidetheHouse([]);
+    setfam_member([]);
+    // setRefreshing(false);
+    // dispatch(action_get_FAD_exist(users_reducers?.resident_pk));
+
+    residents_data_exist[0]?.fam_members?.map((item) => {
+      setPeopleInsidetheHouse((prev) => [
+        ...prev,
+        {
+          PeopleName: item?.first_name + ' ' + item?.last_name,
+          realationship: item?.rel,
+        },
+      ]);
+      setfam_member((prev) => [
+        ...prev,
+        {
+          PeopleName: item?.first_name + ' ' + item?.last_name,
+          resident_pk: parseInt(item?.resident_pk),
+          rel: item?.rel,
+        },
+      ]);
+    });
+    if (
+      qualityness == undefined ||
+      Occationfortheland == undefined ||
+      Occationofthehouse == undefined ||
+      yearsstayed == undefined ||
+      structure == undefined
+    ) {
+      await setInfoError(true);
+      alert('Please Fill All Fields');
+    } else {
+      await setInfoError(false);
+    }
+  }, [
+    qualityness,
+    Occationfortheland,
+    Occationofthehouse,
+    yearsstayed,
+    structure,
+  ]);
 
   const onChangeSearch = useCallback(
     async (value) => {
@@ -444,7 +456,6 @@ const FADForm = () => {
     },
     [waterconnection],
   );
-  console.log(hasComfortRoom);
   const handleCheckBoxKasilyas = useCallback(
     async (selection, item) => {
       let mounted = true;
@@ -824,169 +835,171 @@ const FADForm = () => {
       ]);
     });
   }, [dispatch, users_reducers?.resident_pk, PeopleInsidetheHouse, fam_member]);
-  useEffect(() => {
-    let mounted = true;
-    const index = () => {
-      dispatch(action_get_FAD_exist(users_reducers?.resident_pk));
-    };
-    mounted && index();
-    return () => {
-      mounted = false;
-    };
-  }, [dispatch, users_reducers?.resident_pk]);
 
   useEffect(() => {
     let mounted = true;
-    setspinner(true);
+
     const listofresident = async () => {
-      await setwaterconnection([]);
-      await setwaterconnectionsaver([]);
-
-      await sethasLightConnection([]);
-      await sethasLightConnectionsaver([]);
-
-      await sethasComfortRoom([]);
-      await sethasComfortRoomsaver([]);
-
-      await setwastemanagement([]);
-      await setwastemanagementsaver([]);
-
-      await setvictimofabuse([]);
-      await setvictimofabusesaver([]);
-
-      await setkahimtangsakomunidad([]);
-      await setkahimtangsakomunidadsaver([]);
-
-      await setserbisyo([]);
-      await setserbisyosaver([]);
-
-      await setCheckedWaterConnection({});
-
-      if (searchvalue === '') {
-        await setsearchvalue(null);
-      }
-      await setPeopleInsidetheHouse([]);
-      await dispatch(action_get_residents_list(searchvalue));
-
-      if (residents_data_exist?.data[0]?.kadugayon_pagpuyo === undefined) {
-        setspinner(false);
-        setisDisabled(false);
-      } else {
-        await setisDisabled(true);
+      if (mounted) {
         setspinner(true);
-        if (residents_data_exist?.loading) {
-          await setOccationofthehouse(
-            residents_data_exist?.data[0].okasyon_balay,
-          );
-          await setOccationfortheland(
-            residents_data_exist?.data[0].okasyon_yuta,
-          );
-          await setStructure(residents_data_exist?.data[0].straktura);
-          await setQualityness(residents_data_exist?.data[0].kaligon_balay);
-          await setyearsstayed(
-            '' + residents_data_exist?.data[0].kadugayon_pagpuyo,
-          );
+        await setwaterconnection([]);
+        await setwaterconnectionsaver([]);
 
-          await resident_form?.data?.tinubdan_tubig?.map((item) => {
-            // const isChecked = checkedwaterconnection[item];
-            // setCheckedWaterConnection({...checkedwaterconnection,[item] :!isChecked})
-            setwaterconnection((prev) => [...prev, {label: item, value: item}]);
-            setwaterconnectionsaver((prev) => [...prev, item]);
-          });
-          resident_form?.data?.pasilidad_kuryente?.map((item) => {
-            sethasLightConnection((prev) => [
-              ...prev,
-              {label: item, value: item},
-            ]);
-            sethasLightConnectionsaver((prev) => [...prev, item]);
-          });
-          resident_form?.data?.matang_kasilyas?.map((item) => {
-            sethasComfortRoom((prev) => [...prev, {label: item, value: item}]);
-            sethasComfortRoomsaver((prev) => [...prev, item]);
-          });
-          resident_form?.data?.matang_basura?.map((item) => {
-            setwastemanagement((prev) => [...prev, {label: item, value: item}]);
-            setwastemanagementsaver((prev) => [...prev, item]);
-          });
-          resident_form?.data?.biktima_pangabuso?.map((item) => {
-            setvictimofabuse((prev) => [...prev, {label: item, value: item}]);
-            setvictimofabusesaver((prev) => [...prev, item]);
-          });
+        await sethasLightConnection([]);
+        await sethasLightConnectionsaver([]);
 
-          resident_form?.data?.kahimtanang_komunidad?.map((item) => {
-            setkahimtangsakomunidad((prev) => [
-              ...prev,
-              {label: item, value: item},
-            ]);
-            setkahimtangsakomunidadsaver((prev) => [...prev, item]);
-          });
+        await sethasComfortRoom([]);
+        await sethasComfortRoomsaver([]);
 
-          resident_form?.data?.serbisyo_nadawat?.map((item) => {
-            let agency = '';
-            if (item.programa === 'Scholarship') {
-              setscholarship(item.ahensya);
-            } else if (item.programa === 'Livelihood') {
-              setlivelihood(item.ahensya);
-            } else if (item.programa === 'Housing') {
-              sethouseing(item.ahensya);
-            } else if (item.programa === 'Financial') {
-              setfinancial(item.ahensya);
-            } else if (item.programa === 'Lingap') {
-              setlingap(item.ahensya);
-            } else if (item.programa === 'Medical nga Tabang') {
-              setmedicalngatabang(item.ahensya);
-            } else if (item.programa === 'Day Care Service') {
-              setdaycareservice(item.ahensya);
-            } else if (item.programa === 'Skill Training') {
-              setskilltraining(item.ahensya);
-            } else if (item.programa === 'Employment') {
-              setEmployment(item.ahensya);
-            }
-            setserbisyo((prev) => [
-              ...prev,
-              {label: item.programa, value: item.programa},
-            ]);
-            setserbisyosaver((prev) => [
-              ...prev,
-              {programa: item.programa, ahensya: item.ahensya},
-            ]);
-          });
+        await setwastemanagement([]);
+        await setwastemanagementsaver([]);
 
-          // await sethasLightConnection(
-          //   residents_data_exist?.data[0]?.pasilidad_kuryente,
-          // );
-          // await sethasComfortRoom(
-          //   residents_data_exist?.data[0]?.matang_kasilyas,
-          // );
-          // await setwastemanagement(
-          //   residents_data_exist?.data[0]?.matang_basura,
-          // );
-          // await setvictimofabuse(
-          //   residents_data_exist?.data[0]?.biktima_pangabuso,
-          // );
-          // await setkahimtangsakomunidad(
-          //   residents_data_exist?.data[0]?.kahimtang_komunidad,
-          // );
+        await setvictimofabuse([]);
+        await setvictimofabusesaver([]);
 
-          await setspinner(false);
-          await residents_data_exist?.data[0]?.fam_members?.map((item) => {
-            setPeopleInsidetheHouse((prev) => [
-              ...prev,
-              {
-                PeopleName: item?.first_name + ' ' + item?.last_name,
-                realationship: item?.rel,
-              },
-            ]);
-            setfam_member((prev) => [
-              ...prev,
-              {
-                PeopleName: item?.first_name + ' ' + item?.last_name,
-                resident_pk: parseInt(item?.resident_pk),
-                rel: item?.rel,
-              },
-            ]);
-          });
+        await setkahimtangsakomunidad([]);
+        await setkahimtangsakomunidadsaver([]);
+
+        await setserbisyo([]);
+        await setserbisyosaver([]);
+
+        await setCheckedWaterConnection({});
+
+        if (searchvalue === '') {
+          await setsearchvalue(null);
+        }
+        await setPeopleInsidetheHouse([]);
+        await dispatch(action_get_residents_list(searchvalue));
+
+        if (residents_data_exist?.data[0]?.kadugayon_pagpuyo === undefined) {
           setspinner(false);
+          setisDisabled(false);
+        } else {
+          await setisDisabled(true);
+          setspinner(true);
+          if (residents_data_exist?.loading) {
+            await setOccationofthehouse(
+              residents_data_exist?.data[0].okasyon_balay,
+            );
+            await setOccationfortheland(
+              residents_data_exist?.data[0].okasyon_yuta,
+            );
+            await setStructure(residents_data_exist?.data[0].straktura);
+            await setQualityness(residents_data_exist?.data[0].kaligon_balay);
+            await setyearsstayed(
+              '' + residents_data_exist?.data[0].kadugayon_pagpuyo,
+            );
+
+            await resident_form?.data?.tinubdan_tubig?.map((item) => {
+              // const isChecked = checkedwaterconnection[item];
+              // setCheckedWaterConnection({...checkedwaterconnection,[item] :!isChecked})
+              setwaterconnection((prev) => [
+                ...prev,
+                {label: item, value: item},
+              ]);
+              setwaterconnectionsaver((prev) => [...prev, item]);
+            });
+            resident_form?.data?.pasilidad_kuryente?.map((item) => {
+              sethasLightConnection((prev) => [
+                ...prev,
+                {label: item, value: item},
+              ]);
+              sethasLightConnectionsaver((prev) => [...prev, item]);
+            });
+            resident_form?.data?.matang_kasilyas?.map((item) => {
+              sethasComfortRoom((prev) => [
+                ...prev,
+                {label: item, value: item},
+              ]);
+              sethasComfortRoomsaver((prev) => [...prev, item]);
+            });
+            resident_form?.data?.matang_basura?.map((item) => {
+              setwastemanagement((prev) => [
+                ...prev,
+                {label: item, value: item},
+              ]);
+              setwastemanagementsaver((prev) => [...prev, item]);
+            });
+            resident_form?.data?.biktima_pangabuso?.map((item) => {
+              setvictimofabuse((prev) => [...prev, {label: item, value: item}]);
+              setvictimofabusesaver((prev) => [...prev, item]);
+            });
+
+            resident_form?.data?.kahimtanang_komunidad?.map((item) => {
+              setkahimtangsakomunidad((prev) => [
+                ...prev,
+                {label: item, value: item},
+              ]);
+              setkahimtangsakomunidadsaver((prev) => [...prev, item]);
+            });
+
+            resident_form?.data?.serbisyo_nadawat?.map((item) => {
+              let agency = '';
+              if (item.programa === 'Scholarship') {
+                setscholarship(item.ahensya);
+              } else if (item.programa === 'Livelihood') {
+                setlivelihood(item.ahensya);
+              } else if (item.programa === 'Housing') {
+                sethouseing(item.ahensya);
+              } else if (item.programa === 'Financial') {
+                setfinancial(item.ahensya);
+              } else if (item.programa === 'Lingap') {
+                setlingap(item.ahensya);
+              } else if (item.programa === 'Medical nga Tabang') {
+                setmedicalngatabang(item.ahensya);
+              } else if (item.programa === 'Day Care Service') {
+                setdaycareservice(item.ahensya);
+              } else if (item.programa === 'Skill Training') {
+                setskilltraining(item.ahensya);
+              } else if (item.programa === 'Employment') {
+                setEmployment(item.ahensya);
+              }
+              setserbisyo((prev) => [
+                ...prev,
+                {label: item.programa, value: item.programa},
+              ]);
+              setserbisyosaver((prev) => [
+                ...prev,
+                {programa: item.programa, ahensya: item.ahensya},
+              ]);
+            });
+
+            // await sethasLightConnection(
+            //   residents_data_exist?.data[0]?.pasilidad_kuryente,
+            // );
+            // await sethasComfortRoom(
+            //   residents_data_exist?.data[0]?.matang_kasilyas,
+            // );
+            // await setwastemanagement(
+            //   residents_data_exist?.data[0]?.matang_basura,
+            // );
+            // await setvictimofabuse(
+            //   residents_data_exist?.data[0]?.biktima_pangabuso,
+            // );
+            // await setkahimtangsakomunidad(
+            //   residents_data_exist?.data[0]?.kahimtang_komunidad,
+            // );
+
+            await setspinner(false);
+            await residents_data_exist?.data[0]?.fam_members?.map((item) => {
+              setPeopleInsidetheHouse((prev) => [
+                ...prev,
+                {
+                  PeopleName: item?.first_name + ' ' + item?.last_name,
+                  realationship: item?.rel,
+                },
+              ]);
+              setfam_member((prev) => [
+                ...prev,
+                {
+                  PeopleName: item?.first_name + ' ' + item?.last_name,
+                  resident_pk: parseInt(item?.resident_pk),
+                  rel: item?.rel,
+                },
+              ]);
+            });
+            setspinner(false);
+          }
         }
       }
     };
@@ -994,7 +1007,7 @@ const FADForm = () => {
     return () => {
       mounted = false;
     };
-  }, [dispatch, residents_data_exist.loading, resident_form]);
+  }, [dispatch]);
 
   const onSwipe = useCallback((gestureName, gestureState) => {
     const {SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT} = swipeDirections;
@@ -1026,81 +1039,79 @@ const FADForm = () => {
     // resizeMode="cover"
     // blurRadius={20}>
     // <Card containerStyle={styles.plate}>
-    <ScrollView
-      style={{height: screenHeight, marginTop: 30}}
-      nestedScrollEnabled={true}>
-      <Spinner
-        visible={spinner}
-        textContent={'Loading...'}
-        textStyle={styles.spinnerTextStyle}
-      />
-
-      <View style={styles.container}>
-        <CustomAlert
-          title={Alerttitle}
-          message={Alertmessage}
-          show={Alertshow}
+    <Card containerStyle={styles.plate}>
+      <ScrollView style={{height: screenHeight}} nestedScrollEnabled={true}>
+        <Spinner
+          visible={spinner}
+          textContent={'Loading...'}
+          textStyle={styles.spinnerTextStyle}
         />
-        <View style={{flex: 1, height: screenHeight - 90}}>
-          <ProgressSteps
-            labelFontSize={8}
-            activeLabelColor="#623256"
-            activeStepNumColor="#623256"
-            activeStepIconBorderColor="#623256"
-            completedProgressBarColor="#623256"
-            completedLabelColor="#623256"
-            completedStepNumColor="#623256"
-            completedStepIconColor="#623256">
-            <ProgressStep
-              nextBtnTextStyle={styles.buttonStyle}
-              previousBtnTextStyle={styles.buttonStyle}
-              label="Information"
-              nExt
-              onNext={handleNextInfo}
-              errors={InfoError}>
-              <View style={styles.Inputcontainer}>
-                <TextInput
-                  disabled={true}
-                  theme={{
-                    colors: {
-                      primary: '#3eb2fa',
-                      background: 'white',
-                      underlineColor: 'transparent',
-                    },
-                  }}
-                  mode="flat"
-                  label="First Name"
-                  value={users_reducers.first_name}
-                />
-                <TextInput
-                  disabled={true}
-                  theme={{
-                    colors: {
-                      primary: '#3eb2fa',
-                      background: 'white',
-                      underlineColor: 'transparent',
-                    },
-                  }}
-                  mode="flat"
-                  label="Middle Name"
-                  value={users_reducers.middle_name}
-                />
-                <TextInput
-                  disabled={true}
-                  theme={{
-                    colors: {
-                      primary: '#3eb2fa',
-                      background: 'white',
-                      underlineColor: 'transparent',
-                    },
-                  }}
-                  mode="flat"
-                  label="Last Name"
-                  value={users_reducers.last_name}
-                />
 
-                <View style={styles.container}>
-                  {/* <CardView
+        <View style={styles.container}>
+          <CustomAlert
+            title={Alerttitle}
+            message={Alertmessage}
+            show={Alertshow}
+          />
+          <View style={{flex: 1, height: screenHeight - 90}}>
+            <ProgressSteps
+              labelFontSize={8}
+              activeLabelColor="#623256"
+              activeStepNumColor="#623256"
+              activeStepIconBorderColor="#623256"
+              completedProgressBarColor="#623256"
+              completedLabelColor="#623256"
+              completedStepNumColor="#623256"
+              completedStepIconColor="#623256">
+              <ProgressStep
+                nextBtnTextStyle={styles.buttonStyle}
+                previousBtnTextStyle={styles.buttonStyle}
+                label="Information"
+                onNext={handleNextInfo}
+                errors={InfoError}>
+                <View style={styles.Inputcontainer}>
+                  <TextInput
+                    disabled={true}
+                    theme={{
+                      colors: {
+                        primary: '#3eb2fa',
+                        background: 'white',
+                        underlineColor: 'transparent',
+                      },
+                    }}
+                    mode="flat"
+                    label="First Name"
+                    value={users_reducers.first_name}
+                  />
+                  <TextInput
+                    disabled={true}
+                    theme={{
+                      colors: {
+                        primary: '#3eb2fa',
+                        background: 'white',
+                        underlineColor: 'transparent',
+                      },
+                    }}
+                    mode="flat"
+                    label="Middle Name"
+                    value={users_reducers.middle_name}
+                  />
+                  <TextInput
+                    disabled={true}
+                    theme={{
+                      colors: {
+                        primary: '#3eb2fa',
+                        background: 'white',
+                        underlineColor: 'transparent',
+                      },
+                    }}
+                    mode="flat"
+                    label="Last Name"
+                    value={users_reducers.last_name}
+                  />
+
+                  <View style={styles.container}>
+                    {/* <CardView
                     style={{
                       marginTop: 20,
                       marginBottom: 20,
@@ -1111,530 +1122,532 @@ const FADForm = () => {
                       Family Assesment Data
                     </Text>
                   </CardView> */}
-                  <Picker
-                    selectedValue={Occationofthehouse}
-                    // value={Occationofthehouse}
-                    style={styles.PickerContainer}
-                    onValueChange={(itemValue, itemIndex) =>
-                      handleOccationofthehouse(itemValue)
-                    }>
-                    <Picker.Item key={0} label="Okasyon sa balay" />
-                    <Picker.Item key={1} label="Tag-iya" value="Tag-iya" />
-                    <Picker.Item key={2} label="Renta" value="Renta" />
-                    <Picker.Item key={3} label="Boarder" value="Boarder" />
-                    <Picker.Item
-                      key={4}
-                      label="Nangipon ug puyo"
-                      value="Nangipon ug puyo"
+                    <Picker
+                      selectedValue={Occationofthehouse}
+                      // value={Occationofthehouse}
+                      style={styles.PickerContainer}
+                      onValueChange={(itemValue, itemIndex) =>
+                        handleOccationofthehouse(itemValue)
+                      }>
+                      <Picker.Item key={0} label="Okasyon sa balay" />
+                      <Picker.Item key={1} label="Tag-iya" value="Tag-iya" />
+                      <Picker.Item key={2} label="Renta" value="Renta" />
+                      <Picker.Item key={3} label="Boarder" value="Boarder" />
+                      <Picker.Item
+                        key={4}
+                        label="Nangipon ug puyo"
+                        value="Nangipon ug puyo"
+                      />
+                      <Picker.Item
+                        key={5}
+                        label="Nisumpay ug balay"
+                        value="Nisumpay ug balay"
+                      />
+                    </Picker>
+                    <Picker
+                      selectedValue={Occationfortheland}
+                      style={styles.PickerContainer}
+                      onValueChange={(itemValue, itemIndex) =>
+                        handleOccationfortheland(itemValue)
+                      }>
+                      <Picker.Item label="Okasyon sa Yuta" />
+                      <Picker.Item
+                        key={0}
+                        label="Nanag-iya sa yuta"
+                        value="Nanag-iya sa yuta"
+                      />
+                      <Picker.Item
+                        key={1}
+                        label="Nang arkila sa yuta"
+                        value="Nang arkila sa yuta"
+                      />
+                      <Picker.Item
+                        key={2}
+                        label="Informal settler"
+                        value="Informal settler"
+                      />
+                      <Picker.Item
+                        key={3}
+                        label="Tigbantay sa yuta"
+                        value="Tigbantay sa yuta"
+                      />
+                    </Picker>
+                    <TextInput
+                      disabled={isDisabled}
+                      theme={{
+                        colors: {
+                          primary: '#3eb2fa',
+                          background: 'white',
+                          underlineColor: 'transparent',
+                        },
+                      }}
+                      keyboardType={'number-pad'}
+                      onChangeText={(text) => handleYearsStayedChange(text)}
+                      mode="flat"
+                      label="Kadugayon sa pagpuyo diha sa Barangay"
+                      value={yearsstayed}
                     />
-                    <Picker.Item
-                      key={5}
-                      label="Nisumpay ug balay"
-                      value="Nisumpay ug balay"
-                    />
-                  </Picker>
-                  <Picker
-                    selectedValue={Occationfortheland}
-                    style={styles.PickerContainer}
-                    onValueChange={(itemValue, itemIndex) =>
-                      handleOccationfortheland(itemValue)
-                    }>
-                    <Picker.Item label="Okasyon sa Yuta" />
-                    <Picker.Item
-                      key={0}
-                      label="Nanag-iya sa yuta"
-                      value="Nanag-iya sa yuta"
-                    />
-                    <Picker.Item
-                      key={1}
-                      label="Nang arkila sa yuta"
-                      value="Nang arkila sa yuta"
-                    />
-                    <Picker.Item
-                      key={2}
-                      label="Informal settler"
-                      value="Informal settler"
-                    />
-                    <Picker.Item
-                      key={3}
-                      label="Tigbantay sa yuta"
-                      value="Tigbantay sa yuta"
-                    />
-                  </Picker>
-                  <TextInput
-                    disabled={isDisabled}
-                    theme={{
-                      colors: {
-                        primary: '#3eb2fa',
-                        background: 'white',
-                        underlineColor: 'transparent',
-                      },
-                    }}
-                    keyboardType={'number-pad'}
-                    onChangeText={(text) => handleYearsStayedChange(text)}
-                    mode="flat"
-                    label="Kadugayon sa pagpuyo diha sa Barangay"
-                    value={yearsstayed}
-                  />
 
-                  <Picker
-                    selectedValue={structure}
-                    style={styles.PickerContainer}
-                    onValueChange={(itemValue, itemIndex) =>
-                      handleStructure(itemValue)
-                    }>
-                    <Picker.Item label="Straktura sa Balay" />
-                    <Picker.Item
-                      key={0}
-                      label="Binuhat sa kahoy"
-                      value="Binuhat sa kahoy"
-                    />
-                    <Picker.Item
-                      key={1}
-                      label="Binuhat sa Semento"
-                      value="Binuhat sa Semento"
-                    />
-                    <Picker.Item
-                      key={2}
-                      label="Kombinasyon sa kahoy ug semento"
-                      value="Kombinasyon sa kahoy ug semento"
-                    />
-                    <Picker.Item
-                      key={3}
-                      label="Binuhat sa mga nilabay na materyales sama sa (karton,plastic,etc.)"
-                      value="Binuhat sa mga nilabay na materyales sama sa (karton,plastic,etc.)"
-                    />
-                  </Picker>
+                    <Picker
+                      selectedValue={structure}
+                      style={styles.PickerContainer}
+                      onValueChange={(itemValue, itemIndex) =>
+                        handleStructure(itemValue)
+                      }>
+                      <Picker.Item label="Straktura sa Balay" />
+                      <Picker.Item
+                        key={0}
+                        label="Binuhat sa kahoy"
+                        value="Binuhat sa kahoy"
+                      />
+                      <Picker.Item
+                        key={1}
+                        label="Binuhat sa Semento"
+                        value="Binuhat sa Semento"
+                      />
+                      <Picker.Item
+                        key={2}
+                        label="Kombinasyon sa kahoy ug semento"
+                        value="Kombinasyon sa kahoy ug semento"
+                      />
+                      <Picker.Item
+                        key={3}
+                        label="Binuhat sa mga nilabay na materyales sama sa (karton,plastic,etc.)"
+                        value="Binuhat sa mga nilabay na materyales sama sa (karton,plastic,etc.)"
+                      />
+                    </Picker>
 
-                  <Picker
-                    selectedValue={qualityness}
-                    style={styles.PickerContainer}
-                    onValueChange={(itemValue, itemIndex) =>
-                      handleQualityness(itemValue)
-                    }>
-                    <Picker.Item key={0} label="Kalig-on sa balay" />
-                    <Picker.Item key={1} label="Huyang" value="Huyang" />
-                    <Picker.Item key={2} label="Lig-on" value="Lig-on" />
-                  </Picker>
+                    <Picker
+                      selectedValue={qualityness}
+                      style={styles.PickerContainer}
+                      onValueChange={(itemValue, itemIndex) =>
+                        handleQualityness(itemValue)
+                      }>
+                      <Picker.Item key={0} label="Kalig-on sa balay" />
+                      <Picker.Item key={1} label="Huyang" value="Huyang" />
+                      <Picker.Item key={2} label="Lig-on" value="Lig-on" />
+                    </Picker>
+                  </View>
                 </View>
-              </View>
-            </ProgressStep>
-            <ProgressStep
-              label="Ikaduhang bahin"
-              nextBtnTextStyle={styles.buttonStyle}
-              previousBtnTextStyle={styles.buttonStyle}
-              onNext={handleSecondInfo}
-              errors={InfoError}>
-              <Text
-                style={{
-                  color: '#623256',
-                  fontWeight: '700',
-                  fontSize: 16,
-                  textAlign: 'center',
-                }}>
-                Tinubdan sa Tubig
-              </Text>
-              <SelectMultiple
-                items={waterconnectionchecked}
-                selectedItems={waterconnection}
-                onSelectionsChange={(selections, item) =>
-                  handleCheckBoxwaterConntection(selections, item)
-                }
-              />
-
-              <Text
-                style={{
-                  color: '#623256',
-                  fontWeight: '700',
-                  fontSize: 16,
-                  textAlign: 'center',
-                }}>
-                Matang sa Kasilyas
-              </Text>
-              <SelectMultiple
-                items={Kasilyaschecked}
-                selectedItems={hasComfortRoom}
-                onSelectionsChange={(selections, item) =>
-                  handleCheckBoxKasilyas(selections, item)
-                }
-              />
-
-              <Text
-                style={{
-                  color: '#623256',
-                  fontWeight: '700',
-                  fontSize: 16,
-                  textAlign: 'center',
-                }}>
-                Pasilidad sa Kuryente
-              </Text>
-              <SelectMultiple
-                items={kuryentechecked}
-                selectedItems={hasLightConnection}
-                onSelectionsChange={(selections, item) =>
-                  handleCheckBoxKuryente(selections, item)
-                }
-              />
-
-              <Text
-                style={{
-                  color: '#623256',
-                  fontWeight: '700',
-                  fontSize: 16,
-                  textAlign: 'center',
-                }}>
-                Matang sa Panghipos sa Basura
-              </Text>
-              <SelectMultiple
-                items={basuracheckedf}
-                selectedItems={wastemanagement}
-                onSelectionsChange={(selections, item) =>
-                  handleCheckBoxBasura(selections, item)
-                }
-              />
-
-              <Text
-                style={{
-                  color: '#623256',
-                  fontWeight: '700',
-                  fontSize: 16,
-                  textAlign: 'center',
-                }}>
-                Biktima sa Pang Abuso
-              </Text>
-              <SelectMultiple
-                items={pangabusocheked}
-                selectedItems={victimofabuse}
-                onSelectionsChange={(selections, item) =>
-                  handleCheckBoxPangabuso(selections, item)
-                }
-              />
-            </ProgressStep>
-            <ProgressStep
-              label="Ikatulong bahin"
-              nextBtnTextStyle={styles.buttonStyle}
-              previousBtnTextStyle={styles.buttonStyle}
-              onNext={handleThirdInfo}
-              errors={InfoError}>
-              <SelectMultiple
-                items={kahimtangsakomunidadcheck}
-                selectedItems={kahimtangsakomunidad}
-                onSelectionsChange={(selections, item) =>
-                  handleCheckBoxKahitang(selections, item)
-                }
-              />
-            </ProgressStep>
-            <ProgressStep
-              label="Ikaupat bahin"
-              nextBtnTextStyle={styles.buttonStyle}
-              previousBtnTextStyle={styles.buttonStyle}
-              onNext={handleFourthInfo}
-              errors={InfoError}>
-              <Text
-                style={{
-                  color: '#623256',
-                  fontWeight: '700',
-                  fontSize: 14,
-                  textAlign: 'left',
-                }}>
-                Note: Palihug ug sulat daan sa ahensya bag.o i tuplok ang
-                serbisyo
-              </Text>
-              <View style={{flexDirection: 'row'}}>
-                <View style={{width: '50%'}}>
+              </ProgressStep>
+              <ProgressStep
+                label="Ikaduhang bahin"
+                nextBtnTextStyle={styles.buttonStyle}
+                previousBtnTextStyle={styles.buttonStyle}
+                onNext={handleSecondInfo}
+                errors={InfoError}>
+                <ScrollView style={styles.Inputcontainer}>
                   <Text
                     style={{
                       color: '#623256',
                       fontWeight: '700',
-                      fontSize: 14,
+                      fontSize: 16,
                       textAlign: 'center',
                     }}>
-                    Serbisyo
+                    Tinubdan sa Tubig
                   </Text>
                   <SelectMultiple
-                    items={serbisyochecked}
-                    selectedItems={serbisyo}
+                    items={waterconnectionchecked}
+                    selectedItems={waterconnection}
                     onSelectionsChange={(selections, item) =>
-                      handleCheckBoxSerbisyo(selections, item)
+                      handleCheckBoxwaterConntection(selections, item)
                     }
                   />
-                </View>
-                <View style={{width: '50%'}}>
+
                   <Text
                     style={{
                       color: '#623256',
                       fontWeight: '700',
-                      fontSize: 14,
+                      fontSize: 16,
                       textAlign: 'center',
                     }}>
-                    Ahensya
+                    Matang sa Kasilyas
                   </Text>
-                  <TextInput
-                    style={{height: 55}}
-                    theme={{
-                      colors: {
-                        primary: '#3eb2fa',
-                        background: 'white',
-                        underlineColor: 'transparent',
-                      },
-                    }}
-                    mode="flat"
-                    onChangeText={(text) => setscholarship(text)}
-                    label="Scholarship"
-                    value={scholarship}
+                  <SelectMultiple
+                    items={Kasilyaschecked}
+                    selectedItems={hasComfortRoom}
+                    onSelectionsChange={(selections, item) =>
+                      handleCheckBoxKasilyas(selections, item)
+                    }
                   />
-                  <TextInput
-                    style={{height: 55}}
-                    theme={{
-                      colors: {
-                        primary: '#3eb2fa',
-                        background: 'white',
-                        underlineColor: 'transparent',
-                      },
-                    }}
-                    mode="flat"
-                    onChangeText={(text) => setlivelihood(text)}
-                    label="Livelihood"
-                    value={livelihood}
+
+                  <Text
+                    style={{
+                      color: '#623256',
+                      fontWeight: '700',
+                      fontSize: 16,
+                      textAlign: 'center',
+                    }}>
+                    Pasilidad sa Kuryente
+                  </Text>
+                  <SelectMultiple
+                    items={kuryentechecked}
+                    selectedItems={hasLightConnection}
+                    onSelectionsChange={(selections, item) =>
+                      handleCheckBoxKuryente(selections, item)
+                    }
                   />
-                  <TextInput
-                    style={{height: 55}}
-                    theme={{
-                      colors: {
-                        primary: '#3eb2fa',
-                        background: 'white',
-                        underlineColor: 'transparent',
-                      },
-                    }}
-                    mode="flat"
-                    onChangeText={(text) => sethouseing(text)}
-                    label="Housing"
-                    value={houseing}
+
+                  <Text
+                    style={{
+                      color: '#623256',
+                      fontWeight: '700',
+                      fontSize: 16,
+                      textAlign: 'center',
+                    }}>
+                    Matang sa Panghipos sa Basura
+                  </Text>
+                  <SelectMultiple
+                    items={basuracheckedf}
+                    selectedItems={wastemanagement}
+                    onSelectionsChange={(selections, item) =>
+                      handleCheckBoxBasura(selections, item)
+                    }
                   />
-                  <TextInput
-                    style={{height: 55}}
-                    theme={{
-                      colors: {
-                        primary: '#3eb2fa',
-                        background: 'white',
-                        underlineColor: 'transparent',
-                      },
-                    }}
-                    mode="flat"
-                    onChangeText={(text) => setfinancial(text)}
-                    label="Financial"
-                    value={financial}
+
+                  <Text
+                    style={{
+                      color: '#623256',
+                      fontWeight: '700',
+                      fontSize: 16,
+                      textAlign: 'center',
+                    }}>
+                    Biktima sa Pang Abuso
+                  </Text>
+                  <SelectMultiple
+                    items={pangabusocheked}
+                    selectedItems={victimofabuse}
+                    onSelectionsChange={(selections, item) =>
+                      handleCheckBoxPangabuso(selections, item)
+                    }
                   />
-                  <TextInput
-                    style={{height: 55}}
-                    theme={{
-                      colors: {
-                        primary: '#3eb2fa',
-                        background: 'white',
-                        underlineColor: 'transparent',
-                      },
-                    }}
-                    mode="flat"
-                    onChangeText={(text) => setlingap(text)}
-                    label="Lingap"
-                    value={lingap}
-                  />
-                  <TextInput
-                    style={{height: 55}}
-                    theme={{
-                      colors: {
-                        primary: '#3eb2fa',
-                        background: 'white',
-                        underlineColor: 'transparent',
-                      },
-                    }}
-                    mode="flat"
-                    onChangeText={(text) => setmedicalngatabang(text)}
-                    label="Medical nga Tabang"
-                    value={medicalngatabang}
-                  />
-                  <TextInput
-                    style={{height: 55}}
-                    theme={{
-                      colors: {
-                        primary: '#3eb2fa',
-                        background: 'white',
-                        underlineColor: 'transparent',
-                      },
-                    }}
-                    mode="flat"
-                    onChangeText={(text) => setdaycareservice(text)}
-                    label="Day Care Service"
-                    value={daycareservice}
-                  />
-                  <TextInput
-                    style={{height: 55}}
-                    theme={{
-                      colors: {
-                        primary: '#3eb2fa',
-                        background: 'white',
-                        underlineColor: 'transparent',
-                      },
-                    }}
-                    mode="flat"
-                    onChangeText={(text) => setskilltraining(text)}
-                    label="Skill Training"
-                    value={skilltraining}
-                  />
-                  <TextInput
-                    style={{height: 55}}
-                    theme={{
-                      colors: {
-                        primary: '#3eb2fa',
-                        background: 'white',
-                        underlineColor: 'transparent',
-                      },
-                    }}
-                    mode="flat"
-                    onChangeText={(text) => setEmployment(text)}
-                    label="Employment"
-                    value={Employment}
-                  />
-                </View>
-              </View>
-            </ProgressStep>
-            <ProgressStep
-              nextBtnTextStyle={styles.buttonStyle}
-              previousBtnTextStyle={styles.buttonStyle}
-              label="Sakop sa Panimalay"
-              onSubmit={() => handleSubmit()}>
-              <View style={styles.Inputcontainer}>
-                <ScrollView
-                  nestedScrollEnabled={true}
-                  refreshControl={
-                    <RefreshControl
-                      refreshing={refreshing}
-                      onRefresh={onRefresh}
-                    />
+                </ScrollView>
+              </ProgressStep>
+              <ProgressStep
+                label="Ikatulong bahin"
+                nextBtnTextStyle={styles.buttonStyle}
+                previousBtnTextStyle={styles.buttonStyle}
+                onNext={handleThirdInfo}
+                errors={InfoError}>
+                <SelectMultiple
+                  items={kahimtangsakomunidadcheck}
+                  selectedItems={kahimtangsakomunidad}
+                  onSelectionsChange={(selections, item) =>
+                    handleCheckBoxKahitang(selections, item)
                   }
+                />
+              </ProgressStep>
+              <ProgressStep
+                label="Ikaupat bahin"
+                nextBtnTextStyle={styles.buttonStyle}
+                previousBtnTextStyle={styles.buttonStyle}
+                onNext={handleFourthInfo}
+                errors={InfoError}>
+                <Text
                   style={{
-                    height: screenHeight - 500,
-                    padding: 10,
-                    width: '100%',
-                  }}
-                  showsHorizontalScrollIndicator={false}>
-                  {PeopleInsidetheHouse.map((item, index) => {
-                    return (
-                      <TouchableNativeFeedback
-                        key={index}
-                        name={item?.PeopleName}
-                        onLongPress={() => handleRemoveItem(item)}
-                        onPress={() => {
-                          handlePeopleLivingInsideTheHouse(item);
-                        }}>
-                        <View style={styles.touchablecontainer}>
-                          <CardView
-                            style={{
-                              marginTop: -5,
-                              height: screenHeight - 720,
-                              width: '100%',
-                            }}
-                            radius={1}>
-                            <View
+                    color: '#623256',
+                    fontWeight: '700',
+                    fontSize: 14,
+                    textAlign: 'left',
+                  }}>
+                  Note: Palihug ug sulat daan sa ahensya bag.o i tuplok ang
+                  serbisyo
+                </Text>
+                <View style={{flexDirection: 'row'}}>
+                  <View style={{width: '50%'}}>
+                    <Text
+                      style={{
+                        color: '#623256',
+                        fontWeight: '700',
+                        fontSize: 14,
+                        textAlign: 'center',
+                      }}>
+                      Serbisyo
+                    </Text>
+                    <SelectMultiple
+                      items={serbisyochecked}
+                      selectedItems={serbisyo}
+                      onSelectionsChange={(selections, item) =>
+                        handleCheckBoxSerbisyo(selections, item)
+                      }
+                    />
+                  </View>
+                  <View style={{width: '50%'}}>
+                    <Text
+                      style={{
+                        color: '#623256',
+                        fontWeight: '700',
+                        fontSize: 14,
+                        textAlign: 'center',
+                      }}>
+                      Ahensya
+                    </Text>
+                    <TextInput
+                      style={{height: 55}}
+                      theme={{
+                        colors: {
+                          primary: '#3eb2fa',
+                          background: 'white',
+                          underlineColor: 'transparent',
+                        },
+                      }}
+                      mode="flat"
+                      onChangeText={(text) => setscholarship(text)}
+                      label="Scholarship"
+                      value={scholarship}
+                    />
+                    <TextInput
+                      style={{height: 55}}
+                      theme={{
+                        colors: {
+                          primary: '#3eb2fa',
+                          background: 'white',
+                          underlineColor: 'transparent',
+                        },
+                      }}
+                      mode="flat"
+                      onChangeText={(text) => setlivelihood(text)}
+                      label="Livelihood"
+                      value={livelihood}
+                    />
+                    <TextInput
+                      style={{height: 55}}
+                      theme={{
+                        colors: {
+                          primary: '#3eb2fa',
+                          background: 'white',
+                          underlineColor: 'transparent',
+                        },
+                      }}
+                      mode="flat"
+                      onChangeText={(text) => sethouseing(text)}
+                      label="Housing"
+                      value={houseing}
+                    />
+                    <TextInput
+                      style={{height: 55}}
+                      theme={{
+                        colors: {
+                          primary: '#3eb2fa',
+                          background: 'white',
+                          underlineColor: 'transparent',
+                        },
+                      }}
+                      mode="flat"
+                      onChangeText={(text) => setfinancial(text)}
+                      label="Financial"
+                      value={financial}
+                    />
+                    <TextInput
+                      style={{height: 55}}
+                      theme={{
+                        colors: {
+                          primary: '#3eb2fa',
+                          background: 'white',
+                          underlineColor: 'transparent',
+                        },
+                      }}
+                      mode="flat"
+                      onChangeText={(text) => setlingap(text)}
+                      label="Lingap"
+                      value={lingap}
+                    />
+                    <TextInput
+                      style={{height: 55}}
+                      theme={{
+                        colors: {
+                          primary: '#3eb2fa',
+                          background: 'white',
+                          underlineColor: 'transparent',
+                        },
+                      }}
+                      mode="flat"
+                      onChangeText={(text) => setmedicalngatabang(text)}
+                      label="Medical nga Tabang"
+                      value={medicalngatabang}
+                    />
+                    <TextInput
+                      style={{height: 55}}
+                      theme={{
+                        colors: {
+                          primary: '#3eb2fa',
+                          background: 'white',
+                          underlineColor: 'transparent',
+                        },
+                      }}
+                      mode="flat"
+                      onChangeText={(text) => setdaycareservice(text)}
+                      label="Day Care Service"
+                      value={daycareservice}
+                    />
+                    <TextInput
+                      style={{height: 55}}
+                      theme={{
+                        colors: {
+                          primary: '#3eb2fa',
+                          background: 'white',
+                          underlineColor: 'transparent',
+                        },
+                      }}
+                      mode="flat"
+                      onChangeText={(text) => setskilltraining(text)}
+                      label="Skill Training"
+                      value={skilltraining}
+                    />
+                    <TextInput
+                      style={{height: 55}}
+                      theme={{
+                        colors: {
+                          primary: '#3eb2fa',
+                          background: 'white',
+                          underlineColor: 'transparent',
+                        },
+                      }}
+                      mode="flat"
+                      onChangeText={(text) => setEmployment(text)}
+                      label="Employment"
+                      value={Employment}
+                    />
+                  </View>
+                </View>
+              </ProgressStep>
+              <ProgressStep
+                nextBtnTextStyle={styles.buttonStyle}
+                previousBtnTextStyle={styles.buttonStyle}
+                label="Sakop sa Panimalay"
+                onSubmit={() => handleSubmit()}>
+                <View style={styles.Inputcontainer}>
+                  <ScrollView
+                    nestedScrollEnabled={true}
+                    refreshControl={
+                      <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                      />
+                    }
+                    style={{
+                      height: screenHeight - 500,
+                      padding: 10,
+                      width: '100%',
+                    }}
+                    showsHorizontalScrollIndicator={false}>
+                    {PeopleInsidetheHouse.map((item, index) => {
+                      return (
+                        <TouchableNativeFeedback
+                          key={index}
+                          name={item?.PeopleName}
+                          onLongPress={() => handleRemoveItem(item)}
+                          onPress={() => {
+                            handlePeopleLivingInsideTheHouse(item);
+                          }}>
+                          <View style={styles.touchablecontainer}>
+                            <CardView
                               style={{
-                                flex: 1,
-                                flexDirection: 'column',
-                                justifyContent: 'space-between',
-                              }}>
+                                marginTop: -5,
+                                height: screenHeight - 720,
+                                width: '100%',
+                              }}
+                              radius={1}>
                               <View
                                 style={{
-                                  width: '100%',
-                                  height: 200,
-                                  padding: 20,
+                                  flex: 1,
+                                  flexDirection: 'column',
+                                  justifyContent: 'space-between',
                                 }}>
-                                <Text
-                                  numberOfLines={1}
-                                  style={styles.peopletext}>
-                                  Name: {item?.PeopleName}
-                                </Text>
-                                <Text
-                                  numberOfLines={1}
-                                  style={styles.peopletext}>
-                                  Relasyon: {item?.realationship}
-                                </Text>
+                                <View
+                                  style={{
+                                    width: '100%',
+                                    height: 200,
+                                    padding: 20,
+                                  }}>
+                                  <Text
+                                    numberOfLines={1}
+                                    style={styles.peopletext}>
+                                    Name: {item?.PeopleName}
+                                  </Text>
+                                  <Text
+                                    numberOfLines={1}
+                                    style={styles.peopletext}>
+                                    Relasyon: {item?.realationship}
+                                  </Text>
+                                </View>
                               </View>
-                            </View>
-                          </CardView>
-                        </View>
-                      </TouchableNativeFeedback>
-                    );
-                  })}
-                </ScrollView>
-                <GestureRecognizer
-                  onSwipe={(direction, state) => onSwipe(direction, state)}
-                  config={config}
-                  style={{
-                    flex: 1,
-                  }}>
-                  <CustomBottomSheet
-                    isVisible={isVisible}
-                    color="rgba(0.5, 0.25, 0, 0.2)"
-                    UI={
-                      <View style={{padding: 10, height: screenHeight}}>
-                        <View style={{marginBottom: 50, padding: 10}}>
-                          {/* // items={residents_list?.map((item, index) => [
+                            </CardView>
+                          </View>
+                        </TouchableNativeFeedback>
+                      );
+                    })}
+                  </ScrollView>
+                  <GestureRecognizer
+                    onSwipe={(direction, state) => onSwipe(direction, state)}
+                    config={config}
+                    style={{
+                      flex: 1,
+                    }}>
+                    <CustomBottomSheet
+                      isVisible={isVisible}
+                      color="rgba(0.5, 0.25, 0, 0.2)"
+                      UI={
+                        <View style={{padding: 10, height: screenHeight}}>
+                          <View style={{marginBottom: 50, padding: 10}}>
+                            {/* // items={residents_list?.map((item, index) => [
                             //   {
                             //     label: item?.first_name,
                             //     value: item?.resident_pk,
                             //   },
                             // ])} */}
-                          <Searchbar
-                            placeholder="Search Person"
-                            onChangeText={onChangeSearch}
-                            defaultValue={null}
-                            value={searchvalue}
-                          />
-                          <ScrollView
-                            nestedScrollEnabled={true}
-                            style={{
-                              marginBottom: 10,
-                              padding: 5,
-                              height: screenHeight - 600,
-                            }}>
-                            <SafeAreaView>
-                              {residents_list.map((item, index) => (
-                                <TouchableHighlight
-                                  key={index}
-                                  onPress={() => hadnlePeopleName(item)}
-                                  ker={item.first_name}
-                                  underlayColor="#623256">
-                                  <CardView
-                                    style={{
-                                      textAlign: 'center',
-                                      height: 40,
-
-                                      padding: 5,
-                                    }}>
-                                    <Text
-                                      styles={{
-                                        height: screenHeight,
+                            <Searchbar
+                              placeholder="Search Person"
+                              onChangeText={onChangeSearch}
+                              defaultValue={null}
+                              value={searchvalue}
+                            />
+                            <ScrollView
+                              nestedScrollEnabled={true}
+                              style={{
+                                marginBottom: 10,
+                                padding: 5,
+                                height: screenHeight - 600,
+                              }}>
+                              <SafeAreaView>
+                                {residents_list.map((item, index) => (
+                                  <TouchableHighlight
+                                    key={index}
+                                    onPress={() => hadnlePeopleName(item)}
+                                    ker={item.first_name}
+                                    underlayColor="#623256">
+                                    <CardView
+                                      style={{
+                                        textAlign: 'center',
+                                        height: 40,
 
                                         padding: 5,
                                       }}>
-                                      {item.first_name + ' ' + item.last_name}
-                                    </Text>
-                                  </CardView>
-                                </TouchableHighlight>
-                              ))}
-                            </SafeAreaView>
-                          </ScrollView>
+                                      <Text
+                                        styles={{
+                                          height: screenHeight,
 
-                          <Text
-                            styles={{
-                              textAlign: 'center',
-                              fontWeight: 'bold',
-                              fontSize: 14,
-                              padding: 5,
-                            }}>
-                            Selected Person: {residentname}
-                          </Text>
+                                          padding: 5,
+                                        }}>
+                                        {item.first_name + ' ' + item.last_name}
+                                      </Text>
+                                    </CardView>
+                                  </TouchableHighlight>
+                                ))}
+                              </SafeAreaView>
+                            </ScrollView>
 
-                          {/* <Picker
+                            <Text
+                              styles={{
+                                textAlign: 'center',
+                                fontWeight: 'bold',
+                                fontSize: 14,
+                                padding: 5,
+                              }}>
+                              Selected Person: {residentname}
+                            </Text>
+
+                            {/* <Picker
                             selectedValue={PeopleName}
                             style={styles.PickerContainer}
                             onValueChange={(itemValue, itemIndex) =>
@@ -1656,7 +1669,7 @@ const FADForm = () => {
                             ))}
                           </Picker> */}
 
-                          {/* <DropDownPicker
+                            {/* <DropDownPicker
                             items={residents_list.map((item, index) => [
                               {
                                 value:
@@ -1685,141 +1698,59 @@ const FADForm = () => {
                             }}
                           /> */}
 
-                          <Picker
-                            selectedValue={relationship}
-                            style={styles.PickerContainer}
-                            onValueChange={(itemValue, itemIndex) =>
-                              handleRelationShip(itemValue)
-                            }>
-                            <Picker.Item label="Relasyon" />
-                            <Picker.Item label="asawa" value="asawa" />
-                            <Picker.Item label="bana" value="bana" />
-                            <Picker.Item label="anak" value="anak" />
-                            <Picker.Item label="igsuon" value="igsuon" />
-                            <Picker.Item label="asawa" value="asawa" />
-                            <Picker.Item label="inahan" value="inahan" />
-                          </Picker>
+                            <Picker
+                              selectedValue={relationship}
+                              style={styles.PickerContainer}
+                              onValueChange={(itemValue, itemIndex) =>
+                                handleRelationShip(itemValue)
+                              }>
+                              <Picker.Item label="Relasyon" />
+                              <Picker.Item label="asawa" value="asawa" />
+                              <Picker.Item label="bana" value="bana" />
+                              <Picker.Item label="anak" value="anak" />
+                              <Picker.Item label="igsuon" value="igsuon" />
+                              <Picker.Item label="asawa" value="asawa" />
+                              <Picker.Item label="inahan" value="inahan" />
+                            </Picker>
 
-                          <Button
-                            icon={
-                              <Icons
-                                name="arrow-right"
-                                size={20}
-                                color="#623256"
-                              />
-                            }
-                            title="Add to family"
-                            onPress={() => handlePeopleAdd()}
-                          />
+                            <Button
+                              icon={
+                                <Icons
+                                  name="arrow-right"
+                                  size={20}
+                                  color="#623256"
+                                />
+                              }
+                              title="Add to family"
+                              onPress={() => handlePeopleAdd()}
+                            />
+                          </View>
                         </View>
-                      </View>
+                      }
+                    />
+                  </GestureRecognizer>
+
+                  <Button
+                    icon={
+                      <Icons name="arrow-right" size={20} color="#623256" />
                     }
-                  />
-                </GestureRecognizer>
-
-                <Button
-                  icon={<Icons name="arrow-right" size={20} color="#623256" />}
-                  title="Add family members"
-                  onPress={() => handleAddPeople()}>
-                  Add People
-                </Button>
-              </View>
-            </ProgressStep>
-          </ProgressSteps>
+                    title="Add family members"
+                    onPress={() => handleAddPeople()}>
+                    Add People
+                  </Button>
+                </View>
+              </ProgressStep>
+            </ProgressSteps>
+          </View>
         </View>
-      </View>
 
-      <>
-        <CustomSnackBar show={showsnackbar} message={submitmessage} />
-      </>
-    </ScrollView>
-    // </Card>
+        <>
+          <CustomSnackBar show={showsnackbar} message={submitmessage} />
+        </>
+      </ScrollView>
+    </Card>
     // </ImageBackground>
   );
 };
-
-const styles = StyleSheet.create({
-  buttonStyle: {
-    color: '#623256',
-  },
-  plate: {
-    flex: 1,
-    backgroundColor: 'rgba(255,255,355,0.5)',
-    borderColor: 'rgba(255,255,355,0.5)',
-    borderWidth: 0.1,
-    borderRadius: 5,
-  },
-  CardContainer: {
-    flex: 1,
-    width: '100%',
-    height: 300,
-  },
-  container: {
-    flex: 1,
-    width: '100%',
-    padding: 15,
-  },
-  touchablecontainer: {
-    flex: 6,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-  },
-  text: {
-    color: 'black',
-    fontSize: 14,
-    fontWeight: 'bold',
-    width: '100%',
-    alignContent: 'center',
-    textAlign: 'center',
-    backgroundColor: '#fafafaa0',
-  },
-  peopletext: {
-    color: 'black',
-    padding: 2,
-    fontSize: 16,
-    width: '100%',
-    textAlign: 'justify',
-    backgroundColor: '#fafafaa0',
-  },
-  avatar: {
-    width: 180,
-    height: 180,
-    borderColor: '#623256',
-    alignSelf: 'center',
-    resizeMode: 'cover',
-    flex: 1,
-  },
-  PickerContainer: {
-    flex: 1,
-    width: '100%',
-    padding: 30,
-    height: 70,
-    color: '#623256',
-  },
-  Inputcontainer: {
-    flex: 1,
-    width: '100%',
-  },
-  Titletext: {
-    color: 'black',
-    fontWeight: 'bold',
-    fontSize: 14,
-    padding: 15,
-    textAlign: 'justify',
-  },
-  imagecontainer: {
-    flex: 1,
-    padding: 30,
-    width: '100%',
-    height: 220,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  spinnerTextStyle: {
-    color: '#FFF',
-  },
-});
 
 export default FADForm;

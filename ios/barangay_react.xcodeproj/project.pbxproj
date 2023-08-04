@@ -32,6 +32,37 @@
 		F28A21B0A80E435480638610 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3F84BE11291F495EA7B3AE6D /* Octicons.ttf */; };
 		CEFA7E127E1841FF92C783E0 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 49586871C3B849218DD4BF04 /* SimpleLineIcons.ttf */; };
 		17DBC75D2C984FB9B6908EB3 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AFCF70EE951D45A489136939 /* Zocial.ttf */; };
+		C2ABE0E77DB741D59A9AD15C /* Rene Bieder  Milliard Black Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3D3C8E81C3A34DCA8AE43D5B /* Rene Bieder  Milliard Black Italic.otf */; };
+		0625C8AE38D94205AED0CDF1 /* Rene Bieder  Milliard Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2D31E98FC616415890849415 /* Rene Bieder  Milliard Black.otf */; };
+		06E8CDE0BD9940E98B1E0A47 /* Rene Bieder  Milliard Bold Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = C646D6D4F80A454AA292D67C /* Rene Bieder  Milliard Bold Italic.otf */; };
+		ABAFEA6827A7499FBA11F39C /* Rene Bieder  Milliard Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6E54EEC6C5184D72AFE656A7 /* Rene Bieder  Milliard Bold.otf */; };
+		63621E24C9EB44039B405960 /* Rene Bieder  Milliard Book Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = E92F048BD5CD40FBA7700968 /* Rene Bieder  Milliard Book Italic.otf */; };
+		1753DDAD3F0A484787BF2FCB /* Rene Bieder  Milliard Book.otf in Resources */ = {isa = PBXBuildFile; fileRef = A4411D64CEC84296A8B7FDCE /* Rene Bieder  Milliard Book.otf */; };
+		8A07558A3D48422CA43CB388 /* Rene Bieder  Milliard ExtraBold Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = F877243A1C384E2683838F8B /* Rene Bieder  Milliard ExtraBold Italic.otf */; };
+		B1A614A2E58A46B1BAD9A377 /* Rene Bieder  Milliard ExtraBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = FEAFE438EA4544C4967D1091 /* Rene Bieder  Milliard ExtraBold.otf */; };
+		5FE11624E51B47B78B92A00F /* Rene Bieder  Milliard ExtraLight Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 62BA2081AC93454283B2DC11 /* Rene Bieder  Milliard ExtraLight Italic.otf */; };
+		0D0C135C1EEB4840BEC8E345 /* Rene Bieder  Milliard ExtraLight.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7E11A275562441D3909C16BE /* Rene Bieder  Milliard ExtraLight.otf */; };
+		F3C1E774851B4C53A0C57AC0 /* Rene Bieder  Milliard Hairline Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2FAD2FC5B8C444388A0A3F0D /* Rene Bieder  Milliard Hairline Italic.otf */; };
+		6B20809F3FA14FCFA29B54EF /* Rene Bieder  Milliard Hairline.otf in Resources */ = {isa = PBXBuildFile; fileRef = 80A0FBA96041499790EC0ACC /* Rene Bieder  Milliard Hairline.otf */; };
+		D272EDE22B024FF1A0DCDCAA /* Rene Bieder  Milliard Heavy Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9EE7F5FB1DFE428D92F362AF /* Rene Bieder  Milliard Heavy Italic.otf */; };
+		8163D96E194A4030B49737C0 /* Rene Bieder  Milliard Heavy.otf in Resources */ = {isa = PBXBuildFile; fileRef = C96453FCDC8346C5B2992EA0 /* Rene Bieder  Milliard Heavy.otf */; };
+		5A6A7E15C7D942C9A3F3B2F0 /* Rene Bieder  Milliard Light Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 632709AB0628492590FC3B3C /* Rene Bieder  Milliard Light Italic.otf */; };
+		0A691F87E6B04BFCBEFBA942 /* Rene Bieder  Milliard Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 99F8F80664BE462DAE393499 /* Rene Bieder  Milliard Light.otf */; };
+		B2FFE6B9C87B4FCAA4C9AD23 /* Rene Bieder  Milliard Medium Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 35F0F24469E24F1BB6DBAD6D /* Rene Bieder  Milliard Medium Italic.otf */; };
+		A6A98FE4843B4011AB3226A6 /* Rene Bieder  Milliard Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = E5BED864E67947E38C2B710C /* Rene Bieder  Milliard Medium.otf */; };
+		4CC8EAB30F644317A90F0AE6 /* Rene Bieder  Milliard SemiBold Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6C7E0EE5AEC94E6CBC093E63 /* Rene Bieder  Milliard SemiBold Italic.otf */; };
+		BA0DD252D2B643D6A5F5DF3F /* Rene Bieder  Milliard SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = C78E11BBAC9443B3BCA1989C /* Rene Bieder  Milliard SemiBold.otf */; };
+		6071FE6C83684D1C8F56540E /* Rene Bieder  Milliard Thin Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 06E1CF8222B642FF87CFEDDD /* Rene Bieder  Milliard Thin Italic.otf */; };
+		88190B2FAD1B458DAE82D859 /* Rene Bieder  Milliard Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = CE2441B5DB0C4BAC8393E77F /* Rene Bieder  Milliard Thin.otf */; };
+		1A4CE7CBF87E4A6EBE88CD83 /* SFUIDisplay-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 08118612D2DB46C098311E45 /* SFUIDisplay-Black.otf */; };
+		9737E5DA53384724923BF0C6 /* SFUIDisplay-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8E8DA6A579A3496A8983CB08 /* SFUIDisplay-Bold.ttf */; };
+		19807ECE122F481DBFB2F111 /* SFUIDisplay-Heavy.otf in Resources */ = {isa = PBXBuildFile; fileRef = 10BD77B66D404DBFA60D5E3B /* SFUIDisplay-Heavy.otf */; };
+		910754BD8FE54A22B58909EF /* SFUIDisplay-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8546876652E54A709C3D8E37 /* SFUIDisplay-Light.ttf */; };
+		339A4277D6DE4081BA1406A8 /* SFUIDisplay-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8640BE13FC754E54BDB427B4 /* SFUIDisplay-Medium.otf */; };
+		943F6B24A41D4FEBBA938E9F /* SFUIDisplay-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = E233D43C255348BD8CE101D2 /* SFUIDisplay-Regular.otf */; };
+		D7672D32185F4B87B3400B9D /* SFUIDisplay-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 73F63CC132E047BCA5CB8E19 /* SFUIDisplay-Semibold.otf */; };
+		083D1A3588EB4661BEC7EA6B /* SFUIDisplay-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 40DB5121AA624CB1809DC8EB /* SFUIDisplay-Thin.otf */; };
+		626EA07F61994A35A5FEE000 /* SFUIDisplay-Ultralight.otf in Resources */ = {isa = PBXBuildFile; fileRef = B12151FF6ACE4B8191ADDB93 /* SFUIDisplay-Ultralight.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -83,6 +114,37 @@
 		3F84BE11291F495EA7B3AE6D /* Octicons.ttf */ = {isa = PBXFileReference; name = "Octicons.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		49586871C3B849218DD4BF04 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; name = "SimpleLineIcons.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		AFCF70EE951D45A489136939 /* Zocial.ttf */ = {isa = PBXFileReference; name = "Zocial.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		3D3C8E81C3A34DCA8AE43D5B /* Rene Bieder  Milliard Black Italic.otf */ = {isa = PBXFileReference; name = "Rene Bieder  Milliard Black Italic.otf"; path = "../assets/fonts/Rene Bieder  Milliard Black Italic.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		2D31E98FC616415890849415 /* Rene Bieder  Milliard Black.otf */ = {isa = PBXFileReference; name = "Rene Bieder  Milliard Black.otf"; path = "../assets/fonts/Rene Bieder  Milliard Black.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		C646D6D4F80A454AA292D67C /* Rene Bieder  Milliard Bold Italic.otf */ = {isa = PBXFileReference; name = "Rene Bieder  Milliard Bold Italic.otf"; path = "../assets/fonts/Rene Bieder  Milliard Bold Italic.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		6E54EEC6C5184D72AFE656A7 /* Rene Bieder  Milliard Bold.otf */ = {isa = PBXFileReference; name = "Rene Bieder  Milliard Bold.otf"; path = "../assets/fonts/Rene Bieder  Milliard Bold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		E92F048BD5CD40FBA7700968 /* Rene Bieder  Milliard Book Italic.otf */ = {isa = PBXFileReference; name = "Rene Bieder  Milliard Book Italic.otf"; path = "../assets/fonts/Rene Bieder  Milliard Book Italic.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		A4411D64CEC84296A8B7FDCE /* Rene Bieder  Milliard Book.otf */ = {isa = PBXFileReference; name = "Rene Bieder  Milliard Book.otf"; path = "../assets/fonts/Rene Bieder  Milliard Book.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		F877243A1C384E2683838F8B /* Rene Bieder  Milliard ExtraBold Italic.otf */ = {isa = PBXFileReference; name = "Rene Bieder  Milliard ExtraBold Italic.otf"; path = "../assets/fonts/Rene Bieder  Milliard ExtraBold Italic.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		FEAFE438EA4544C4967D1091 /* Rene Bieder  Milliard ExtraBold.otf */ = {isa = PBXFileReference; name = "Rene Bieder  Milliard ExtraBold.otf"; path = "../assets/fonts/Rene Bieder  Milliard ExtraBold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		62BA2081AC93454283B2DC11 /* Rene Bieder  Milliard ExtraLight Italic.otf */ = {isa = PBXFileReference; name = "Rene Bieder  Milliard ExtraLight Italic.otf"; path = "../assets/fonts/Rene Bieder  Milliard ExtraLight Italic.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		7E11A275562441D3909C16BE /* Rene Bieder  Milliard ExtraLight.otf */ = {isa = PBXFileReference; name = "Rene Bieder  Milliard ExtraLight.otf"; path = "../assets/fonts/Rene Bieder  Milliard ExtraLight.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		2FAD2FC5B8C444388A0A3F0D /* Rene Bieder  Milliard Hairline Italic.otf */ = {isa = PBXFileReference; name = "Rene Bieder  Milliard Hairline Italic.otf"; path = "../assets/fonts/Rene Bieder  Milliard Hairline Italic.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		80A0FBA96041499790EC0ACC /* Rene Bieder  Milliard Hairline.otf */ = {isa = PBXFileReference; name = "Rene Bieder  Milliard Hairline.otf"; path = "../assets/fonts/Rene Bieder  Milliard Hairline.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		9EE7F5FB1DFE428D92F362AF /* Rene Bieder  Milliard Heavy Italic.otf */ = {isa = PBXFileReference; name = "Rene Bieder  Milliard Heavy Italic.otf"; path = "../assets/fonts/Rene Bieder  Milliard Heavy Italic.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		C96453FCDC8346C5B2992EA0 /* Rene Bieder  Milliard Heavy.otf */ = {isa = PBXFileReference; name = "Rene Bieder  Milliard Heavy.otf"; path = "../assets/fonts/Rene Bieder  Milliard Heavy.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		632709AB0628492590FC3B3C /* Rene Bieder  Milliard Light Italic.otf */ = {isa = PBXFileReference; name = "Rene Bieder  Milliard Light Italic.otf"; path = "../assets/fonts/Rene Bieder  Milliard Light Italic.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		99F8F80664BE462DAE393499 /* Rene Bieder  Milliard Light.otf */ = {isa = PBXFileReference; name = "Rene Bieder  Milliard Light.otf"; path = "../assets/fonts/Rene Bieder  Milliard Light.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		35F0F24469E24F1BB6DBAD6D /* Rene Bieder  Milliard Medium Italic.otf */ = {isa = PBXFileReference; name = "Rene Bieder  Milliard Medium Italic.otf"; path = "../assets/fonts/Rene Bieder  Milliard Medium Italic.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		E5BED864E67947E38C2B710C /* Rene Bieder  Milliard Medium.otf */ = {isa = PBXFileReference; name = "Rene Bieder  Milliard Medium.otf"; path = "../assets/fonts/Rene Bieder  Milliard Medium.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		6C7E0EE5AEC94E6CBC093E63 /* Rene Bieder  Milliard SemiBold Italic.otf */ = {isa = PBXFileReference; name = "Rene Bieder  Milliard SemiBold Italic.otf"; path = "../assets/fonts/Rene Bieder  Milliard SemiBold Italic.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		C78E11BBAC9443B3BCA1989C /* Rene Bieder  Milliard SemiBold.otf */ = {isa = PBXFileReference; name = "Rene Bieder  Milliard SemiBold.otf"; path = "../assets/fonts/Rene Bieder  Milliard SemiBold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		06E1CF8222B642FF87CFEDDD /* Rene Bieder  Milliard Thin Italic.otf */ = {isa = PBXFileReference; name = "Rene Bieder  Milliard Thin Italic.otf"; path = "../assets/fonts/Rene Bieder  Milliard Thin Italic.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		CE2441B5DB0C4BAC8393E77F /* Rene Bieder  Milliard Thin.otf */ = {isa = PBXFileReference; name = "Rene Bieder  Milliard Thin.otf"; path = "../assets/fonts/Rene Bieder  Milliard Thin.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		08118612D2DB46C098311E45 /* SFUIDisplay-Black.otf */ = {isa = PBXFileReference; name = "SFUIDisplay-Black.otf"; path = "../assets/fonts/SFUIDisplay-Black.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		8E8DA6A579A3496A8983CB08 /* SFUIDisplay-Bold.ttf */ = {isa = PBXFileReference; name = "SFUIDisplay-Bold.ttf"; path = "../assets/fonts/SFUIDisplay-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		10BD77B66D404DBFA60D5E3B /* SFUIDisplay-Heavy.otf */ = {isa = PBXFileReference; name = "SFUIDisplay-Heavy.otf"; path = "../assets/fonts/SFUIDisplay-Heavy.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		8546876652E54A709C3D8E37 /* SFUIDisplay-Light.ttf */ = {isa = PBXFileReference; name = "SFUIDisplay-Light.ttf"; path = "../assets/fonts/SFUIDisplay-Light.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		8640BE13FC754E54BDB427B4 /* SFUIDisplay-Medium.otf */ = {isa = PBXFileReference; name = "SFUIDisplay-Medium.otf"; path = "../assets/fonts/SFUIDisplay-Medium.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		E233D43C255348BD8CE101D2 /* SFUIDisplay-Regular.otf */ = {isa = PBXFileReference; name = "SFUIDisplay-Regular.otf"; path = "../assets/fonts/SFUIDisplay-Regular.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		73F63CC132E047BCA5CB8E19 /* SFUIDisplay-Semibold.otf */ = {isa = PBXFileReference; name = "SFUIDisplay-Semibold.otf"; path = "../assets/fonts/SFUIDisplay-Semibold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		40DB5121AA624CB1809DC8EB /* SFUIDisplay-Thin.otf */ = {isa = PBXFileReference; name = "SFUIDisplay-Thin.otf"; path = "../assets/fonts/SFUIDisplay-Thin.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		B12151FF6ACE4B8191ADDB93 /* SFUIDisplay-Ultralight.otf */ = {isa = PBXFileReference; name = "SFUIDisplay-Ultralight.otf"; path = "../assets/fonts/SFUIDisplay-Ultralight.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -209,6 +271,37 @@
 				3F84BE11291F495EA7B3AE6D /* Octicons.ttf */,
 				49586871C3B849218DD4BF04 /* SimpleLineIcons.ttf */,
 				AFCF70EE951D45A489136939 /* Zocial.ttf */,
+				3D3C8E81C3A34DCA8AE43D5B /* Rene Bieder  Milliard Black Italic.otf */,
+				2D31E98FC616415890849415 /* Rene Bieder  Milliard Black.otf */,
+				C646D6D4F80A454AA292D67C /* Rene Bieder  Milliard Bold Italic.otf */,
+				6E54EEC6C5184D72AFE656A7 /* Rene Bieder  Milliard Bold.otf */,
+				E92F048BD5CD40FBA7700968 /* Rene Bieder  Milliard Book Italic.otf */,
+				A4411D64CEC84296A8B7FDCE /* Rene Bieder  Milliard Book.otf */,
+				F877243A1C384E2683838F8B /* Rene Bieder  Milliard ExtraBold Italic.otf */,
+				FEAFE438EA4544C4967D1091 /* Rene Bieder  Milliard ExtraBold.otf */,
+				62BA2081AC93454283B2DC11 /* Rene Bieder  Milliard ExtraLight Italic.otf */,
+				7E11A275562441D3909C16BE /* Rene Bieder  Milliard ExtraLight.otf */,
+				2FAD2FC5B8C444388A0A3F0D /* Rene Bieder  Milliard Hairline Italic.otf */,
+				80A0FBA96041499790EC0ACC /* Rene Bieder  Milliard Hairline.otf */,
+				9EE7F5FB1DFE428D92F362AF /* Rene Bieder  Milliard Heavy Italic.otf */,
+				C96453FCDC8346C5B2992EA0 /* Rene Bieder  Milliard Heavy.otf */,
+				632709AB0628492590FC3B3C /* Rene Bieder  Milliard Light Italic.otf */,
+				99F8F80664BE462DAE393499 /* Rene Bieder  Milliard Light.otf */,
+				35F0F24469E24F1BB6DBAD6D /* Rene Bieder  Milliard Medium Italic.otf */,
+				E5BED864E67947E38C2B710C /* Rene Bieder  Milliard Medium.otf */,
+				6C7E0EE5AEC94E6CBC093E63 /* Rene Bieder  Milliard SemiBold Italic.otf */,
+				C78E11BBAC9443B3BCA1989C /* Rene Bieder  Milliard SemiBold.otf */,
+				06E1CF8222B642FF87CFEDDD /* Rene Bieder  Milliard Thin Italic.otf */,
+				CE2441B5DB0C4BAC8393E77F /* Rene Bieder  Milliard Thin.otf */,
+				08118612D2DB46C098311E45 /* SFUIDisplay-Black.otf */,
+				8E8DA6A579A3496A8983CB08 /* SFUIDisplay-Bold.ttf */,
+				10BD77B66D404DBFA60D5E3B /* SFUIDisplay-Heavy.otf */,
+				8546876652E54A709C3D8E37 /* SFUIDisplay-Light.ttf */,
+				8640BE13FC754E54BDB427B4 /* SFUIDisplay-Medium.otf */,
+				E233D43C255348BD8CE101D2 /* SFUIDisplay-Regular.otf */,
+				73F63CC132E047BCA5CB8E19 /* SFUIDisplay-Semibold.otf */,
+				40DB5121AA624CB1809DC8EB /* SFUIDisplay-Thin.otf */,
+				B12151FF6ACE4B8191ADDB93 /* SFUIDisplay-Ultralight.otf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -368,6 +461,37 @@
 				F28A21B0A80E435480638610 /* Octicons.ttf in Resources */,
 				CEFA7E127E1841FF92C783E0 /* SimpleLineIcons.ttf in Resources */,
 				17DBC75D2C984FB9B6908EB3 /* Zocial.ttf in Resources */,
+				C2ABE0E77DB741D59A9AD15C /* Rene Bieder  Milliard Black Italic.otf in Resources */,
+				0625C8AE38D94205AED0CDF1 /* Rene Bieder  Milliard Black.otf in Resources */,
+				06E8CDE0BD9940E98B1E0A47 /* Rene Bieder  Milliard Bold Italic.otf in Resources */,
+				ABAFEA6827A7499FBA11F39C /* Rene Bieder  Milliard Bold.otf in Resources */,
+				63621E24C9EB44039B405960 /* Rene Bieder  Milliard Book Italic.otf in Resources */,
+				1753DDAD3F0A484787BF2FCB /* Rene Bieder  Milliard Book.otf in Resources */,
+				8A07558A3D48422CA43CB388 /* Rene Bieder  Milliard ExtraBold Italic.otf in Resources */,
+				B1A614A2E58A46B1BAD9A377 /* Rene Bieder  Milliard ExtraBold.otf in Resources */,
+				5FE11624E51B47B78B92A00F /* Rene Bieder  Milliard ExtraLight Italic.otf in Resources */,
+				0D0C135C1EEB4840BEC8E345 /* Rene Bieder  Milliard ExtraLight.otf in Resources */,
+				F3C1E774851B4C53A0C57AC0 /* Rene Bieder  Milliard Hairline Italic.otf in Resources */,
+				6B20809F3FA14FCFA29B54EF /* Rene Bieder  Milliard Hairline.otf in Resources */,
+				D272EDE22B024FF1A0DCDCAA /* Rene Bieder  Milliard Heavy Italic.otf in Resources */,
+				8163D96E194A4030B49737C0 /* Rene Bieder  Milliard Heavy.otf in Resources */,
+				5A6A7E15C7D942C9A3F3B2F0 /* Rene Bieder  Milliard Light Italic.otf in Resources */,
+				0A691F87E6B04BFCBEFBA942 /* Rene Bieder  Milliard Light.otf in Resources */,
+				B2FFE6B9C87B4FCAA4C9AD23 /* Rene Bieder  Milliard Medium Italic.otf in Resources */,
+				A6A98FE4843B4011AB3226A6 /* Rene Bieder  Milliard Medium.otf in Resources */,
+				4CC8EAB30F644317A90F0AE6 /* Rene Bieder  Milliard SemiBold Italic.otf in Resources */,
+				BA0DD252D2B643D6A5F5DF3F /* Rene Bieder  Milliard SemiBold.otf in Resources */,
+				6071FE6C83684D1C8F56540E /* Rene Bieder  Milliard Thin Italic.otf in Resources */,
+				88190B2FAD1B458DAE82D859 /* Rene Bieder  Milliard Thin.otf in Resources */,
+				1A4CE7CBF87E4A6EBE88CD83 /* SFUIDisplay-Black.otf in Resources */,
+				9737E5DA53384724923BF0C6 /* SFUIDisplay-Bold.ttf in Resources */,
+				19807ECE122F481DBFB2F111 /* SFUIDisplay-Heavy.otf in Resources */,
+				910754BD8FE54A22B58909EF /* SFUIDisplay-Light.ttf in Resources */,
+				339A4277D6DE4081BA1406A8 /* SFUIDisplay-Medium.otf in Resources */,
+				943F6B24A41D4FEBBA938E9F /* SFUIDisplay-Regular.otf in Resources */,
+				D7672D32185F4B87B3400B9D /* SFUIDisplay-Semibold.otf in Resources */,
+				083D1A3588EB4661BEC7EA6B /* SFUIDisplay-Thin.otf in Resources */,
+				626EA07F61994A35A5FEE000 /* SFUIDisplay-Ultralight.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

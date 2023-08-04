@@ -21,17 +21,18 @@ import {Actions} from 'react-native-router-flux';
 import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
 import Icons from 'react-native-vector-icons/FontAwesome';
 import {useDispatch, useSelector} from 'react-redux';
-import CustomBottomSheet from '../../Plugins/CustomBottomSheet';
-import wait from '../../Plugins/waitinterval';
+import CustomBottomSheet from '../../../Plugins/CustomBottomSheet';
+import wait from '../../../Plugins/waitinterval';
 import {ScrollView, TextInput} from 'react-native-gesture-handler';
 import {
   action_get_complaints,
+  action_get_complaint_id,
   action_insert_complaints,
-} from '../../Services/Actions/ComplaintsActions';
-import CustomFlexBox from '../../Plugins/CustomFlexBox';
+} from '../../../Services/Actions/ComplaintsActions';
+import CustomFlexBox from '../../../Plugins/CustomFlexBox';
 import {ImageBackground} from 'react-native';
-import { Card } from 'react-native-elements';
-
+import {Card} from 'react-native-elements';
+import styles from './style';
 export async function requestStoragePermission() {
   if (Platform.OS !== 'android') return true;
 
@@ -58,12 +59,11 @@ export async function requestStoragePermission() {
     return false;
   }
 }
-const complaints = () => {
+const Complaints = () => {
   const complaintslist = useSelector((state) => state.ComplaintsReducers.data);
-  const users_reducers = useSelector((state) => state.UserInfoReducers.data);
   const dispatch = useDispatch();
   const [refreshing, setRefreshing] = useState(false);
-  const [spinner, setSpinner] = useState(false);
+  const users_reducers = useSelector((state) => state.UserInfoReducers.data);
   const [isVisible, setIsVisible] = useState(false);
   const [subjecttext, setsubjecttext] = useState('');
   const [complaintmessage, setcomplaintmessage] = useState('');
@@ -73,35 +73,41 @@ const complaints = () => {
   const [singleFile, setSingleFile] = useState([]);
   const [overlaymessage, setoverlaymessage] = useState('');
   const [reported_by, setreported_by] = useState('');
-  AsyncStorage.getItem('user_id').then((item) => {
-    if (item == null) {
-      Actions.home();
-    } else {
-      setreported_by(item);
-    }
-    console.log(item);
-  });
+  const [complaintlists, setcomplaintlist] = useState([...complaintslist]);
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     wait(1000).then(() => {
       setRefreshing(false);
-      dispatch(action_get_complaints(reported_by));
+      dispatch(action_get_complaints(users_reducers?.user_pk));
     });
-  }, [dispatch, reported_by]);
+  }, [dispatch, users_reducers?.user_pk]);
+
   useEffect(() => {
     let mounted = true;
+    if (mounted) {
+      if (complaintslist.length > 0) {
+        complaintlists.sort((obj1, obj2) => {
+          return obj2.complaint_pk - obj1.complaint_pk;
+        });
+        setcomplaintlist([...complaintlists]);
+      }
+    }
 
-    const getcomplaints = () => {
-      dispatch(action_get_complaints(reported_by));
+    return () => {
+      mounted = false;
     };
-
-    mounted && getcomplaints();
-    return () => (mounted = false);
-  }, [dispatch, reported_by]);
-  const gotocomplaints = useCallback((item) => {
-    Actions.complaintsinfo();
-    AsyncStorage.setItem('complaint_pk', item?.complaint_pk.toString());
-  });
+  }, [complaintslist]);
+  const gotocomplaints = useCallback(
+    async (item) => {
+      dispatch(action_get_complaint_id(item?.complaint_pk.toString()));
+      await AsyncStorage.setItem('complaint_pk', item?.complaint_pk.toString());
+      wait(200).then(() => {
+        Actions.complaintsinfo();
+      });
+    },
+    [dispatch],
+  );
   const handleFloatingIcon = useCallback((value) => {
     setIsVisible(true);
   });
@@ -120,7 +126,7 @@ const complaints = () => {
         action_insert_complaints(subjecttext, complaintmessage, singleFile),
       );
       wait(1000).then(() => {
-        dispatch(action_get_complaints(reported_by));
+        dispatch(action_get_complaints(users_reducers?.user_pk));
       });
       setIsVisible(false);
       alert('Complaint Successfully Send');
@@ -130,7 +136,7 @@ const complaints = () => {
     subjecttext,
     complaintmessage,
     dispatch,
-    reported_by,
+    users_reducers?.user_pk,
     singleFile,
   ]);
   const handleCancelButton = useCallback(() => {
@@ -193,55 +199,57 @@ const complaints = () => {
     velocityThreshold: 0.5,
     directionalOffsetThreshold: 80,
   };
+
   return (
-    <ImageBackground
-    style={{flex: 1}}
-    source={require('../../assets/background/bgImage.jpg')}
-    resizeMode="stretch"
-    blurRadius={20}>
- 
     <SafeAreaView style={styles.flatlistcontainer}>
-      {/* <CustomOverLay overlayvisible={overlayopen} message={overlaymessage} /> */}
-      <Spinner visible={spinner} textContent={'Fetching Data...'} />
-      <Card containerStyle={styles.plate}>
-      <Text style={styles.HeaderText}>Complaints</Text>
       <FlatList
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
+        style={{marginBottom: 50}}
         data={complaintslist}
         keyExtractor={(item, index) => index.toString()}
         onEndReachedThreshold={0.1}
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: 'flex-start',
+        }}
         renderItem={({item, index}) => (
           <TouchableHighlight
             onPress={() => gotocomplaints(item)}
             underlayColor="white">
-            <CardView style={{marginTop: -5}} radius={1}>
+            <CardView radius={15}>
               <View
                 style={{
                   flex: 1,
-                  flexDirection: 'row',
+                  flexDirection: 'column',
                   justifyContent: 'space-between',
                 }}>
                 <View
                   style={{
-                    width: '30%',
-                    height: 50,
+                    width: '100%',
+                    height: 20,
+                    padding: 5,
                   }}>
                   <Text numberOfLines={1} style={styles.Titletext}>
-                    {item?.title}
+                    Subject: {item?.title}
                   </Text>
                 </View>
                 <View
                   style={{
-                    width: '70%',
-                    height: 50,
+                    width: '100%',
+                    height: 60,
+                    padding: 5,
                   }}>
                   <Text numberOfLines={1} style={styles.text}>
-                    {item?.body}
+                    Body: {item?.body}
+                  </Text>
+                  <Text numberOfLines={1} style={styles.reportedAt}>
+                    {item?.reported_at}
                   </Text>
                 </View>
               </View>
+
               {/* <View
                 style={{
                   flexDirection: 'row',
@@ -326,7 +334,6 @@ const complaints = () => {
                 <View
                   style={{
                     width: '100%',
-                    height: 50,
                   }}>
                   <Input
                     placeholder="Subject"
@@ -343,7 +350,6 @@ const complaints = () => {
                 <View
                   style={{
                     width: '100%',
-                    height: 200,
                   }}>
                   <View
                     style={{
@@ -357,7 +363,7 @@ const complaints = () => {
                     />
                   </View>
                 </View>
-                <View style={{width: 30 + '%', height: 30, padding: 5}}>
+                <View style={{width: '30%', height: 30, padding: 5}}>
                   <Button
                     style={{color: 'black'}}
                     icon={<Icons name="file-image-o" size={15} color="green" />}
@@ -426,7 +432,6 @@ const complaints = () => {
           }
         />
       </GestureRecognizer>
-      </Card>
       <FAB
         style={styles.fab}
         icon="plus"
@@ -434,76 +439,8 @@ const complaints = () => {
       />
     </SafeAreaView>
 
-    </ImageBackground>
+    // </ImageBackground>
   );
 };
 
-const styles = StyleSheet.create({
-  background: {
-    backgroundColor: 'black',
-    flex: 1,
-  },
-  avatar: {
-    width: '100%',
-    height: 500,
-    borderColor: 'white',
-    alignSelf: 'center',
-    resizeMode: 'contain',
-  },
-  container: {
-    flex: 1,
-    width: '100%',
-    height: 500,
-  },
-  fab: {
-    position: 'absolute',
-    bottom: 8,
-    right: 16,
-    backgroundColor: '#a0c2fa',
-  },
-  text: {
-    color: 'black',
-    fontSize: 14,
-    padding: 5,
-  },
-  HeaderText: {
-    color: 'white',
-    fontSize: 24,
-    padding: 5,
-    textAlign: 'justify',
-  },
-  Titletext: {
-    color: 'black',
-    fontWeight: 'bold',
-    fontSize: 14,
-    padding: 5,
-    textAlign: 'justify',
-  },
-  flatlistcontainer: {
-    flex: 1,
-    height: 500,
-    paddingTop: 10,
-    marginTop:50
-  },
-  plate:{
-    flex:1,
-    backgroundColor:"rgba(255,255,355,0.5)",
-    borderColor:"rgba(255,255,355,0.5)",
-    borderWidth:0.1,
-    borderRadius:5
-},
-  flatlistitem: {
-    marginStart: 30,
-    fontSize: 14,
-    fontFamily: 'Open-Sans',
-    height: 10,
-  },
-  flatlistitemappointmentno: {
-    marginStart: 30,
-    fontSize: 14,
-    fontWeight: 'bold',
-    fontFamily: 'Open-Sans',
-    height: 20,
-  },
-});
-export default complaints;
+export default Complaints;

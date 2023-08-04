@@ -20,6 +20,7 @@ import {action_get_userinfo} from '../../Services/Actions/UserInfoActions';
 import {action_upadatenewuser} from '../../Services/Actions/ResidentsActions';
 import {action_netinfo} from '../../Services/Actions/DefaultActions';
 import wait from '../../Plugins/waitinterval';
+import SplashScreen from 'react-native-splash-screen';
 import {action_get_complaints} from '../../Services/Actions/ComplaintsActions';
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const MORE_ICON = Platform.OS === 'ios' ? 'dots-horizontal' : 'dots-vertical';
@@ -132,7 +133,11 @@ const MeScreen = () => {
     Actions.officials();
   }, []);
   const gotofad = useCallback(() => {
-    if (new_user !== 'true' && users_reducers?.ulo_pamilya !== null) {
+    console.log(users_reducers?.new_user);
+    if (
+      users_reducers?.new_user !== 'true' &&
+      users_reducers?.ulo_pamilya !== null
+    ) {
       Actions.fad();
     } else if (
       users_reducers?.new_user === 'false' &&
@@ -152,6 +157,20 @@ const MeScreen = () => {
     Actions.profile();
   }, []);
   const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
+  useEffect(() => {
+    let mounted = true;
+    const getprem_image = async () => {
+      if (mounted) {
+        if (users_reducers?.user_pk !== '') {
+          SplashScreen.hide();
+        }
+      }
+    };
+    mounted && getprem_image();
+    return () => {
+      mounted = false;
+    };
+  }, [users_reducers]);
   return (
     <ScrollView
       style={{height: screenHeight}}

@@ -30,14 +30,11 @@ export const action_get_news_lastweek = () => async (dispatch) => {
     },
   });
   const parseData = await fetchdata.json();
-  if (parseData.status != 400) {
-    if (parseData.success != false) {
-      dispatch({
-        type: GET_NEWS_DATA,
-        payload: parseData.data,
-      });
-    }
-  }
+  console.log(parseData);
+  dispatch({
+    type: GET_NEWS_DATA,
+    payload: parseData.data,
+  });
 };
 
 export const action_get_news = () => async (dispatch) => {
@@ -54,14 +51,12 @@ export const action_get_news = () => async (dispatch) => {
     },
   });
   const parseData = await fetchdata.json();
-  if (parseData.status != 400) {
-    if (parseData.success != false) {
-      dispatch({
-        type: GET_NEWS_DATA,
-        payload: parseData.data,
-      });
-    }
-  }
+  console.log(parseData?.data[0]?.upload_files);
+
+  dispatch({
+    type: GET_NEWS_DATA,
+    payload: parseData.data,
+  });
 };
 export const action_get_news_info = (news_pk) => async (dispatch) => {
   //   var url = `${BASE_URL}/api/user/currentUser`;
@@ -80,14 +75,11 @@ export const action_get_news_info = (news_pk) => async (dispatch) => {
     body: formdata,
   });
   const parseData = await fetchdata.json();
-  if (parseData.status != 400) {
-    if (parseData.success != false) {
-      dispatch({
-        type: GET_NEWS_INFO,
-        payload: {data: parseData.data, loading: parseData.success},
-      });
-    }
-  }
+
+  dispatch({
+    type: GET_NEWS_INFO,
+    payload: {data: parseData.data, loading: parseData.success},
+  });
 };
 
 export const action_get_news_comments = (news_pk) => async (dispatch) => {
@@ -107,14 +99,11 @@ export const action_get_news_comments = (news_pk) => async (dispatch) => {
     body: formdata,
   });
   const parseData = await fetchdata.json();
-  if (parseData.status != 400) {
-    if (parseData.success != false) {
-      dispatch({
-        type: GET_COMMENTS,
-        payload: parseData.data,
-      });
-    }
-  }
+
+  dispatch({
+    type: GET_COMMENTS,
+    payload: parseData.data,
+  });
 };
 export const action_set_news_reactions = (news_pk, reaction) => async (
   dispatch,
@@ -136,14 +125,11 @@ export const action_set_news_reactions = (news_pk, reaction) => async (
     body: formdata,
   });
   const parseData = await fetchdata.json();
-  if (parseData.status != 400) {
-    if (parseData.success != false) {
-      dispatch({
-        type: GET_NEWS_REACTION,
-        payload: parseData.data,
-      });
-    }
-  }
+
+  dispatch({
+    type: GET_NEWS_REACTION,
+    payload: parseData.data,
+  });
 };
 export const action_get_news_add_comment = (news_pk, body) => async () => {
   //   var url = `${BASE_URL}/api/user/currentUser`;
@@ -191,18 +177,19 @@ export const action_filter_news = (value, index, text) => async (dispatch) => {
     body: formdata,
   });
   const parseData = await fetchdata.json();
-  if (parseData.status != 400) {
-    if (parseData.success != false) {
-      dispatch({
-        type: GET_NEWS_DATA,
-        payload: parseData.data,
-      });
-    }
-  }
+
+  dispatch({
+    type: GET_NEWS_DATA,
+    payload: parseData.data,
+  });
 };
 export const action_filter = (value, index, text) => async (dispatch) => {
   dispatch({
     type: SELECTED_FILTER,
     payload: {value: value, index: index, text: text},
+  });
+  dispatch({
+    type: GET_NEWS_DATA,
+    payload: [],
   });
 };

@@ -182,7 +182,6 @@ function BottomNavigation() {
     const netinfo = async () => {
       await dispatch(action_get_userinfo());
       await dispatch(action_netinfo());
-      console.log(users_reducers.new_user);
       if ((await users_reducers.new_user) === 'true') {
         await dispatch(aciton_check_new_user(true));
       } else {

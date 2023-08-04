@@ -2,6 +2,7 @@ import {BASE_URL} from '../Types/Default_Types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   GET_COMPLAINTS,
+  GET_COMPLAINTS_ID,
   GET_COMPLAINTS_INFO,
   GET_COMPLAINTS_MESSAGE,
 } from '../Types/Complaints_Types';
@@ -109,16 +110,17 @@ export const action_get_complaints_messages = (complaint_pk) => async (
       Authorization: bearer,
     },
     body: formdata,
-  });
-  const parseData = await fetchdata.json();
-  if (parseData.status != 400) {
-    if (parseData.success != false) {
-      dispatch({
-        type: GET_COMPLAINTS_MESSAGE,
-        payload: parseData.data,
-      });
-    }
-  }
+  })
+    .then((response) => response.json())
+    .then((res) => {
+      console.log(complaint_pk);
+      if (res.success) {
+        dispatch({
+          type: GET_COMPLAINTS_MESSAGE,
+          payload: res.data,
+        });
+      }
+    });
 };
 
 export const action_set_complaints_messages = (body, complaint_pk) => async (
@@ -150,5 +152,18 @@ export const action_notify = (notify) => async (dispatch) => {
   dispatch({
     type: NOTIFY,
     payload: notify,
+  });
+};
+
+export const action_complaint_info_reset = () => async (dispatch) => {
+  dispatch({
+    type: GET_COMPLAINTS_INFO,
+    payload: [],
+  });
+};
+export const action_get_complaint_id = (complaint_id) => async (dispatch) => {
+  dispatch({
+    type: GET_COMPLAINTS_ID,
+    payload: complaint_id,
   });
 };

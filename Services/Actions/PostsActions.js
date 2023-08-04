@@ -25,13 +25,11 @@ export const action_get_user_posts = () => async (dispatch) => {
     },
   });
   const parseData = await fetchdata.json();
-  if (parseData.status != 400) {
-    if (parseData.success != false) {
-      dispatch({
-        type: GET_USER_POSTS,
-        payload: parseData.data,
-      });
-    }
+  if (parseData.success != false) {
+    dispatch({
+      type: GET_USER_POSTS,
+      payload: parseData.data,
+    });
   }
 };
 export const action_get_user_comments_limit = (posts_pk) => async (

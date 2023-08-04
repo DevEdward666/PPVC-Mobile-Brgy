@@ -39,7 +39,9 @@ export const action_get_residents_list = (searchname) => async (dispatch) => {
   }
 };
 
-export const action_get_FAD_form = (resident_pk,fam_pk) => async (dispatch) => {
+export const action_get_FAD_form = (resident_pk, fam_pk) => async (
+  dispatch,
+) => {
   //   var url = `${BASE_URL}/api/user/currentUser`;
   var url = `${BASE_URL}/api/familymobile/getforms`;
   const token = await AsyncStorage.getItem('tokenizer');
@@ -204,7 +206,6 @@ export const action_addfamily = (
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      fam_pk: fam_pk,
       ulo_pamilya: resident_pk,
       okasyon_balay: okasyon_balay,
       straktura: straktura,
@@ -217,20 +218,18 @@ export const action_addfamily = (
       matang_basura: wastemanagement,
       kahimtanang_komunidad: kahimtang_komunidad,
       biktima_pangabuso: victimofabuse,
-      serbisyo_nadawat:serbisyo,
+      serbisyo_nadawat: serbisyo,
       fam_members: fam_member,
     }),
   });
   const parseData = await fetchdata.json();
-  if (parseData.status != 400) {
-    if (parseData.success != false) {
-      dispatch({
-        type: GET_RESIDENTS_ISSUCCESS,
-        payload: parseData.success,
-      });
-    }
+
+  if (parseData.success != false) {
+    dispatch({
+      type: GET_RESIDENTS_ISSUCCESS,
+      payload: parseData.success,
+    });
   }
-  console.log(parseData);
 };
 export const action_updatefamily = (
   fam_pk,
@@ -276,20 +275,17 @@ export const action_updatefamily = (
       matang_basura: wastemanagement,
       kahimtanang_komunidad: kahimtang_komunidad,
       biktima_pangabuso: victimofabuse,
-      serbisyo_nadawat:serbisyo,
+      serbisyo_nadawat: serbisyo,
       fam_members: fam_member,
     }),
   });
   const parseData = await fetchdata.json();
-  if (parseData.status != 400) {
-    if (parseData.success != false) {
-      dispatch({
-        type: GET_RESIDENTS_ISSUCCESS,
-        payload: parseData.success,
-      });
-    }
+  if (parseData.success) {
+    dispatch({
+      type: GET_RESIDENTS_ISSUCCESS,
+      payload: parseData.success,
+    });
   }
-  console.log(parseData);
 };
 export const action_upadatenewuser = (user_pk) => async (dispatch) => {
   var url = `${BASE_URL}/api/residentmobile/upadatenewuser`;
@@ -364,7 +360,7 @@ export const action_getmembers_ulosapamilya = (fam_pk) => async (dispatch) => {
       });
     }
   }
-  console.log(parseData)
+  console.log(parseData);
 };
 
 export const action_getreligion = () => async (dispatch) => {
@@ -384,6 +380,13 @@ export const action_getreligion = () => async (dispatch) => {
   }
 };
 
+export const action_set_reset = (reset) => async (dispatch) => {
+  dispatch({
+    type: GET_RESIDENTS_ISSUCCESS,
+    payload: reset,
+  });
+};
+
 export const action_getnationality = () => async (dispatch) => {
   var url = `${BASE_URL}/api/residentmobile/getnationality`;
 
@@ -397,7 +400,6 @@ export const action_getnationality = () => async (dispatch) => {
         type: GET_NATIONALTIY_LIST,
         payload: parseData.data,
       });
-     
     }
   }
 };

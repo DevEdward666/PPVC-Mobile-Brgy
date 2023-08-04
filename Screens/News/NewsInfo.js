@@ -15,6 +15,7 @@ import {
   TouchableHighlight,
   ImageBackground,
 } from 'react-native';
+import ImageView from 'react-native-image-viewing';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Button} from 'react-native-elements';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -29,6 +30,7 @@ import {
   action_get_news_info,
   action_get_news_add_comment,
 } from '../../Services/Actions/NewsActions';
+import moment from 'moment';
 import {Card} from 'react-native-elements';
 import BASE_URL from '../../Services/Types/Default_Types';
 import CustomBottomSheet from '../../Plugins/CustomBottomSheet';
@@ -39,6 +41,7 @@ const UINews = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [news_id, setnews_id] = useState('');
   const [spinner, setSpinner] = useState(false);
+  const [visible, setvisible] = useState(false);
   const [carouselItems, setcarouselItems] = useState([]);
 
   const sheetRef = React.useRef(null);
@@ -55,6 +58,7 @@ const UINews = () => {
   const [comment, setcomment] = useState('');
   const [title, settitle] = useState('');
   const [body, setbody] = useState('');
+  const [images, setimages] = useState([]);
   const [count, setcount] = useState(0);
 
   const [isVisible, setisVisible] = useState(false);
@@ -62,7 +66,6 @@ const UINews = () => {
   AsyncStorage.getItem('news_id').then(async (item) => {
     await setnews_id(item);
   });
-  console.log(news_id);
   useEffect(() => {
     let mounted = true;
     const getnewinfo = async () => {
@@ -71,6 +74,14 @@ const UINews = () => {
       if (news_reducers_info?.loading) {
         await setSpinner(false);
         await setEntries(ENTRIES1);
+        news_reducers_info?.data[0]?.upload_files.map((i) => {
+          setimages((prev) => [
+            ...prev,
+            {
+              uri: `${base_url}/${i.file_path}`,
+            },
+          ]);
+        });
       }
       await setSpinner(false);
     };
@@ -82,6 +93,7 @@ const UINews = () => {
   const goForward = () => {
     carouselRef.current.snapToNext();
   };
+  console.log(images);
 
   const renderItem = useCallback(
     ({item, index}, parallaxProps) => {
@@ -155,12 +167,8 @@ const UINews = () => {
     velocityThreshold: 0.3,
     directionalOffsetThreshold: 1000,
   };
+  console.log(news_reducers_info?.data);
   return (
-    // <ImageBackground
-    // style={{flex: 1}}
-    // source={require('../../assets/background/bgImage.jpg')}
-    // resizeMode="stretch"
-    // blurRadius={20}>
     <SafeAreaView style={styles.flatlistcontainer}>
       <Spinner
         visible={spinner}
@@ -171,6 +179,13 @@ const UINews = () => {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>
+        <ImageView
+          images={images}
+          imageIndex={0}
+          visible={visible}
+          onRequestClose={() => setvisible(false)}
+        />
+
         <CardView
           style={{marginTop: -5}}
           radius={1}
@@ -182,17 +197,23 @@ const UINews = () => {
               alignItems: 'center',
             }}>
             <View style={styles.container}>
-              <Carousel
-                ref={carouselRef}
-                sliderWidth={screenWidth}
-                sliderHeight={screenWidth}
-                itemWidth={screenWidth - 60}
-                data={entries}
-                renderItem={renderItem}
-                hasParallaxImages={true}
-              />
+              <TouchableHighlight onPress={() => setvisible(true)}>
+                <Carousel
+                  ref={carouselRef}
+                  sliderWidth={screenWidth}
+                  sliderHeight={screenWidth}
+                  itemWidth={screenWidth - 60}
+                  data={entries}
+                  renderItem={renderItem}
+                  hasParallaxImages={true}
+                  onPress={() => setvisible(true)}
+                />
+              </TouchableHighlight>
             </View>
           </View>
+          <Text style={styles.text}>
+            {moment(news_reducers_info.data[0]?.encoded_at).calendar()}
+          </Text>
         </CardView>
         <View
           style={{

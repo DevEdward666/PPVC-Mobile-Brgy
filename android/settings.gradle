@@ -9,3 +9,4 @@ apply from: file("../node_modules/@react-native-community/cli-platform-android/n
 include ':app'
 include ':react-native-get-real-path'
 project(':react-native-get-real-path').projectDir = new File(settingsDir, '../node_modules/react-native-get-real-path/android')
+apply from: '../node_modules/react-native-unimodules/gradle.groovy'; includeUnimodulesProjects()

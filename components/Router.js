@@ -3,15 +3,16 @@ import {Router, Scene} from 'react-native-router-flux';
 import Login from '../Screens/LoginScreen';
 import SignUp from '../Screens/SignUpScreen';
 import Index from '../Screens/Main/BottomNavigation';
-import NewsFeed from '../Screens/News/NewsFeed';
+import NewsFeed from '../Screens/News/NewsFeed/NewsFeedMain';
 import NewsInfo from '../Screens/News/NewsInfo';
-import PostsInfo from '../Screens/Posts/PostsInfo';
-import Complaints from '../Screens/Me/Complaints';
-import ComplaintsInfo from '../Screens/Complaints/ComplaintsInfo';
+import PostsInfo from '../Screens/Posts/PostInfo/PostInfoMain';
+import Complaints from '../Screens/Complaints/ComplaintList/ComplaintListMain';
+import ComplaintsInfo from '../Screens/Complaints/ComplaintInfo/ComplaintInfoMain';
 import FADForm from '../Screens/FamilyAssesmentData/FADForm';
+import FADMain from '../Screens/FamilyAssesmentData/FADMain';
 import MeInfo from '../Screens/Me/MeInfo';
-import Posts from '../Screens/Posts/Posts';
-import BarangayOfficials from '../Screens/BarangayOfficials/BarangayOfficialsList';
+import Posts from '../Screens/Posts/PostsFeed/PostsMain';
+import BarangayOfficials from '../Screens/BarangayOfficials/OfficialsMain';
 import ResetPassword from '../Screens/Me/ResetPassword';
 import UpdateInfo from '../Screens/Me/UpdateInfo';
 import Settings from '../Screens/Me/Settings';
@@ -95,7 +96,7 @@ const Routes = () => (
       />
       <Scene
         key="fad"
-        component={FADForm}
+        component={FADMain}
         title="Family Assesment Data Form"
         titleStyle={{color: '#623256'}}
         navBarButtonColor="#623256"
@@ -120,7 +121,7 @@ const Routes = () => (
         component={Index}
         titleStyle={{color: '#623256'}}
         title="Home"
-        initial="true"
+        initial
       />
     </Scene>
   </Router>

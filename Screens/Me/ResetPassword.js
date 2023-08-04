@@ -12,8 +12,8 @@ import {
 import CustomSnackBar from '../../Plugins/CustomSnackBar';
 import wait from '../../Plugins/waitinterval';
 import {Actions} from 'react-native-router-flux';
-import { ImageBackground } from 'react-native';
-import { Card } from 'react-native-elements';
+import {ImageBackground} from 'react-native';
+import {Card} from 'react-native-elements';
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const ResetPassword = () => {
   const [password, setpassword] = useState('');
@@ -128,117 +128,118 @@ const ResetPassword = () => {
     isVisible,
   ]);
   return (
-    <ImageBackground
-    style={{flex: 1}}
-    source={require('../../assets/background/bgImage.jpg')}
-    resizeMode="cover"
-    blurRadius={20}>
-      <Card containerStyle={styles.plate}>
-    <SafeAreaView style={{padding: 20,marginTop:50}}>
-      <ScrollView>
-        {forgotpassword ? (
+    // <ImageBackground
+    // style={{flex: 1}}
+    // source={require('../../assets/background/bgImage.jpg')}
+    // resizeMode="cover"
+    // blurRadius={20}>
+    <Card containerStyle={styles.plate}>
+      <SafeAreaView style={{padding: 20, marginTop: 50}}>
+        <ScrollView>
+          {forgotpassword ? (
+            <TextInput
+              theme={{
+                colors: {
+                  primary: '#623256',
+                  background: 'white',
+                  underlineColor: 'transparent',
+                },
+              }}
+              mode="outlined"
+              onChangeText={(text) => handleEmail(text)}
+              label="Email"
+              value={Email}
+            />
+          ) : (
+            <TextInput
+              theme={{
+                colors: {
+                  primary: '#623256',
+                  background: 'white',
+                  underlineColor: 'transparent',
+                },
+              }}
+              mode="outlined"
+              onChangeText={(text) => handleCurrentPassword(text)}
+              label="Current Password"
+              secureTextEntry={true}
+              value={currentpassword}
+            />
+          )}
           <TextInput
             theme={{
               colors: {
-                primary: '#3eb2fa',
+                primary: '#623256',
                 background: 'white',
                 underlineColor: 'transparent',
               },
             }}
             mode="outlined"
-            onChangeText={(text) => handleEmail(text)}
-            label="Email"
-            value={Email}
-          />
-        ) : (
-          <TextInput
-            theme={{
-              colors: {
-                primary: '#3eb2fa',
-                background: 'white',
-                underlineColor: 'transparent',
-              },
-            }}
-            mode="outlined"
-            onChangeText={(text) => handleCurrentPassword(text)}
-            label="Current Password"
+            onChangeText={(text) => handlePassword(text)}
+            label="New Password"
             secureTextEntry={true}
-            value={currentpassword}
+            value={password}
           />
-        )}
-        <TextInput
-          theme={{
-            colors: {
-              primary: '#3eb2fa',
-              background: 'white',
-              underlineColor: 'transparent',
-            },
-          }}
-          mode="outlined"
-          onChangeText={(text) => handlePassword(text)}
-          label="New Password"
-          secureTextEntry={true}
-          value={password}
-        />
-        <TextInput
-          theme={{
-            colors: {
-              primary: '#3eb2fa',
-              background: 'white',
-              underlineColor: 'transparent',
-            },
-          }}
-          mode="outlined"
-          onChangeText={(text) => handleConfirmPassword(text)}
-          label="Confirm Password"
-          secureTextEntry={true}
-          value={confirmpassword}
-        />
-        <View style={{width: '100%', padding: 10}}>
-          <TouchableHighlight
-            style={styles.login}
-            underlayColor="rgba(252, 87, 81, 0.5)"
-            onPress={() => handleresetbutton()}>
-            <Text style={styles.submitText}>Reset Password</Text>
-          </TouchableHighlight>
+          <TextInput
+            theme={{
+              colors: {
+                primary: '#623256',
+                background: 'white',
+                underlineColor: 'transparent',
+              },
+            }}
+            mode="outlined"
+            onChangeText={(text) => handleConfirmPassword(text)}
+            label="Confirm Password"
+            secureTextEntry={true}
+            value={confirmpassword}
+          />
+          <View style={{width: '100%', padding: 10}}>
+            <TouchableHighlight
+              style={styles.login}
+              underlayColor="#623256"
+              onPress={() => handleresetbutton()}>
+              <Text style={styles.submitText}>Reset Password</Text>
+            </TouchableHighlight>
+          </View>
+        </ScrollView>
+        <View
+          style={{
+            bottom: screenHeight - 900,
+            flex: 1,
+            justifyContent: 'flex-end',
+            marginBottom: 36,
+          }}>
+          <CustomSnackBar show={isVisible} message={message} />
         </View>
-      </ScrollView>
-      <View
-        style={{
-          bottom: screenHeight - 900,
-          flex: 1,
-          justifyContent: 'flex-end',
-          marginBottom: 36,
-        }}>
-        <CustomSnackBar show={isVisible} message={message} />
-      </View>
-    </SafeAreaView>
-    </Card></ImageBackground>
+      </SafeAreaView>
+    </Card>
+    // </ImageBackground>
   );
 };
 
 ResetPassword.propTypes = {};
 
 const styles = StyleSheet.create({
-  plate:{
-    flex:1,
-    backgroundColor:"rgba(255,255,355,0.5)",
-    borderColor:"rgba(255,255,355,0.5)",
-    borderWidth:0.1,
-    borderRadius:5
-},
+  plate: {
+    flex: 1,
+    backgroundColor: 'rgba(255,255,355,0.5)',
+    borderColor: 'rgba(255,255,355,0.5)',
+    borderWidth: 0.1,
+    borderRadius: 5,
+  },
   login: {
     marginTop: 10,
     paddingTop: 10,
     width: '70%',
     alignSelf: 'center',
     paddingBottom: 20,
-   
+
     height: 50,
-    backgroundColor: 'rgba(252, 87, 81, 0.2)',
+    backgroundColor: '#623256',
     borderRadius: 20,
     borderWidth: 3,
-    borderColor: 'rgba(252, 87, 81, 0.5)',
+    borderColor: '#623256',
   },
   submitText: {
     color: 'white',

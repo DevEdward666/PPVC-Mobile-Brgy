@@ -60,7 +60,7 @@ const LoginScreen = () => {
         <TextInput
           theme={{
             colors: {
-              primary: '#3eb2fa',
+              primary: '#623256',
               background: 'white',
               underlineColor: 'transparent',
             },
@@ -83,7 +83,7 @@ const LoginScreen = () => {
         <TextInput
           theme={{
             colors: {
-              primary: '#3eb2fa',
+              primary: '#623256',
               background: 'white',
               underlineColor: 'transparent',
             },
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 50,
     paddingBottom: 20,
-    backgroundColor: '#3eb2fa',
+    backgroundColor: '#623256',
     borderRadius: 20,
     borderWidth: 1,
     borderColor: '#fff',

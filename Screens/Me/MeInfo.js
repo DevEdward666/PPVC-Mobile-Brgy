@@ -260,6 +260,65 @@ const MeInfo = () => {
   };
   const buttons = [{element: component1}, {element: component2}];
   const buttonliked = [{element: liked}, {element: component2}];
+  const FlatListHeader = () => (
+    <Card containerStyle={styles.plate}>
+      <View
+        radius={1}
+        backgroundColor={'#ffffff'}
+        style={{height: screenHeight - 450, marginBottom: 10}}>
+        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          <View
+            style={{
+              width: '100%',
+              height: screenHeight - 450,
+              textAlign: 'center',
+            }}>
+            <Image
+              style={{
+                marginTop: 10,
+                marginStart: 10,
+                alignSelf: 'center',
+                width: 100,
+                height: 100,
+                borderRadius: 180 / 2,
+                overflow: 'hidden',
+                borderWidth: 3,
+              }}
+              source={{uri: imageUri, scale: 1}}
+            />
+            <Text
+              style={{
+                textAlign: 'center',
+                fontSize: 16,
+                fontWeight: 'bold',
+              }}>
+              {users_reducers?.full_name}
+            </Text>
+            <Text style={{textAlign: 'center', fontSize: 12}}>Age :{age}</Text>
+            <Text style={{textAlign: 'center', fontSize: 12}}>
+              Birthday : {Dateconverter(users_reducers?.birth_date)}
+            </Text>
+            <Text
+              style={{
+                textAlign: 'center',
+                fontSize: 14,
+                textTransform: 'capitalize',
+              }}>
+              Civil Status : {users_reducers?.civil_status}
+            </Text>
+            <View style={{width: '100%', height: 50, padding: 5}}></View>
+          </View>
+        </View>
+      </View>
+      <CardView style={{height: 70, padding: 10}}>
+        <Button
+          title="Show family members"
+          type="clear"
+          onPress={() => handleAddPostPress()}
+        />
+      </CardView>
+    </Card>
+  );
   return (
     // <ImageBackground
     // style={{flex: 1}}
@@ -267,67 +326,9 @@ const MeInfo = () => {
     // resizeMode="cover"
     // blurRadius={20}>
     <SafeAreaView style={styles.flatlistcontainer}>
-      <ScrollView>
-        <Card containerStyle={styles.plate}>
-          <View
-            radius={1}
-            backgroundColor={'#ffffff'}
-            style={{height: screenHeight - 550, marginBottom: 10}}>
-            <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-              <View
-                style={{
-                  width: '100%',
-                  height: screenHeight - 450,
-                  textAlign: 'center',
-                }}>
-                <Image
-                  style={{
-                    marginTop: 10,
-                    marginStart: 10,
-                    alignSelf: 'center',
-                    width: 100,
-                    height: 100,
-                    borderRadius: 180 / 2,
-                    overflow: 'hidden',
-                    borderWidth: 3,
-                  }}
-                  source={{uri: imageUri, scale: 1}}
-                />
-                <Text
-                  style={{
-                    textAlign: 'center',
-                    fontSize: 16,
-                    fontWeight: 'bold',
-                  }}>
-                  {users_reducers?.full_name}
-                </Text>
-                <Text style={{textAlign: 'center', fontSize: 12}}>
-                  Age :{age}
-                </Text>
-                <Text style={{textAlign: 'center', fontSize: 12}}>
-                  Birthday : {Dateconverter(users_reducers?.birth_date)}
-                </Text>
-                <Text
-                  style={{
-                    textAlign: 'center',
-                    fontSize: 14,
-                    textTransform: 'capitalize',
-                  }}>
-                  Civil Status : {users_reducers?.civil_status}
-                </Text>
-                <View style={{width: '100%', height: 50, padding: 5}}></View>
-              </View>
-            </View>
-          </View>
-          <CardView style={{height: 70, padding: 10}}>
-            <Button
-              title="Show family members"
-              type="clear"
-              onPress={() => handleAddPostPress()}
-            />
-          </CardView>
-        </Card>
-      </ScrollView>
+      {/* <ScrollView>
+       
+      </ScrollView> */}
 
       <FlatList
         refreshControl={
@@ -424,7 +425,7 @@ const MeInfo = () => {
                     </Text>
                   </>
                 )}
-                <CardView>
+                <CardView style={{marginStart: -10}}>
                   <View
                     style={{
                       flexDirection: 'row',
@@ -491,6 +492,7 @@ const MeInfo = () => {
             </TouchableHighlight>
           </Card>
         )}
+        ListHeaderComponent={<FlatListHeader />}
       />
       {/* <FlatList
         refreshControl={
@@ -904,8 +906,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    marginTop: -250,
-    width: '100%',
   },
   containerNOTIFICATION: {
     paddingLeft: 19,
