@@ -83,6 +83,7 @@ export const action_get_posts = (offset) => async (dispatch) => {
       payload: {data: parseData.data, loading: parseData.success},
     });
   }
+  console.log(parseData)
 };
 export const action_get_posts_info = (posts_pk) => async (dispatch) => {
   var url = `${BASE_URL}/api/postsMobile/getSinglePostWithPhoto`;
