@@ -30,6 +30,7 @@
     "react-native-fb-image-grid": "0.0.5",
     "react-native-floating-action": "^1.21.0",
     "react-native-gesture-handler": "^1.10.3",
+    "react-native-global-font": "^1.0.3",
     "react-native-grid-image-viewer": "^1.0.9",
     "react-native-image-helper": "0.0.3",
     "react-native-image-picker": "^3.2.1",

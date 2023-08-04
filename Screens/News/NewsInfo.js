@@ -13,7 +13,7 @@ import {
   Image,
   RefreshControl,
   TouchableHighlight,
-  ImageBackground
+  ImageBackground,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Button} from 'react-native-elements';
@@ -29,7 +29,7 @@ import {
   action_get_news_info,
   action_get_news_add_comment,
 } from '../../Services/Actions/NewsActions';
-import {Card} from 'react-native-elements'
+import {Card} from 'react-native-elements';
 import BASE_URL from '../../Services/Types/Default_Types';
 import CustomBottomSheet from '../../Plugins/CustomBottomSheet';
 import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
@@ -156,14 +156,12 @@ const UINews = () => {
     directionalOffsetThreshold: 1000,
   };
   return (
-    <ImageBackground
-    style={{flex: 1}}
-    source={require('../../assets/background/bgImage.jpg')}
-    resizeMode="stretch"
-    blurRadius={20}>
+    // <ImageBackground
+    // style={{flex: 1}}
+    // source={require('../../assets/background/bgImage.jpg')}
+    // resizeMode="stretch"
+    // blurRadius={20}>
     <SafeAreaView style={styles.flatlistcontainer}>
-     
-   
       <Spinner
         visible={spinner}
         textContent={'Loading...'}
@@ -397,10 +395,9 @@ const UINews = () => {
           }
         />
       </GestureRecognizer>
-   
     </SafeAreaView>
-  
-    </ImageBackground>
+
+    // </ImageBackground>
   );
 };
 const styles = StyleSheet.create({
@@ -411,13 +408,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
   },
-  plate:{
-    flex:1,
-    backgroundColor:"rgba(255,255,355,0.5)",
-    borderColor:"rgba(255,255,355,0.5)",
-    borderWidth:0.1,
-    borderRadius:5
-},
+  plate: {
+    flex: 1,
+    backgroundColor: 'rgba(255,255,355,0.5)',
+    borderColor: 'rgba(255,255,355,0.5)',
+    borderWidth: 0.1,
+    borderRadius: 5,
+  },
   containerlist: {
     flex: 1,
     width: '100%',
@@ -470,11 +467,10 @@ const styles = StyleSheet.create({
     textAlign: 'justify',
   },
   flatlistcontainer: {
-    backgroundColor:"rgba(255,255,355,0.5)",
-    borderColor:"rgba(255,255,355,0.5)",
+    backgroundColor: 'rgba(255,255,355,0.5)',
+    borderColor: 'rgba(255,255,355,0.5)',
     flex: 1,
     paddingTop: 10,
-    marginTop:50
   },
   flatlistitem: {
     marginStart: 30,

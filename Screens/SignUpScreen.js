@@ -307,10 +307,7 @@ const SignUpScreen = () => {
       tribe == '' ||
       disability == '' ||
       purok == '' ||
-      jobspecs == '' ||
       HouseIncome == '' ||
-      HouseStatus == '' ||
-      VotingPrecint == '' ||
       houseownedby == ''
     ) {
       setAddressError(true);
@@ -668,80 +665,83 @@ const SignUpScreen = () => {
     directionalOffsetThreshold: 80,
   };
   return (
-    <ImageBackground
-    style={{flex: 1}}
-    source={require('../assets/background/bgImage.jpg')}
-    resizeMode="stretch"
-    blurRadius={20}>
- <Card containerStyle={styles.plate}>
-    <ScrollView >
-      <View style={styles.container}>
-        <CustomAlert
-          title={alerttitle}
-          message={alertmessage}
-          show={alertshow}
-        />
-        <View style={{flex: 1}}>
-          <ProgressSteps activeLabelColor="white" activeStepNumColor="white" 
-          activeStepIconBorderColor="#ff5959" completedProgressBarColor="#ff5959" completedLabelColor="#ff5959" completedStepNumColor="#ff5959" completedStepIconColor="#ff5959">
-            <ProgressStep
-              label="Information"
-              nextBtnTextStyle={styles.buttonStyle} previousBtnTextStyle={styles.buttonStyle}
-              onNext={handleNextInfo}
-              errors={InfoError}>
-              {resourcePathProfile ? (
-                <TouchableHighlight
-                  onPress={profileImage}
-                  style={{
-                    width: '100%',
-                    height: 180,
-                    resizeMode: 'contain',
-                    alignContent: 'flex-start',
-                  }}
-                  underlayColor="white">
-                  <ImageBackground
-                    style={styles.avatar}
-                    source={{
-                      uri: resourcePathProfile,
-                    }}>
-                    <Text style={styles.text}>Choose Image</Text>
-                  </ImageBackground>
-                </TouchableHighlight>
-              ) : (
-                <TouchableHighlight
-                  onPress={profileImage}
-                  style={{
-                    width: '100%',
-                    height: 180,
-                    resizeMode: 'contain',
-                    alignContent: 'flex-start',
-                  }}
-                  underlayColor="white">
-                  <ImageBackground
-                    style={styles.avatar}
-                    source={{
-                      uri: 'https://bootdey.com/img/Content/avatar/avatar6.png',
-                    }}>
-                    <Text style={styles.text}>Choose Image</Text>
-                  </ImageBackground>
-                </TouchableHighlight>
-              )}
+    <Card containerStyle={styles.plate}>
+      <ScrollView>
+        <View style={styles.container}>
+          <CustomAlert
+            title={alerttitle}
+            message={alertmessage}
+            show={alertshow}
+          />
+          <View style={{flex: 1}}>
+            <ProgressSteps
+              activeLabelColor="#623256"
+              activeStepNumColor="#623256"
+              activeStepIconBorderColor="#623256"
+              completedProgressBarColor="#623256"
+              completedLabelColor="#623256"
+              completedStepNumColor="#623256"
+              completedStepIconColor="#623256">
+              <ProgressStep
+                label="Information"
+                nextBtnTextStyle={styles.buttonStyle}
+                previousBtnTextStyle={styles.buttonStyle}
+                onNext={handleNextInfo}
+                errors={InfoError}>
+                {resourcePathProfile ? (
+                  <TouchableHighlight
+                    onPress={profileImage}
+                    style={{
+                      width: '100%',
+                      height: 180,
+                      resizeMode: 'contain',
+                      alignContent: 'flex-start',
+                    }}
+                    underlayColor="white">
+                    <ImageBackground
+                      style={styles.avatar}
+                      source={{
+                        uri: resourcePathProfile,
+                      }}>
+                      <Text style={styles.text}>Choose Image</Text>
+                    </ImageBackground>
+                  </TouchableHighlight>
+                ) : (
+                  <TouchableHighlight
+                    onPress={profileImage}
+                    style={{
+                      width: '100%',
+                      height: 180,
+                      resizeMode: 'contain',
+                      alignContent: 'flex-start',
+                    }}
+                    underlayColor="white">
+                    <ImageBackground
+                      style={styles.avatar}
+                      source={{
+                        uri:
+                          'https://bootdey.com/img/Content/avatar/avatar6.png',
+                      }}>
+                      <Text style={styles.text}>Choose Image</Text>
+                    </ImageBackground>
+                  </TouchableHighlight>
+                )}
 
-              <View style={styles.Inputcontainer}>
-                <TextInput
-                  theme={{
-                    colors: {
-                      primary: '#3eb2fa',
-                      background: 'white',
-                      underlineColor: 'transparent',
-                    },
-                  }}
-                  mode="flat"
-                  onChangeText={(text) => setfirstname(text)}
-                  label="First Name"
-                  value={firstname}
-                />
-                {/* <Input
+                <View style={styles.Inputcontainer}>
+                  <TextInput
+                    theme={{
+                      colors: {
+                        primary: '#3eb2fa',
+                        background: 'white',
+                        underlineColor: 'transparent',
+                      },
+                    }}
+                    mode="flat"
+                    onChangeText={(text) => setfirstname(text)}
+                    label="First Name"
+                    value={firstname}
+                  />
+                  {/* <Input
                   style={styles.textInput}
                   placeholder="First Name"
                   inputContainerStyle={styles.inputContainer}
@@ -749,20 +749,20 @@ const SignUpScreen = () => {
                   onChangeText={(text) => setfirstname(text)}
                   defaultValue={firstname}
                 /> */}
-                <TextInput
-                  theme={{
-                    colors: {
-                      primary: '#3eb2fa',
-                      background: 'white',
-                      underlineColor: 'transparent',
-                    },
-                  }}
-                  mode="flat"
-                  onChangeText={(text) => setmiddlename(text)}
-                  label="Middle Name"
-                  value={middlename}
-                />
-                {/* <Input
+                  <TextInput
+                    theme={{
+                      colors: {
+                        primary: '#3eb2fa',
+                        background: 'white',
+                        underlineColor: 'transparent',
+                      },
+                    }}
+                    mode="flat"
+                    onChangeText={(text) => setmiddlename(text)}
+                    label="Middle Name"
+                    value={middlename}
+                  />
+                  {/* <Input
                   style={styles.textInput}
                   placeholder="Middle Name"
                   inputContainerStyle={styles.inputContainer}
@@ -770,20 +770,20 @@ const SignUpScreen = () => {
                   onChangeText={(text) => setmiddlename(text)}
                   defaultValue={middlename}
                 /> */}
-                <TextInput
-                  theme={{
-                    colors: {
-                      primary: '#3eb2fa',
-                      background: 'white',
-                      underlineColor: 'transparent',
-                    },
-                  }}
-                  mode="flat"
-                  onChangeText={(text) => setlastname(text)}
-                  label="Last Name"
-                  value={lastname}
-                />
-                {/* <Input
+                  <TextInput
+                    theme={{
+                      colors: {
+                        primary: '#3eb2fa',
+                        background: 'white',
+                        underlineColor: 'transparent',
+                      },
+                    }}
+                    mode="flat"
+                    onChangeText={(text) => setlastname(text)}
+                    label="Last Name"
+                    value={lastname}
+                  />
+                  {/* <Input
                   style={styles.textInput}
                   placeholder="Last Name"
                   inputContainerStyle={styles.inputContainer}
@@ -791,20 +791,20 @@ const SignUpScreen = () => {
                   onChangeText={(text) => setlastname(text)}
                   defaultValue={lastname}
                 /> */}
-                <TextInput
-                  theme={{
-                    colors: {
-                      primary: '#3eb2fa',
-                      background: 'white',
-                      underlineColor: 'transparent',
-                    },
-                  }}
-                  mode="flat"
-                  onChangeText={(text) => setSuffix(text)}
-                  label="Suffix"
-                  value={suffix}
-                />
-                {/* <Input
+                  <TextInput
+                    theme={{
+                      colors: {
+                        primary: '#3eb2fa',
+                        background: 'white',
+                        underlineColor: 'transparent',
+                      },
+                    }}
+                    mode="flat"
+                    onChangeText={(text) => setSuffix(text)}
+                    label="Suffix"
+                    value={suffix}
+                  />
+                  {/* <Input
                   style={styles.textInput}
                   placeholder="Suffix"
                   inputContainerStyle={styles.inputContainer}
@@ -813,124 +813,118 @@ const SignUpScreen = () => {
                   defaultValue={suffix}
                 /> */}
 
-                <View style={{flex: 1, flexDirection: 'row'}}>
-                  <View
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                    }}>
-                        <TouchableHighlight
-                      underlayColor="white"
+                  <View style={{flex: 1, flexDirection: 'row'}}>
+                    <View
                       style={{
-                      
-                        justifyContent: 'center',
-                        width: "100%",
-                        height: 65,
-                  
-                      }}
-                      onPress={showDatepicker}>
-                     
-                
-                   
-                    <TextInput
-                      theme={{
-                        colors: {
-                          primary: '#3eb2fa',
-                          underlineColor: 'transparent',
-                          background: 'white',
-                        },
-                      }}
-                      disabled={true}
-                      mode="flat"
-                      inputContainerStyle={styles.inputContainer}
-                      inputStyle={styles.inputText}
-                      onChangeText={(text) => setbirthdate(text)}
-                      label="Birthdate"
-                      value={birthdate}
-                    />
-                   </TouchableHighlight>
+                        width: '100%',
+                        height: '100%',
+                      }}>
+                      <TouchableHighlight
+                        underlayColor="white"
+                        style={{
+                          justifyContent: 'center',
+                          width: '100%',
+                          height: 65,
+                        }}
+                        onPress={showDatepicker}>
+                        <TextInput
+                          theme={{
+                            colors: {
+                              primary: '#3eb2fa',
+                              underlineColor: 'transparent',
+                              background: 'white',
+                            },
+                          }}
+                          disabled={true}
+                          mode="flat"
+                          inputContainerStyle={styles.inputContainer}
+                          inputStyle={styles.inputText}
+                          onChangeText={(text) => setbirthdate(text)}
+                          label="Birthdate"
+                          value={birthdate}
+                        />
+                      </TouchableHighlight>
+                    </View>
                   </View>
-                 
-                
-                </View>
-                {show && (
-                  <DateTimePicker
-                    testID="dateTimePicker"
-                    value={date}
-                    mode={mode}
-                    is24Hour={true}
-                    display="default"
-                    onChange={onChange}
-                  />
-                )}
-                <View>
-                  <Picker
-                    selectedValue={gender}
-                    style={styles.PickerContainer}
-                    onValueChange={(itemValue, itemIndex) =>
-                      setgender(itemValue)
-                    }>
-                    <Picker.Item label="Gender" />
-                    <Picker.Item label="Male" value="m" />
-                    <Picker.Item label="Female" value="f" />
-                  </Picker>
-                </View>
-                <View>
-                  <Picker
-                    selectedValue={educ}
-                    style={styles.PickerContainer}
-                    onValueChange={(itemValue, itemIndex) =>
-                      handleseteduc(itemValue)
-                    }>
-                    <Picker.Item label="Nag Skwela or wala?" />
-                    <Picker.Item label="Nag skwela" value="y" />
-                    <Picker.Item label="Wala nag skwela" value="n" />
-                  </Picker>
-                </View>
-
-                {enablesEduc ? (
+                  {show && (
+                    <DateTimePicker
+                      testID="dateTimePicker"
+                      value={date}
+                      mode={mode}
+                      is24Hour={true}
+                      display="default"
+                      onChange={onChange}
+                    />
+                  )}
                   <View>
                     <Picker
-                      selectedValue={grado}
+                      selectedValue={gender}
                       style={styles.PickerContainer}
                       onValueChange={(itemValue, itemIndex) =>
-                        setgrado(itemValue)
+                        setgender(itemValue)
                       }>
-                      <Picker.Item label="Grado na nakab-ot" />
-                      <Picker.Item label="Elementary" value="elementary" />
-                      <Picker.Item label="High School" value="high school" />
-                      <Picker.Item label="College" value="college" />
+                      <Picker.Item label="Gender" />
+                      <Picker.Item label="Male" value="m" />
+                      <Picker.Item label="Female" value="f" />
                     </Picker>
                   </View>
-                ) : null}
-              </View>
-            </ProgressStep>
-            <ProgressStep
-              label="Part 2"
-              nextBtnTextStyle={styles.buttonStyle} previousBtnTextStyle={styles.buttonStyle}
-              onNext={handleNextAddress}
-              errors={AddressError}>
-              <View style={styles.Inputcontainer}>
-                <Picker
-                  selectedValue={nationality}
-                  style={styles.PickerContainer}
-                  onValueChange={(itemValue, itemIndex) => {
-                    if (!itemValue) {
-                      setnationality('Filipino');
-                    } else {
-                      setnationality(itemValue);
-                    }
-                  }}>
-                  <Picker.Item key={0} label="Filipino" value="Filipino" />
-                  {nationality_list.map((item, index) => (
-                    <Picker.Item
-                      key={index}
-                      label={item?.name}
-                      value={item?.name}
-                    />
-                  ))}
-                </Picker>
-                {/* <Input
+                  <View>
+                    <Picker
+                      selectedValue={educ}
+                      style={styles.PickerContainer}
+                      onValueChange={(itemValue, itemIndex) =>
+                        handleseteduc(itemValue)
+                      }>
+                      <Picker.Item label="Nag Skwela or wala?" />
+                      <Picker.Item label="Nag skwela" value="y" />
+                      <Picker.Item label="Wala nag skwela" value="n" />
+                    </Picker>
+                  </View>
+
+                  {enablesEduc ? (
+                    <View>
+                      <Picker
+                        selectedValue={grado}
+                        style={styles.PickerContainer}
+                        onValueChange={(itemValue, itemIndex) =>
+                          setgrado(itemValue)
+                        }>
+                        <Picker.Item label="Grado na nakab-ot" />
+                        <Picker.Item label="Elementary" value="elementary" />
+                        <Picker.Item label="High School" value="high school" />
+                        <Picker.Item label="College" value="college" />
+                      </Picker>
+                    </View>
+                  ) : null}
+                </View>
+              </ProgressStep>
+              <ProgressStep
+                label="Part 2"
+                nextBtnTextStyle={styles.buttonStyle}
+                previousBtnTextStyle={styles.buttonStyle}
+                onNext={handleNextAddress}
+                errors={AddressError}>
+                <View style={styles.Inputcontainer}>
+                  <Picker
+                    selectedValue={nationality}
+                    style={styles.PickerContainer}
+                    onValueChange={(itemValue, itemIndex) => {
+                      if (!itemValue) {
+                        setnationality('Filipino');
+                      } else {
+                        setnationality(itemValue);
+                      }
+                    }}>
+                    <Picker.Item key={0} label="Filipino" value="Filipino" />
+                    {nationality_list.map((item, index) => (
+                      <Picker.Item
+                        key={index}
+                        label={item?.name}
+                        value={item?.name}
+                      />
+                    ))}
+                  </Picker>
+                  {/* <Input
                   style={styles.textInput}
                   placeholder="Nationality"
                   inputContainerStyle={styles.inputContainer}
@@ -938,26 +932,26 @@ const SignUpScreen = () => {
                   onChangeText={(text) => handleNationality(text)}
                   defaultValue={nationality}
                 /> */}
-                <Picker
-                  selectedValue={religion}
-                  style={styles.PickerContainer}
-                  onValueChange={(itemValue, itemIndex) => {
-                    if (!itemValue) {
-                      setreligion('CATHOLIC');
-                    } else {
-                      setreligion(itemValue);
-                    }
-                  }}>
-                  <Picker.Item key={0} label="CATHOLIC" value="CATHOLIC" />
-                  {religion_list.map((item, index) => (
-                    <Picker.Item
-                      key={index}
-                      label={item?.religion}
-                      value={item?.religion}
-                    />
-                  ))}
-                </Picker>
-                {/* <Input
+                  <Picker
+                    selectedValue={religion}
+                    style={styles.PickerContainer}
+                    onValueChange={(itemValue, itemIndex) => {
+                      if (!itemValue) {
+                        setreligion('CATHOLIC');
+                      } else {
+                        setreligion(itemValue);
+                      }
+                    }}>
+                    <Picker.Item key={0} label="CATHOLIC" value="CATHOLIC" />
+                    {religion_list.map((item, index) => (
+                      <Picker.Item
+                        key={index}
+                        label={item?.religion}
+                        value={item?.religion}
+                      />
+                    ))}
+                  </Picker>
+                  {/* <Input
                   style={styles.textInput}
                   placeholder="Religion"
                   inputContainerStyle={styles.inputContainer}
@@ -965,32 +959,32 @@ const SignUpScreen = () => {
                   onChangeText={(text) => handleRegligion(text)}
                   defaultValue={religion}
                 /> */}
-                <Picker
-                  selectedValue={civilstatus}
-                  style={styles.PickerContainer}
-                  onValueChange={(itemValue, itemIndex) =>
-                    handleCivilStatus(itemValue)
-                  }>
-                  <Picker.Item label="Civil Status" />
-                  <Picker.Item label="Single" value="single" />
-                  <Picker.Item label="Married" value="married" />
-                  <Picker.Item label="Annulled" value="annulled" />
-                  <Picker.Item label="Divorced" value="divorced" />
-                </Picker>
-                <TextInput
-                  theme={{
-                    colors: {
-                      primary: '#3eb2fa',
-                      background: 'white',
-                      underlineColor: 'transparent',
-                    },
-                  }}
-                  mode="flat"
-                  onChangeText={(text) => handleDialect(text)}
-                  label="Dialect"
-                  value={dialect}
-                />
-                {/* <Input
+                  <Picker
+                    selectedValue={civilstatus}
+                    style={styles.PickerContainer}
+                    onValueChange={(itemValue, itemIndex) =>
+                      handleCivilStatus(itemValue)
+                    }>
+                    <Picker.Item label="Civil Status" />
+                    <Picker.Item label="Single" value="single" />
+                    <Picker.Item label="Married" value="married" />
+                    <Picker.Item label="Annulled" value="annulled" />
+                    <Picker.Item label="Divorced" value="divorced" />
+                  </Picker>
+                  <TextInput
+                    theme={{
+                      colors: {
+                        primary: '#3eb2fa',
+                        background: 'white',
+                        underlineColor: 'transparent',
+                      },
+                    }}
+                    mode="flat"
+                    onChangeText={(text) => handleDialect(text)}
+                    label="Dialect"
+                    value={dialect}
+                  />
+                  {/* <Input
                   style={styles.textInput}
                   placeholder="Dialect"
                   inputContainerStyle={styles.inputContainer}
@@ -998,20 +992,20 @@ const SignUpScreen = () => {
                   onChangeText={(text) => handleDialect(text)}
                   defaultValue={dialect}
                 /> */}
-                <TextInput
-                  theme={{
-                    colors: {
-                      primary: '#3eb2fa',
-                      background: 'white',
-                      underlineColor: 'transparent',
-                    },
-                  }}
-                  mode="flat"
-                  onChangeText={(text) => handleTribe(text)}
-                  label="Tribe"
-                  value={tribe}
-                />
-                {/* <Input
+                  <TextInput
+                    theme={{
+                      colors: {
+                        primary: '#3eb2fa',
+                        background: 'white',
+                        underlineColor: 'transparent',
+                      },
+                    }}
+                    mode="flat"
+                    onChangeText={(text) => handleTribe(text)}
+                    label="Tribe"
+                    value={tribe}
+                  />
+                  {/* <Input
                   style={styles.textInput}
                   placeholder="Tribe"
                   inputContainerStyle={styles.inputContainer}
@@ -1020,30 +1014,30 @@ const SignUpScreen = () => {
                   defaultValue={tribe}
                 /> */}
 
-                <Picker
-                  selectedValue={disability}
-                  style={styles.PickerContainer}
-                  onValueChange={(itemValue, itemIndex) =>
-                    handleDisablity(itemValue)
-                  }>
-                  <Picker.Item label="Disabled Person" />
-                  <Picker.Item label="Yes" value="y" />
-                  <Picker.Item label="No" value="n" />
-                </Picker>
-                <TextInput
-                  theme={{
-                    colors: {
-                      primary: '#3eb2fa',
-                      background: 'white',
-                      underlineColor: 'transparent',
-                    },
-                  }}
-                  mode="flat"
-                  onChangeText={(text) => handlePurok(text)}
-                  label="Purok"
-                  value={purok}
-                />
-                {/* <Input
+                  <Picker
+                    selectedValue={disability}
+                    style={styles.PickerContainer}
+                    onValueChange={(itemValue, itemIndex) =>
+                      handleDisablity(itemValue)
+                    }>
+                    <Picker.Item label="Disabled Person" />
+                    <Picker.Item label="Yes" value="y" />
+                    <Picker.Item label="No" value="n" />
+                  </Picker>
+                  <TextInput
+                    theme={{
+                      colors: {
+                        primary: '#3eb2fa',
+                        background: 'white',
+                        underlineColor: 'transparent',
+                      },
+                    }}
+                    mode="flat"
+                    onChangeText={(text) => handlePurok(text)}
+                    label="Purok"
+                    value={purok}
+                  />
+                  {/* <Input
                   style={styles.textInput}
                   placeholder="Purok"
                   inputContainerStyle={styles.inputContainer}
@@ -1051,17 +1045,17 @@ const SignUpScreen = () => {
                   onChangeText={(text) => handlePurok(text)}
                   defaultValue={purok}
                 /> */}
-                <Picker
-                  selectedValue={jobspecs}
-                  style={styles.PickerContainer}
-                  onValueChange={(itemValue, itemIndex) =>
-                    handleJobSpecs(itemValue)
-                  }>
-                  <Picker.Item label="Matang sa trabaho" />
-                  <Picker.Item label="Kanunay" value="Kanunay" />
-                  <Picker.Item label="Panagsa" value="Panagsa" />
-                </Picker>
-                {/* <Input
+                  <Picker
+                    selectedValue={jobspecs}
+                    style={styles.PickerContainer}
+                    onValueChange={(itemValue, itemIndex) =>
+                      handleJobSpecs(itemValue)
+                    }>
+                    <Picker.Item label="Matang sa trabaho" />
+                    <Picker.Item label="Kanunay" value="Kanunay" />
+                    <Picker.Item label="Panagsa" value="Panagsa" />
+                  </Picker>
+                  {/* <Input
                   style={styles.textInput}
                   placeholder="Job Specification"
                   inputContainerStyle={styles.inputContainer}
@@ -1069,21 +1063,21 @@ const SignUpScreen = () => {
                   onChangeText={(text) => handleJobSpecs(text)}
                   defaultValue={jobspecs}
                 /> */}
-                <TextInput
-                  theme={{
-                    colors: {
-                      primary: '#3eb2fa',
-                      background: 'white',
-                      underlineColor: 'transparent',
-                    },
-                  }}
-                  mode="flat"
-                  keyboardType="number-pad"
-                  onChangeText={(text) => handleHouseIncome(text)}
-                  label="House Income"
-                  value={HouseIncome}
-                />
-                {/* <Input
+                  <TextInput
+                    theme={{
+                      colors: {
+                        primary: '#3eb2fa',
+                        background: 'white',
+                        underlineColor: 'transparent',
+                      },
+                    }}
+                    mode="flat"
+                    keyboardType="number-pad"
+                    onChangeText={(text) => handleHouseIncome(text)}
+                    label="House Income"
+                    value={HouseIncome}
+                  />
+                  {/* <Input
                   style={styles.textInput}
                   placeholder="House Income"
                   inputContainerStyle={styles.inputContainer}
@@ -1092,7 +1086,7 @@ const SignUpScreen = () => {
                   defaultValue={HouseIncome}
                 /> */}
 
-                {/* <Input
+                  {/* <Input
                   style={styles.textInput}
                   placeholder="House Status"
                   inputContainerStyle={styles.inputContainer}
@@ -1101,40 +1095,41 @@ const SignUpScreen = () => {
                   defaultValue={HouseStatus}
                 /> */}
 
-                <Picker
-                  selectedValue={houseownedby}
-                  style={styles.PickerContainer}
-                  onValueChange={(itemValue, itemIndex) =>
-                    handlehouseownedby(itemValue)
-                  }>
-                  <Picker.Item label="Okasyon sa balay" />
-                  <Picker.Item label="Family Owned" value="Tag-iya" />
-                  <Picker.Item label="Renta" value="Renta" />
-                  <Picker.Item label="Boarder" value="Boarder" />
-                  <Picker.Item label="Live In" value="Nangipon ug puyo" />
-                </Picker>
-              </View>
-            </ProgressStep>
-            <ProgressStep
-              label="Credentials"
-              nextBtnTextStyle={styles.buttonStyle} previousBtnTextStyle={styles.buttonStyle}
-              onSubmit={handleSubmitCredentials}>
-              <View style={styles.Inputcontainer}>
-                <TextInput
-                  theme={{
-                    colors: {
-                      primary: '#3eb2fa',
-                      background: 'white',
-                      underlineColor: 'transparent',
-                    },
-                  }}
-                  mode="flat"
-                  error={emailErrorMessage}
-                  onChangeText={(text) => validate(text)}
-                  label="Email"
-                  value={email}
-                />
-                {/* <Input
+                  <Picker
+                    selectedValue={houseownedby}
+                    style={styles.PickerContainer}
+                    onValueChange={(itemValue, itemIndex) =>
+                      handlehouseownedby(itemValue)
+                    }>
+                    <Picker.Item label="Okasyon sa balay" />
+                    <Picker.Item label="Family Owned" value="Tag-iya" />
+                    <Picker.Item label="Renta" value="Renta" />
+                    <Picker.Item label="Boarder" value="Boarder" />
+                    <Picker.Item label="Live In" value="Nangipon ug puyo" />
+                  </Picker>
+                </View>
+              </ProgressStep>
+              <ProgressStep
+                label="Credentials"
+                nextBtnTextStyle={styles.buttonStyle}
+                previousBtnTextStyle={styles.buttonStyle}
+                onSubmit={handleSubmitCredentials}>
+                <View style={styles.Inputcontainer}>
+                  <TextInput
+                    theme={{
+                      colors: {
+                        primary: '#3eb2fa',
+                        background: 'white',
+                        underlineColor: 'transparent',
+                      },
+                    }}
+                    mode="flat"
+                    error={emailErrorMessage}
+                    onChangeText={(text) => validate(text)}
+                    label="Email"
+                    value={email}
+                  />
+                  {/* <Input
                   style={styles.textInput}
                   placeholder="Email"
                   inputContainerStyle={styles.inputContainer}
@@ -1143,20 +1138,20 @@ const SignUpScreen = () => {
                   onChangeText={(text) => validate(text)}
                   defaultValue={email}
                 /> */}
-                <TextInput
-                  theme={{
-                    colors: {
-                      primary: '#3eb2fa',
-                      background: 'white',
-                      underlineColor: 'transparent',
-                    },
-                  }}
-                  mode="flat"
-                  onChangeText={(text) => setmobile(text)}
-                  label="Mobile No."
-                  value={mobile}
-                />
-                {/* <Input
+                  <TextInput
+                    theme={{
+                      colors: {
+                        primary: '#3eb2fa',
+                        background: 'white',
+                        underlineColor: 'transparent',
+                      },
+                    }}
+                    mode="flat"
+                    onChangeText={(text) => setmobile(text)}
+                    label="Mobile No."
+                    value={mobile}
+                  />
+                  {/* <Input
                   style={styles.textInput}
                   placeholder="Mobile No."
                   inputContainerStyle={styles.inputContainer}
@@ -1166,7 +1161,7 @@ const SignUpScreen = () => {
                   defaultValue={mobile}
                 /> */}
 
-                {/*                 
+                  {/*                 
                 <View style={{flex: 1, flexDirection: 'row'}}>
                   <View
                     style={{
@@ -1262,9 +1257,9 @@ const SignUpScreen = () => {
                   </View>
                 </View>
                */}
-              </View>
-            </ProgressStep>
-            {/* <ProgressStep label="FAD" onSubmit={handleSubmitCredentials}>
+                </View>
+              </ProgressStep>
+              {/* <ProgressStep label="FAD" onSubmit={handleSubmitCredentials}>
               <View style={styles.Inputcontainer}>
                 <CardView
                   style={{marginBottom: 20, textAlign: 'center', height: 40}}>
@@ -1573,26 +1568,25 @@ const SignUpScreen = () => {
               </View>
             </ProgressStep>
                   */}
-          </ProgressSteps>
+            </ProgressSteps>
+          </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
     </Card>
-    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  buttonStyle:{
-    color:"#ff5959"
+  buttonStyle: {
+    color: '#623256',
   },
-  plate:{
-    flex:1,
-    backgroundColor:"rgba(255,255,355,0.5)",
-    borderColor:"rgba(255,255,355,0.5)",
-    borderWidth:0.1,
-    borderRadius:5
-},
+  plate: {
+    flex: 1,
+    backgroundColor: 'rgba(255,255,355,0.5)',
+    borderColor: 'rgba(255,255,355,0.5)',
+    borderWidth: 0.1,
+    borderRadius: 5,
+  },
   container: {
     flex: 1,
     width: '100%',
@@ -1634,11 +1628,11 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 30,
     height: 70,
-    color:"white"
+    color: '#623256',
   },
   Inputcontainer: {
     flex: 1,
-    padding: 30,
+    padding: 5,
     width: '100%',
   },
   Titletext: {
@@ -1650,7 +1644,7 @@ const styles = StyleSheet.create({
   },
   imagecontainer: {
     flex: 1,
-    padding: 30,
+    padding: 15,
     width: '100%',
     height: 220,
     alignItems: 'center',

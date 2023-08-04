@@ -261,72 +261,74 @@ const MeInfo = () => {
   const buttons = [{element: component1}, {element: component2}];
   const buttonliked = [{element: liked}, {element: component2}];
   return (
-    <ImageBackground
-    style={{flex: 1}}
-    source={require('../../assets/background/bgImage.jpg')}
-    resizeMode="cover"
-    blurRadius={20}>
+    // <ImageBackground
+    // style={{flex: 1}}
+    // source={require('../../assets/background/bgImage.jpg')}
+    // resizeMode="cover"
+    // blurRadius={20}>
     <SafeAreaView style={styles.flatlistcontainer}>
-    
-    
       <ScrollView>
-      <Card containerStyle={styles.plate}>
-        <View
-          radius={1}
-          backgroundColor={'#ffffff'}
-          style={{height: screenHeight - 450, marginBottom: 10}}>
-          <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-            <View
-              style={{
-                width: '100%',
-                height: screenHeight - 450,
-                textAlign: 'center',
-              }}>
-              <Image
+        <Card containerStyle={styles.plate}>
+          <View
+            radius={1}
+            backgroundColor={'#ffffff'}
+            style={{height: screenHeight - 550, marginBottom: 10}}>
+            <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+              <View
                 style={{
-                  marginTop: 10,
-                  marginStart: 10,
-                  alignSelf: 'center',
-                  width: 100,
-                  height: 100,
-                  borderRadius: 180 / 2,
-                  overflow: 'hidden',
-                  borderWidth: 3,
-                }}
-                source={{uri: imageUri, scale: 1}}
-              />
-              <Text
-                style={{textAlign: 'center', fontSize: 16, fontWeight: 'bold'}}>
-                {users_reducers?.full_name}
-              </Text>
-              <Text style={{textAlign: 'center', fontSize: 12}}>
-                Age :{age}
-              </Text>
-              <Text style={{textAlign: 'center', fontSize: 12}}>
-                Birthday : {Dateconverter(users_reducers?.birth_date)}
-              </Text>
-              <Text
-                style={{
+                  width: '100%',
+                  height: screenHeight - 450,
                   textAlign: 'center',
-                  fontSize: 14,
-                  textTransform: 'capitalize',
                 }}>
-                Civil Status : {users_reducers?.civil_status}
-              </Text>
-              <View style={{width: '100%', height: 50, padding: 5}}></View>
+                <Image
+                  style={{
+                    marginTop: 10,
+                    marginStart: 10,
+                    alignSelf: 'center',
+                    width: 100,
+                    height: 100,
+                    borderRadius: 180 / 2,
+                    overflow: 'hidden',
+                    borderWidth: 3,
+                  }}
+                  source={{uri: imageUri, scale: 1}}
+                />
+                <Text
+                  style={{
+                    textAlign: 'center',
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                  }}>
+                  {users_reducers?.full_name}
+                </Text>
+                <Text style={{textAlign: 'center', fontSize: 12}}>
+                  Age :{age}
+                </Text>
+                <Text style={{textAlign: 'center', fontSize: 12}}>
+                  Birthday : {Dateconverter(users_reducers?.birth_date)}
+                </Text>
+                <Text
+                  style={{
+                    textAlign: 'center',
+                    fontSize: 14,
+                    textTransform: 'capitalize',
+                  }}>
+                  Civil Status : {users_reducers?.civil_status}
+                </Text>
+                <View style={{width: '100%', height: 50, padding: 5}}></View>
+              </View>
             </View>
           </View>
-        </View>
-        <CardView style={{height: 70, padding: 10}}>
-          <Button
-            title="Show family members"
-            type="clear"
-            onPress={() => handleAddPostPress()}
-          />
-        </CardView>
+          <CardView style={{height: 70, padding: 10}}>
+            <Button
+              title="Show family members"
+              type="clear"
+              onPress={() => handleAddPostPress()}
+            />
+          </CardView>
         </Card>
       </ScrollView>
-     
+
       <FlatList
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -337,156 +339,156 @@ const MeInfo = () => {
         onEndReachedThreshold={0.1}
         renderItem={({item, index}) => (
           <Card containerStyle={styles.plate}>
-          <TouchableHighlight
-            onPress={() => gotopostsinfo(item)}
-            underlayColor="white">
-            <CardView style={{marginTop: 10, marginBottom: 20}} radius={1}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  height: 50,
-                  padding: 10,
-                  marginTop: 10,
-                  alignItems: 'center',
-                }}>
-                <View style={styles.contentNOTIFICATION}>
-                  <View
-                    style={{
-                      flex: 1,
-                      flexDirection: 'row',
-                      justifyContent: 'space-around',
-                      marginBottom: 50,
-                    }}>
-                    <View style={{width: 20 + '%', height: 20}}>
-                      <Image
-                        source={{
-                          uri: `data:image/png;base64,${item?.user_pic}`,
-                        }}
-                        style={{
-                          marginTop: 10,
-                          marginStart: 10,
-                          width: 40,
-                          height: 40,
-                          borderRadius: 120 / 2,
-                          overflow: 'hidden',
-                          borderWidth: 3,
-                        }}
-                      />
-                    </View>
-                    <View style={{width: 95 + '%', height: 50}}>
-                      <Text style={styles.containerNOTIFICATION}>
-                        {item?.user_full_name}
-                        {'\n'}
-                        {item?.TIMESTAMP}
-                      </Text>
-                    </View>
-                  </View>
-
-                  <Text rkType="primary3 mediumLine"></Text>
-                </View>
-              </View>
-              {item?.upload_files[0]?.file_path ? (
-                <View
-                  style={{
-                    flexDirection: 'column',
-                    height: 300,
-                    alignItems: 'center',
-                  }}>
-                  <View style={{width: '100%', height: screenHeight - 1000}}>
-                    <Text numberOfLines={6} style={styles.text}>
-                      {item.title}
-                    </Text>
-                  </View>
-                  <View style={{width: '100%', height: screenHeight - 500}}>
-                    <ImageBackground
-                      source={item.upload_files.map((item) => {
-                        return {
-                          uri: `${base_url}/${item.file_path}`,
-                          width: 400,
-                          height: 100,
-                        };
-                      })}
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        flex: 1,
-                        resizeMode: 'cover',
-                        justifyContent: 'center',
-                      }}></ImageBackground>
-                  </View>
-                </View>
-              ) : (
-                <>
-                  <Text numberOfLines={6} style={styles.noimagetext}>
-                    {item.body}
-                  </Text>
-                </>
-              )}
-              <CardView>
+            <TouchableHighlight
+              onPress={() => gotopostsinfo(item)}
+              underlayColor="white">
+              <CardView style={{marginTop: 10, marginBottom: 20}} radius={1}>
                 <View
                   style={{
                     flexDirection: 'row',
-                    height: 30,
+                    height: 50,
+                    padding: 10,
+                    marginTop: 10,
                     alignItems: 'center',
                   }}>
+                  <View style={styles.contentNOTIFICATION}>
+                    <View
+                      style={{
+                        flex: 1,
+                        flexDirection: 'row',
+                        justifyContent: 'space-around',
+                        marginBottom: 50,
+                      }}>
+                      <View style={{width: 20 + '%', height: 20}}>
+                        <Image
+                          source={{
+                            uri: `data:image/png;base64,${item?.user_pic}`,
+                          }}
+                          style={{
+                            marginTop: 10,
+                            marginStart: 10,
+                            width: 40,
+                            height: 40,
+                            borderRadius: 120 / 2,
+                            overflow: 'hidden',
+                            borderWidth: 3,
+                          }}
+                        />
+                      </View>
+                      <View style={{width: 95 + '%', height: 50}}>
+                        <Text style={styles.containerNOTIFICATION}>
+                          {item?.user_full_name}
+                          {'\n'}
+                          {item?.TIMESTAMP}
+                        </Text>
+                      </View>
+                    </View>
+
+                    <Text rkType="primary3 mediumLine"></Text>
+                  </View>
+                </View>
+                {item?.upload_files[0]?.file_path ? (
                   <View
                     style={{
-                      flex: 1,
-                      justifyContent: 'flex-start',
+                      flexDirection: 'column',
+                      height: 300,
+                      alignItems: 'center',
+                    }}>
+                    <View style={{width: '100%', height: screenHeight - 1000}}>
+                      <Text numberOfLines={6} style={styles.text}>
+                        {item.title}
+                      </Text>
+                    </View>
+                    <View style={{width: '100%', height: screenHeight - 500}}>
+                      <ImageBackground
+                        source={item.upload_files.map((item) => {
+                          return {
+                            uri: `${base_url}/${item.file_path}`,
+                            width: 400,
+                            height: 100,
+                          };
+                        })}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          flex: 1,
+                          resizeMode: 'cover',
+                          justifyContent: 'center',
+                        }}></ImageBackground>
+                    </View>
+                  </View>
+                ) : (
+                  <>
+                    <Text numberOfLines={6} style={styles.noimagetext}>
+                      {item.body}
+                    </Text>
+                  </>
+                )}
+                <CardView>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      height: 30,
+                      alignItems: 'center',
                     }}>
                     <View
                       style={{
-                        width: 30,
-                        marginBottom: -20,
-                        marginStart: 20,
+                        flex: 1,
+                        justifyContent: 'flex-start',
                       }}>
-                      <Icons name="thumbs-up" size={15} color="grey" />
+                      <View
+                        style={{
+                          width: 30,
+                          marginBottom: -20,
+                          marginStart: 20,
+                        }}>
+                        <Icons name="thumbs-up" size={15} color="grey" />
+                      </View>
+                      <View style={{width: 80}}>
+                        {item?.reactions.map((likes, index) => {
+                          return (
+                            <Badge
+                              status="primary"
+                              key={index}
+                              value={likes?.likes}
+                            />
+                          );
+                        })}
+                      </View>
                     </View>
-                    <View style={{width: 80}}>
-                      {item?.reactions.map((likes, index) => {
-                        return (
-                          <Badge
-                            status="primary"
-                            key={index}
-                            value={likes?.likes}
-                          />
-                        );
-                      })}
+                    <View
+                      style={{
+                        alignItems: 'stretch',
+                        width: screenWidth - 270,
+                      }}>
+                      <View style={{width: '100%'}}>
+                        {item?.totalcomments.map((comments, index) => {
+                          return (
+                            <Text key={index}>
+                              <Text> {comments.comments} </Text>
+                              Comments
+                            </Text>
+                          );
+                        })}
+                      </View>
                     </View>
                   </View>
-                  <View
-                    style={{
-                      alignItems: 'stretch',
-                      width: screenWidth - 270,
-                    }}>
-                    <View style={{width: '100%'}}>
-                      {item?.totalcomments.map((comments, index) => {
-                        return (
-                          <Text key={index}>
-                            <Text> {comments.comments} </Text>
-                            Comments
-                          </Text>
-                        );
-                      })}
-                    </View>
-                  </View>
-                </View>
-                {item?.liked[0]?.reaction ? (
-                  <ButtonGroup
-                    onPress={(index) => updateIndex(item, index)}
-                    buttons={buttonliked}
-                    containerStyle={{height: 35, marginBottom: 15}}
-                  />
-                ) : (
-                  <ButtonGroup
-                    onPress={(index) => updateIndex(item, index)}
-                    buttons={buttons}
-                    containerStyle={{height: 35, marginBottom: 15}}
-                  />
-                )}
+                  {item?.liked[0]?.reaction ? (
+                    <ButtonGroup
+                      onPress={(index) => updateIndex(item, index)}
+                      buttons={buttonliked}
+                      containerStyle={{height: 35, marginBottom: 15}}
+                    />
+                  ) : (
+                    <ButtonGroup
+                      onPress={(index) => updateIndex(item, index)}
+                      buttons={buttons}
+                      containerStyle={{height: 35, marginBottom: 15}}
+                    />
+                  )}
+                </CardView>
               </CardView>
-            </CardView>
-          </TouchableHighlight>
+            </TouchableHighlight>
           </Card>
         )}
       />
@@ -871,20 +873,19 @@ const MeInfo = () => {
           }
         />
       </GestureRecognizer>
-
     </SafeAreaView>
-    </ImageBackground>
+    // </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  plate:{
-    flex:1,
-    backgroundColor:"rgba(255,255,355,0.5)",
-    borderColor:"rgba(255,255,355,0.5)",
-    borderWidth:0.1,
-    borderRadius:5
-},
+  plate: {
+    flex: 1,
+    backgroundColor: 'rgba(255,255,355,0.5)',
+    borderColor: 'rgba(255,255,355,0.5)',
+    borderWidth: 0.1,
+    borderRadius: 5,
+  },
   containerclose: {
     paddingRight: 16,
     marginBottom: 10,
@@ -944,9 +945,7 @@ const styles = StyleSheet.create({
   },
   flatlistcontainer: {
     flex: 1,
-    height: "100%",
-    marginTop:50
-
+    height: '100%',
   },
   flatlistitem: {
     marginStart: 30,

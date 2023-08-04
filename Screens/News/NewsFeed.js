@@ -11,7 +11,7 @@ import {
   TouchableHighlight,
   View,
 } from 'react-native';
-import {Card} from 'react-native-elements'
+import {Card} from 'react-native-elements';
 import {Picker} from '@react-native-community/picker';
 import Icons from 'react-native-vector-icons/FontAwesome';
 import {
@@ -158,19 +158,18 @@ const UINews = () => {
     {month: 'December', number: 12},
   ];
   return (
-    <ImageBackground
-    style={{flex: 1}}
-    source={require('../../assets/background/bgImage.jpg')}
-    resizeMode="stretch"
-    blurRadius={20}>
+    // <ImageBackground
+    // style={{flex: 1}}
+    // source={require('../../assets/background/bgImage.jpg')}
+    // resizeMode="stretch"
+    // blurRadius={20}>
     <SafeAreaView style={styles.flatlistcontainer}>
-
       <Spinner
         visible={spinner}
         textContent={'Loading...'}
         textStyle={styles.spinnerTextStyle}
       />
-      
+
       <View style={{flexDirection: 'row', paddingLeft: 15}}>
         <View style={{width: '50%'}}>
           <HelperText type="info" visible={true} padding="none">
@@ -209,7 +208,7 @@ const UINews = () => {
           </View>
         ) : null}
       </View>
-      
+
       <FlatList
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -219,16 +218,11 @@ const UINews = () => {
         keyExtractor={(item, index) => index.toString()}
         onEndReached={loadmore}
         onEndReachedThreshold={0.1}
-
         renderItem={({item, index}) => (
-  
-    
           <TouchableHighlight
             onPress={() => gotonewsinfo(item)}
             underlayColor="white">
-            <CardView
-              style={{marginTop: -5, marginBottom:20}}
-              radius={1}>
+            <CardView style={{marginBottom: 5}} radius={1} elevation={15}>
               <View
                 style={{
                   flexDirection: 'row',
@@ -290,15 +284,11 @@ const UINews = () => {
               /> */}
             </CardView>
           </TouchableHighlight>
-    
         )}
-      
       />
     </SafeAreaView>
-   
-       </ImageBackground>
-  
-   
+
+    //  </ImageBackground>
   );
 };
 const styles = StyleSheet.create({
@@ -318,12 +308,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#000000a0',
   },
   flatlistcontainer: {
-    backgroundColor:"rgba(255,255,355,0.5)",
-    borderColor:"rgba(255,255,355,0.5)",
+    backgroundColor: 'rgba(255,255,355,0.5)',
+    borderColor: 'rgba(255,255,355,0.5)',
     flex: 1,
     paddingTop: 10,
-   
-    marginTop:50
   },
   flatlistitem: {
     marginStart: 30,
@@ -331,13 +319,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Open-Sans',
     height: 10,
   },
-  plate:{
-    flex:1,
-    backgroundColor:"rgba(255,255,355,0.5)",
-    borderColor:"rgba(255,255,355,0.5)",
-    borderWidth:0.1,
-    borderRadius:5
-},
+  plate: {
+    flex: 1,
+    backgroundColor: 'rgba(255,255,355,0.5)',
+    borderColor: 'rgba(255,255,355,0.5)',
+    borderWidth: 0.1,
+    borderRadius: 5,
+  },
   flatlistitemappointmentno: {
     marginStart: 30,
     fontSize: 14,

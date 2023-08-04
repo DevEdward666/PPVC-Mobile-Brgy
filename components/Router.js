@@ -26,18 +26,55 @@ const Routes = () => (
         hideNavBar={true}
         renderBackButton={() => <View />}
       />
-      <Scene key="signup" component={SignUp} title="Signup" hideNavBar={true}/>
-      <Scene key="newsfeed" component={NewsFeed} title="News"  navTransparent={true} navBarButtonColor="white"  titleStyle={{ color: "#ffffff" }} />
-      <Scene key="newsinfo" component={NewsInfo} title="News Info" navTransparent={true} titleStyle={{ color: "#ffffff" }} navBarButtonColor="white" />
-      <Scene key="postsinfo" component={PostsInfo} title="Posts" navTransparent={true} titleStyle={{ color: "#ffffff" }} navBarButtonColor="white"/>
-      <Scene key="posts" component={Posts} title="Posts" navTransparent={true} titleStyle={{ color: "#ffffff" }} navBarButtonColor="white"/>
-      <Scene key="officials" component={BarangayOfficials} title="Officials" navTransparent={true} titleStyle={{ color: "#ffffff" }} navBarButtonColor="white"/>
-      <Scene key="profile" component={MeInfo} title="My Profile" navTransparent={true} titleStyle={{ color: "#ffffff" }} navBarButtonColor="white" />
+      <Scene key="signup" component={SignUp} title="Signup" hideNavBar={true} />
+      <Scene
+        key="newsfeed"
+        component={NewsFeed}
+        title="News"
+        navBarButtonColor="#623256"
+        titleStyle={{color: '#623256'}}
+      />
+      <Scene
+        key="newsinfo"
+        component={NewsInfo}
+        title="News Info"
+        titleStyle={{color: '#623256'}}
+        navBarButtonColor="#623256"
+      />
+      <Scene
+        key="postsinfo"
+        component={PostsInfo}
+        title="Posts"
+        titleStyle={{color: '#623256'}}
+        navBarButtonColor="#623256"
+      />
+      <Scene
+        key="posts"
+        component={Posts}
+        title="Posts"
+        titleStyle={{color: '#623256'}}
+        navBarButtonColor="#623256"
+      />
+      <Scene
+        key="officials"
+        component={BarangayOfficials}
+        title="Officials"
+        titleStyle={{color: '#623256'}}
+        navBarButtonColor="#623256"
+      />
+      <Scene
+        key="profile"
+        component={MeInfo}
+        title="My Profile"
+        titleStyle={{color: '#623256'}}
+        navBarButtonColor="#623256"
+      />
       <Scene
         key="resetpassword"
         component={ResetPassword}
         title="Reset Password"
-        navTransparent={true} titleStyle={{ color: "#ffffff" }} navBarButtonColor="white"
+        titleStyle={{color: '#623256'}}
+        navBarButtonColor="#623256"
       />
       <Scene
         key="updateinfo"
@@ -49,22 +86,42 @@ const Routes = () => (
         component={Family_Members}
         title="My Family Members"
       />
-      <Scene key="settings" component={Settings} title="Settings" navTransparent={true} titleStyle={{ color: "#ffffff" }} navBarButtonColor="white"/>
-      <Scene key="fad" component={FADForm} title="Family Assesment Data Form" navTransparent={true} titleStyle={{ color: "#ffffff" }} navBarButtonColor="white"/>
+      <Scene
+        key="settings"
+        component={Settings}
+        title="Settings"
+        titleStyle={{color: '#623256'}}
+        navBarButtonColor="#623256"
+      />
+      <Scene
+        key="fad"
+        component={FADForm}
+        title="Family Assesment Data Form"
+        titleStyle={{color: '#623256'}}
+        navBarButtonColor="#623256"
+      />
 
       <Scene
         key="complaintsinfo"
         component={ComplaintsInfo}
         title="Complaint Info"
-        navTransparent={true} titleStyle={{ color: "#ffffff" }} navBarButtonColor="white"
+        titleStyle={{color: '#623256'}}
+        navBarButtonColor="#623256"
       />
       <Scene
         key="complaints"
         component={Complaints}
         title="List of Complaints"
-        navTransparent={true} titleStyle={{ color: "#ffffff" }} navBarButtonColor="white"
+        titleStyle={{color: '#623256'}}
+        navBarButtonColor="#623256"
       />
-      <Scene key="index" component={Index} title="Home" initial="true" hideNavBar={true} />
+      <Scene
+        key="index"
+        component={Index}
+        titleStyle={{color: '#623256'}}
+        title="Home"
+        initial="true"
+      />
     </Scene>
   </Router>
 );

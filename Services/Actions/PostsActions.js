@@ -62,27 +62,28 @@ export const action_get_user_comments_limit = (posts_pk) => async (
     }
   }
 };
-export const action_get_posts = () => async (dispatch) => {
-  //   var url = `${BASE_URL}/api/user/currentUser`;
-  var url = `${BASE_URL}/api/postsMobile/getPosts`;
+export const action_get_posts = (offset) => async (dispatch) => {
   const token = await AsyncStorage.getItem('tokenizer');
   const bearer_token = token;
   const bearer = 'Bearer ' + bearer_token;
+  var url = `${BASE_URL}/api/postsMobile/getPosts`;
+  let formdata = new FormData();
+  formdata.append('offset', offset);
   const fetchdata = await fetch(url, {
     method: 'POST',
     withCredentials: true,
     headers: {
       Authorization: bearer,
     },
+    body: formdata,
   });
   const parseData = await fetchdata.json();
-  if (parseData.status != 400) {
-    if (parseData.success != false) {
-      dispatch({
-        type: GET_POSTS,
-        payload: {data: parseData.data, loading: parseData.success},
-      });
-    }
+  console.log(parseData);
+  if (parseData.success) {
+    dispatch({
+      type: GET_POSTS,
+      payload: {data: parseData.data, loading: parseData.success},
+    });
   }
 };
 export const action_get_posts_info = (posts_pk) => async (dispatch) => {

@@ -229,12 +229,12 @@ const UINews = () => {
   const BadgedIcon = withBadge(1)(Icons);
   let imageUri = 'data:image/png;base64,' + users_reducers?.pic;
   return (
-    <ImageBackground
-    style={{flex: 1}}
-    source={require('../../assets/background/bgImage.jpg')}
-    resizeMode="cover"
-    blurRadius={20}>
-      
+    // <ImageBackground
+    // style={{flex: 1}}
+    // source={require('../../assets/background/bgImage.jpg')}
+    // resizeMode="cover"
+    // blurRadius={20}>
+
     <SafeAreaView style={styles.flatlistcontainer}>
       <Spinner
         visible={spinner}
@@ -674,7 +674,7 @@ const UINews = () => {
         )}
       />
     </SafeAreaView>
- </ImageBackground>
+    //  </ImageBackground>
   );
 };
 const styles = StyleSheet.create({
@@ -685,13 +685,13 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     resizeMode: 'contain',
   },
-  plate:{
-    flex:1,
-    backgroundColor:"rgba(255,255,355,0.5)",
-    borderColor:"rgba(255,255,355,0.5)",
-    borderWidth:0.1,
-    borderRadius:5
-},
+  plate: {
+    flex: 1,
+    backgroundColor: 'rgba(255,255,355,0.5)',
+    borderColor: 'rgba(255,255,355,0.5)',
+    borderWidth: 0.1,
+    borderRadius: 5,
+  },
   spinnerTextStyle: {
     color: '#FFF',
   },
@@ -741,11 +741,10 @@ const styles = StyleSheet.create({
     textAlign: 'justify',
   },
   flatlistcontainer: {
-    backgroundColor:"rgba(255,255,355,0.5)",
-    borderColor:"rgba(255,255,355,0.5)",
+    backgroundColor: 'rgba(255,255,355,0.5)',
+    borderColor: 'rgba(255,255,355,0.5)',
     flex: 1,
     paddingTop: 10,
-    marginTop:50
   },
   flatlistitem: {
     marginStart: 30,
